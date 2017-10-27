@@ -1,0 +1,59 @@
+= Test-driven Development mit Spring Boot 2: Keine Ausreden gegen Integrationstest
+Michael Simons <michael.simons@innoq.com>
+:doctype: article
+:source-highlighter: coderay
+:icons: font
+:sectlink: true,
+:sectanchors: true,
+:numbered: true
+
+[abstract]
+--
+Am Anfang eines Projektes wird heutzutage in der Regel Wert auf Tests gelegt. Projekte werden sogar als Test-getrieben aufgesetzt (Test-driven-development, TDD). Schleicht sich Streß ein oder lässt die Begeisterung nach, kann es passieren, dass das Thema Tests, obwohl wichtig, vernachlässigt werden. Das gilt umso mehr, je schwieriger Komponenten eines Systems zu testen sind, unabhängig, ob sie einzeln oder integriert betrachtet werden.
+
+Erfahren Sie in in diesem Artikel, wie Spring Boot 2 Ihnen dabei hilft, sehr einfach Integrationstests zu schreiben: Sei es als vollständiger Durchstich oder als Integrationstest auf einer technischen Ebene.
+--
+
+== Hehre Ziele
+
+Tests und Dokumentation sind wichtige Aspekte einzelner Anwendungen und sicherlich der meisten Anwendungssysteme. Beide Themen sind gleichermaßen vielschichtig und finden auf unterschiedlichen Ebenen statt. Tests und Dokumentation finden unter anderem auf folgenden Ebenen statt:
+
+* Methodenebene
+* Klassenebene
+* Modulebene
+* Systemebene
+
+Genauso unterschiedlich wie die Ebenen sind die Ziele. Tests werden oftmals genutzt, um die Korrektheit von Komponenten nachzuweisen. Das sind dann in der Regel Unittests. Der nächste Schritt ist sicherzustellen, dass Komponenten untereinander funktionieren. Es wird von Integrationstests gesprochen. Regressionstests können sowohl als Unit- als auch Integretionstest ausgeprägt sein. Regressionstests sollen Fehler nach Änderungen von Komponenten aufdecken, das heißt, dass Regresionstests wiederholbar sein müssen, um das Ergebnis eines alten mit dem Ergebnis eines neuen Testfalls vergleichen zu können.
+
+Hinsichtlich Dokumentation ist das Feld ähnlich vielfältig. Es wird von Code-, API-, Architektur- und Anwenderdokumentation gesprochen. Zusammenfassend möchte ich behaupten, dass Dinge zum einen auf mikroarchitektonischer und makroarchitektonischer Ebene getestet und dokumentiert werden können.
+
+Zu Beginn eines Projektes haben Tests und Dokumentation noch eine weitere Gemeinsamkeit: Es wird beides gemacht, manche Projekte werden sogar rein testgetrieben (Test-driven) aufgesetzt. Schleicht sich allerdings Streß ein, sei es durch zeitlichen Druck, unklare Anforderungen oder anderes mehr, werden gerne eines oder beide Themen vernachlässigt. Hinterher Tests zu schreiben bringt oftmals keinen direkten Mehrwert mehr und eine Nachdokumentation macht selten Spaß.
+
+Der im folgenden vorgestellte Stack soll dabei helfen, von Anfang an testgetrieben zu Entwickeln und diese Ziele nicht aus dem Auge zu verlieren.
+
+== Die Testpyramide
+
+Der Autor https://watirmelon.wordpress.com/about/[Alister Scott] stellte 2012 den Begriff der https://watirmelon.blog/2012/01/31/introducing-the-software-testing-ice-cream-cone/[Testpyramide] und das dazugehörige Antipattern, das Testing-Eishörnchen vor.
+
+image::testing-pyramide.png[Testingpyramide]
+
+Unit-Tests sind -- die richtige Herangehensweise vorausgesetzt -- einfach zu erstellen und sollten zahlreich vorhanden sein. Integrationstest in vielfältigen Ausprägungen (im Bild als API Tests, "echte" Integrationstests zwischen Systemen oder als Tests zwischen Komponenten), sind in der Regel aufwendiger und eine der Königsdisziplinen sind automatisierte UI-Tests, darüber hinaus sind nur noch Click-Tests durch echte Benutzer angesiedelt. Die sind in der Regel einfach durchzuführen, dadurch nicht weniger teuer. Leider sieht es in der Realität oftmals eher so aus, dass die "Wolke" an der Spitze übermässig groß ist und die Pyramide umgekehrt wird: Ein teures Eishörnchen.
+
+.Das Beispiel
+****
+Gestestet werden soll ein Service, der Events und dazugehörige Registrierungen verwaltet. Ein einem Tag findet nur ein Event statt, Events haben eine begrenzte Teilnehmeranzahl. Interesierte Besucher melden sich mit Namen und einer E-Mail-Adresse an und sollen sich nicht mehrfach anmelden können. Der Dienst stellt dazu eine einfache Oberfläche zur Verfügung. 
+****
+
+
+== Weitere Herausforderungen
+
+* Continous delivery, schnelle tests
+* unabhängiges testen von services
+* pro weniger tests
+
+
+== Über den Autor
+
+{author} arbeit als Senior Consultant bei https://www.innoq.com/de/[innoQ Deutschland]. Er ist Mitglied des NetBeans Dream Team und Gründer der Euregio JUG. Michael schreibt in seinem http://info.michael-simons.eu[Blog] über Java, Spring und Softwarearchitektur. {firstname} ist Autor des im Januar 2018 erscheinenden Spring Boot Buches.
+
+Auf Twitter unterwegs als @rotnroll666, unter anderem mit Java, Music und den kleineren und größeren Problemen als Ehemann und Vater von 2 Kindern.
