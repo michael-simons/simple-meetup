@@ -47,6 +47,11 @@ dependencies {
 asciidoctor {
     sourceDir = file("src/article")
     outputDir = file(Paths.get(project.buildDir.toString(), "article"))
+    resources {
+        from(sourceDir) {
+            include '*.png'
+        }
+    }
 }
 
 defaultTasks "clean", "build", "asciidoctor"
