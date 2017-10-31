@@ -16,17 +16,21 @@
 package ac.simons.tdd;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.Optional;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -80,25 +84,70 @@ class EventTest {
         // tag::eventStructureTest[]
     }
 
-    @Nested // <6>
-    class Postconditions {
-        @TestFactory
-        Stream<DynamicTest> constructor() {
-            return Stream.of(23, null)
-                .map(numberOfSeats -> dynamicTest(
-                    "Constructor should create valid events", () -> {
-                        final Event event = new Event(
-                            LocalDate.of(2018, 1, 2), "test", numberOfSeats);
-                        assertAll(
-                            () -> assertTrue(event.isOpen()),
-                            () -> assertEquals(
-                                Optional.ofNullable(numberOfSeats).orElse(20),
-                                event.getNumberOfSeats()
-                            )
-                        ); // <7>
-                    })
-                );
+    @Nested
+    class Postconditions { // <6>
+        @Test
+        @DisplayName("Constructor should create valid events")
+        void constructor() {
+            final Integer numberOfSeats = 23;
+            final LocalDate heldOn = LocalDate.of(2018, 1, 2);
+            final Event event = new Event(
+                heldOn, "test", numberOfSeats);
+            assertAll(
+                () -> assertEquals(heldOn, event.getHeldOn()),
+                () -> assertEquals("test", event.getName()),
+                () -> assertEquals(numberOfSeats, event.getNumberOfSeats()),
+                () -> assertTrue(event.isOpen())
+            ); // <7>
         }
     }
+
+    @TestFactory
+    @DisplayName("Registration logic should work")
+    Stream<DynamicTest> registrationShouldWork() {  // <8>
+        final Map<Event, Class<? extends Exception>> events = new HashMap<>();
+        events.put(closedEvent(), IllegalStateException.class);
+        events.put(pastEvent(), IllegalStateException.class);
+
+        // end::eventStructureTest[]
+        events.put(fullEvent(), IllegalStateException.class);
+        events.put(alreadyRegisteredEvent(), IllegalArgumentException.class);
+        // tag::eventStructureTest[]
+
+        return events.entrySet().stream().map(entry ->
+            dynamicTest("Should not be able to register to event with wrong state", () ->
+                assertThrows(
+                    entry.getValue(),
+                    () -> entry.getKey().registerWith(new Registration("test@test.com", "test"))
+                )
+            ));
+    }
+
+    Event closedEvent() {
+        final Event event = new Event(LocalDate.of(2018, 1, 2), "closedEvent");
+        event.close();
+        return event;
+    }
+
+    Event pastEvent() {
+        final Event event = new Event(LocalDate.of(2018, 1, 2), "pastEvent");
+        ReflectionTestUtils.setField(event, "heldOn", LocalDate.of(2017, 1, 2));
+        return event;
+    }
+    // end::eventStructureTest[]
+
+    Event fullEvent() {
+        final Event event = new Event(LocalDate.of(2018, 1, 2), "fullEvent");
+        ReflectionTestUtils.setField(event, "numberOfSeats", 0);
+        return event;
+    }
+
+    Event alreadyRegisteredEvent() {
+        final Event event = new Event(LocalDate.of(2018, 1, 2), "alreadyRegisteredEvent");
+        event.registerWith(new Registration("test@test.com", "test"));
+        return event;
+    }
+
+    // tag::eventStructureTest[]
 }
 // end::eventStructureTest[]

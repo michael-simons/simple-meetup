@@ -28,14 +28,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-
 import java.io.Serializable;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * @author Michael J. Simons, 2017-10-31
@@ -97,7 +95,7 @@ public class Event implements Serializable {
     }
 
     public Event(final LocalDate heldOn, final String name) {
-        this(heldOn, name, null);
+        this(heldOn, name, 20);
     }
 
     // tag::eventStructure[]
@@ -109,7 +107,7 @@ public class Event implements Serializable {
         this.heldOn = heldOn;
 
         this.setName(name);
-        this.setNumberOfSeats(Optional.ofNullable(numberOfSeats).orElse(20));
+        this.setNumberOfSeats(numberOfSeats);
 
         this.status = Status.open;
     }
@@ -140,7 +138,7 @@ public class Event implements Serializable {
     }
 
     public void setNumberOfSeats(final Integer numberOfSeats) {
-        if (numberOfSeats != null && numberOfSeats < 0) {
+        if (numberOfSeats == null || numberOfSeats < 0) {
             throw new IllegalArgumentException("Event requires some seats.");
         }
 

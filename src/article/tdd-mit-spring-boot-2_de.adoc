@@ -54,6 +54,8 @@ Gestestet werden soll ein Service, der Events und dazugehörige Registrierungen 
 
 Die Plattform stellt dabei die API der Test-Engine und eine Ablaufumgebung für Tests jeglicher Art auf der JVM bereit. Die Plattform beihaltet auch die Plugins für die Build-Management-Werkzeuge Gradle und Maven. JUnit Jupiter ist eine Implementierung der Test-Engine. JUnit Vintage wird nur benötigt, um JUnit-4-Tests auf der aktuellen JUNit-5-Plattform ablaufen zu lassen.
 
+JUnit 5 wurde als JUnit-Lambda begonnen. Es überrascht wenig, dass neue Assertions fast alle Java-8-Lambdas unterstützen. Aber nicht nur die konsequente Unterstützung von Lambdas, Java-8-Supplier für Tests, sondern auch verschachtelte Tests, Gruppierungen von Assertions, Displaynamen für Tests und Kategoriersierung von Tests mit Hilfe von Tags sind gute Gründe dafür, dass Sie einen Blick auf JUnit 5 werfen.
+
 Das Beispielprojekt wird mit http://junit.org/junit5/[Gradle] gebaut und die Plattform muss entsprechend in der Datei `build.gradle` konfiguriert werden:
 
 [source,groovy]
@@ -71,7 +73,9 @@ JUnit 5 lässt sich vollständig aus Gradle heraus konfigurieren, bitte schlagen
 
 == Unit-Tests der Domain
 
-Die Entwicklung beginnt mit der Domain und Unit-Tests. Das Projekt verwendet JPA, um Events zu speichern, es müssen also einige Java-Annotationen verwendet werden. Diese verhindern allerdings die Testbarkeit der Domain-Klasse `Event` nicht. Die Klasse Event wird strikt von der vorgegeben Fachlichkeit getrieben, die JPA-Annotationen wurden im Source-Code ausgeblendet, sie sind für das Beispiel irrelevant.
+=== Das Root-Aggregat
+
+Die Entwicklung beginnt mit der Domain und Unit-Tests. Ich verwende in diesem Projekt JPA, um Events in einer relationalen Datenbank zu speichern; es müssen also einige Java-Annotationen verwendet werden. Diese verhindern allerdings die Testbarkeit der Domain-Klasse `Event` nicht. Die Klasse Event wird strikt von der vorgegeben Fachlichkeit getrieben, die JPA-Annotationen wurden im Source-Code ausgeblendet, sie sind für das Beispiel irrelevant.
 
 [source,java]
 .Event.java
@@ -90,10 +94,23 @@ include::../test/java/ac/simons/tdd/EventTest.java[tags=eventStructureTest]
 <1> Tests sollen in Isolation ablaufen. Das Ergebnis eines Tests darf andere nicht ändern. Ältere Versionen von JUnit haben per Default die Testklasse für jeden Test neu erzeugt. Methoden, die vor jedem Test ablaufen, mussten daher statisch sein. JUnit 5 hat einen neuen Lebenszyklus `PER_CLASS`, der hier angewandt wird.
 <2> Wird vor jedem Test -- auch den Tests in verschachtelten Klassen -- aufgerufen, wenn der Lebenszyklus `PER_CLASS` genutzt wird. Die Methode muss nicht statisch sein. Hier wird sichergestellt, dass sich der Test der Event-Klasse immer auf ein bestimmtes Datum bezieht.
 <3> Verschachtelte Tests erlauben es Ihnen, Themen gezielt zu adressieren
-<4> Die JUnit 5 TestFactory ist eine modernere Form von parametrisierten Tests.
-<5> Sie testet hier sowohl ein Datum in der Vergangenheit als auch ein ungültiges Datum. Pro Eintrag im Stream wird ein dynamischer Test erzeugt, der sowohl die Art der ausgelösten Exception als auch ihre Nachricht überprüft
-<6> Natürlich sollten Sie nicht nur die Pre Conditions, sondern auch die Post Conditions überprüfen, sprich bei gültiger Eingabe ist ein gültiges Ergebnis zu erwarten
-<7> `assertAll` überprüft alle verschachtelte Assertion. Ich würde `assertAll` immer dann nutzen, um eine Menge von Behauptung nach der Benutzung einer defininierten Menge von Parametern zu überprüfen, nicht um verschiedene Parameter zu testen
+<4> Die JUnit 5 TestFactory ist eine Form von parametrisierten Tests. Sie gibt eine Liste, ein Iterable oder wie im Beispiel einen Stream von dynamischen Tests zurück. Alle Einträge werden erst bei Bedarf instanziiert. Möglichen machen es die Test-Supplier (im Beispiel natürlich als Lambda implementiert).
+<5> Die TestFactory testet hier sowohl ein Datum in der Vergangenheit als auch ein ungültiges Datum. Pro Eintrag im Stream wird ein dynamischer Test erzeugt, der sowohl die Art der ausgelösten Exception als auch ihre Nachricht überprüft
+<6> Natürlich sollten Sie nicht nur die Pre Conditions, sondern auch die Post Conditions überprüfen, sprich bei gültiger Eingabe ist ein gültiges Ergebnis zu erwarten. Dieser Test hier ist auf klassische Art als `@Test` annotiert und beinhaltet nur einen Testfall.
+<7> `assertAll` überprüft alle verschachtelte Assertion. Ich würde `assertAll` immer dann nutzen, um eine Menge von Behauptung nach der Benutzung einer defininierten Menge von Parametern zu überprüfen, nicht um verschiedene Parameter zu testen.
+<8> Der Test der Registrierungslogik basiert dann wieder auf `@TestFactory`, um kompakt alle Testfälle abdecken zu können. Ich arbeite an dieser Stelle mit Template-Methoden, die mir das zu testende Objekt im passenden Zustand erzeugen. Wenn Sie genau hinschauen bemerken Sie, dass ich auch nicht davor zurückscheue, mir einen Testkandidat mit Hilfe von Reflection im passenden Zustand zu erzeugen, ich betrachte diesen Unittest explizit als White-Box Test.
+
+=== Der Event-Service
+
+Nachdem wir sichergestellt haben, dass die Klasse `Event`, das Root-Aggregate dieser Domain, für sich alleine funktioniert, wenden wir uns komplexeren Dingen zu. Das Event kann für sich alleine beim Anlegen nicht feststellen, ob es schon ein Event am selben Tag gibt. Wir könnten jetzt auf die Idee kommen, diese Überprüfung an die Möglichkeiten der Datenbank zu deligieren, konsequent Unique-Keys zu nutzen und Fehlermeldungen abzufangen. Dieses Vorgehen nimmt uns nicht nur jede Menge Kontrolle aus der Hand, sondern verteilt unserere fachliche Logik auf zu viele Ebenen. Statt dessen führen wir ein Repository ein, dass die Menge aller Events in einer Art Kollektion kapselt (siehe https://de.wikipedia.org/wiki/Repository_(Entwurfsmuster)[Repository]) und einen Service, der dieses Repository nutzt, um einzelne Events zu selektieren.
+
+[source,java]
+.EventTest.java
+----
+include::../main/java/ac/simons/tdd/EventRepository.java[tags=eventRepositoryStructure]
+----
+
+Das Repository bleibt angenehm frei von Annotationen. Spring-Data-Repositorys werden überlicherweise nur als Interfaces deklariert. Spring Boot konfiguriert Spring Data automatisch und Spring Data sorgt dafür, dass zur Laufzeit eine Implementierung dieses Interface zur Verfügung steht, das die deklarierten Methoden bereitstellt. Üblicherweise teste ich diese Methoden nicht mehr, es sei denn, sie basieren auf SQL-Abfragen. Das ist dann allerdings ein Fall für einen Integrationstest.
 
 == Weitere Herausforderungen
 
