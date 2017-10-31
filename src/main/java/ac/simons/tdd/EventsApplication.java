@@ -18,10 +18,13 @@ package ac.simons.tdd;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+/**
+ * @author Michael J. Simons, 2017-10-31
+ */
 @SpringBootApplication
-public class DemoApplication {
+public class EventsApplication {
 
    public static void main(final String[] args) {
-      SpringApplication.run(DemoApplication.class, args);
+      SpringApplication.run(EventsApplication.class, args);
    }
 }

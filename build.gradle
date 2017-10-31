@@ -1,27 +1,43 @@
 import java.nio.file.Paths
 
+// tag::junit5config[]
 buildscript {
     ext {
+        // end::junit5config[]
         springBootVersion = "2.0.0.M5"
+        // tag::junit5config[]
+        jUnitPlatformVersion = "1.0.1" // <1>
+        jUnitVersion = "5.0.1"
     }
+    // end::junit5config[]
     repositories {
         mavenCentral()
         maven { url "https://repo.spring.io/snapshot" }
         maven { url "https://repo.spring.io/milestone" }
     }
+    // tag::junit5config[]
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        // end::junit5config[]
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+        // tag::junit5config[]
+        classpath "org.junit.platform:junit-platform-gradle-plugin:${jUnitPlatformVersion}" // <2>
     }
 }
 
+// end::junit5config[]
+
 plugins {
     id "java"
-    id "checkstyle"
+    // id "checkstyle"
     id "org.asciidoctor.convert" version "1.5.6"
 }
 
 apply plugin: "org.springframework.boot"
 apply plugin: "io.spring.dependency-management"
+// tag::junit5config[]
+apply plugin: "org.junit.platform.gradle.plugin" // <3>
+
+// end::junit5config[]
 
 group = "eu.michael-simons"
 version = "0.0.1-SNAPSHOT"
@@ -33,16 +49,30 @@ repositories {
     maven { url "https://repo.spring.io/milestone" }
 }
 
+// tag::junit5config[]
 dependencies {
-    checkstyle("com.puppycrawl.tools:checkstyle:8.3")
+    // end::junit5config[]
+    // checkstyle "com.puppycrawl.tools:checkstyle:8.3"
 
-    compile("org.springframework.boot:spring-boot-starter-data-jpa")
-    compile("org.springframework.boot:spring-boot-starter-web")
-    runtime("com.h2database:h2")
+    compile "org.springframework.boot:spring-boot-starter-data-jpa"
+    compile "org.springframework.boot:spring-boot-starter-web"
 
-    testCompile("org.springframework.boot:spring-boot-starter-test")
-    testCompile("org.springframework.restdocs:spring-restdocs-mockmvc")
+    compile "org.springframework.boot:spring-boot-devtools"
+
+    runtime "com.h2database:h2"
+
+    testCompile "org.springframework.boot:spring-boot-starter-test"
+    testCompile "org.springframework.restdocs:spring-restdocs-mockmvc"
+
+    compileOnly('org.apiguardian:apiguardian-api:1.0.0')
+    testCompileOnly('org.apiguardian:apiguardian-api:1.0.0')
+
+    // tag::junit5config[]
+    testCompile "org.junit.jupiter:junit-jupiter-api:${jUnitVersion}" // <4>
+    testRuntime "org.junit.jupiter:junit-jupiter-engine:${jUnitVersion}" // <5>
 }
+
+// end::junit5config[]
 
 asciidoctor {
     sourceDir = file("src/article")

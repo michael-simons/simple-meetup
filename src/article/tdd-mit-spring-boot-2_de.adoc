@@ -44,6 +44,56 @@ Unit-Tests sind -- die richtige Herangehensweise vorausgesetzt -- einfach zu ers
 Gestestet werden soll ein Service, der Events und dazugehörige Registrierungen verwaltet. Ein einem Tag findet nur ein Event statt, Events haben eine begrenzte Teilnehmeranzahl. Interesierte Besucher melden sich mit Namen und einer E-Mail-Adresse an und sollen sich nicht mehrfach anmelden können. Der Dienst stellt dazu eine einfache Oberfläche zur Verfügung. 
 ****
 
+== Test-Werkzeuge
+
+2017 erschien mit JUnit 5 eine komplett neue Version des bekannten Test-Frameworks http://junit.org/[JUnit]. JUnit 5 ist modular aufgebaut und besteht aus
+
+* der JUnit Plattform
+* JUnit Jupiter
+* JUnit Vintage
+
+Die Plattform stellt dabei die API der Test-Engine und eine Ablaufumgebung für Tests jeglicher Art auf der JVM bereit. Die Plattform beihaltet auch die Plugins für die Build-Management-Werkzeuge Gradle und Maven. JUnit Jupiter ist eine Implementierung der Test-Engine. JUnit Vintage wird nur benötigt, um JUnit-4-Tests auf der aktuellen JUNit-5-Plattform ablaufen zu lassen.
+
+Das Beispielprojekt wird mit http://junit.org/junit5/[Gradle] gebaut und die Plattform muss entsprechend in der Datei `build.gradle` konfiguriert werden:
+
+[source,groovy]
+.build-gradle
+----
+include::../../build.gradle[tags=junit5config]
+----
+<1> Versionen werden in diesem Projekt über globale Propertys verwaltet
+<2> Gradle benötigt die Abhängigkeit zur JUnit-Plattform während des Build-Prozess…
+<3> …um das entsprechende Plugin konfigurieren zu können
+<4> Die eigentlichen Abhängigkeiten zu _Jupiter_ werden während des Kompilierens der Tests…
+<5> und zur Laufzeit derselben benötigt
+
+JUnit 5 lässt sich vollständig aus Gradle heraus konfigurieren, bitte schlagen Sie in der http://junit.org/junit5/docs/current/user-guide/#running-tests-build-gradle[Dokumentation] nach.
+
+== Unit-Tests der Domain
+
+Die Entwicklung beginnt mit der Domain und Unit-Tests. Das Projekt verwendet JPA, um Events zu speichern, es müssen also einige Java-Annotationen verwendet werden. Diese verhindern allerdings die Testbarkeit der Domain-Klasse `Event` nicht. Die Klasse Event wird strikt von der vorgegeben Fachlichkeit getrieben, die JPA-Annotationen wurden im Source-Code ausgeblendet, sie sind für das Beispiel irrelevant.
+
+[source,java]
+.Event.java
+----
+include::../main/java/ac/simons/tdd/Event.java[tags=eventStructure]
+----
+<1> Ein Event muss verschiedene Zeitpunkte verarbeiten, eine Registrierung ist abhängig davon, ob das Event schon stattfand oder nicht. Naiv auf `LocalDate.now()` zu Vergleichen, macht die Klasse schwerer testbar, da `now()` keine Seiteneffektfreie Funktion ist. Offensichtlich wird je nach Zeitpunkt ein anderer Wert zurückgegeben. Über die Java-8-Klasse `Clock` kann für Testfälle ein fester Wert genutzt werden.
+
+Die Klasse `Event` macht deutlich, dass es keiner Vielzahl Schichten und Services bedarf, um domainorientiert zu arbeiten. Sie können die fachlichen Anforderungen einfach ablesen und genauso einfach testen. Beispielhaft erfahren Sie im Folgenden, wie die Vor- und Nachbedingungen (Pre- und Postconditions) des Konstruktors und die eigentliche Logik des Registrierens mit aktuellen JUnit-5-Methoden getestet werden:
+
+[source,java]
+.EventTest.java
+----
+include::../test/java/ac/simons/tdd/EventTest.java[tags=eventStructureTest]
+----
+<1> Tests sollen in Isolation ablaufen. Das Ergebnis eines Tests darf andere nicht ändern. Ältere Versionen von JUnit haben per Default die Testklasse für jeden Test neu erzeugt. Methoden, die vor jedem Test ablaufen, mussten daher statisch sein. JUnit 5 hat einen neuen Lebenszyklus `PER_CLASS`, der hier angewandt wird.
+<2> Wird vor jedem Test -- auch den Tests in verschachtelten Klassen -- aufgerufen, wenn der Lebenszyklus `PER_CLASS` genutzt wird. Die Methode muss nicht statisch sein. Hier wird sichergestellt, dass sich der Test der Event-Klasse immer auf ein bestimmtes Datum bezieht.
+<3> Verschachtelte Tests erlauben es Ihnen, Themen gezielt zu adressieren
+<4> Die JUnit 5 TestFactory ist eine modernere Form von parametrisierten Tests.
+<5> Sie testet hier sowohl ein Datum in der Vergangenheit als auch ein ungültiges Datum. Pro Eintrag im Stream wird ein dynamischer Test erzeugt, der sowohl die Art der ausgelösten Exception als auch ihre Nachricht überprüft
+<6> Natürlich sollten Sie nicht nur die Pre Conditions, sondern auch die Post Conditions überprüfen, sprich bei gültiger Eingabe ist ein gültiges Ergebnis zu erwarten
+<7> `assertAll` überprüft alle verschachtelte Assertion. Ich würde `assertAll` immer dann nutzen, um eine Menge von Behauptung nach der Benutzung einer defininierten Menge von Parametern zu überprüfen, nicht um verschiedene Parameter zu testen
 
 == Weitere Herausforderungen
 
