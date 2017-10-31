@@ -41,7 +41,7 @@ Unit-Tests sind -- die richtige Herangehensweise vorausgesetzt -- einfach zu ers
 
 .Das Beispiel
 ****
-Gestestet werden soll ein Service, der Events und dazugehörige Registrierungen verwaltet. Ein einem Tag findet nur ein Event statt, Events haben eine begrenzte Teilnehmeranzahl. Interesierte Besucher melden sich mit Namen und einer E-Mail-Adresse an und sollen sich nicht mehrfach anmelden können. Der Dienst stellt dazu eine einfache Oberfläche zur Verfügung. 
+Gestestet werden soll ein Service, der Events und dazugehörige Registrierungen verwaltet. Ein einem Tag findet nur ein Event statt, Events haben eine begrenzte Teilnehmeranzahl. Interesierte Besucher melden sich mit Namen und einer E-Mail-Adresse an und sollen sich nicht mehrfach anmelden können. Von einem Event soll zum vorherigen und nächstem Event navigiert werden können. Der Dienst stellt dazu eine einfache Oberfläche zur Verfügung.
 ****
 
 == Test-Werkzeuge

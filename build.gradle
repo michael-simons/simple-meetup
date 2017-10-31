@@ -28,7 +28,7 @@ buildscript {
 
 plugins {
     id "java"
-    // id "checkstyle"
+    id "checkstyle"
     id "org.asciidoctor.convert" version "1.5.6"
 }
 
@@ -52,7 +52,7 @@ repositories {
 // tag::junit5config[]
 dependencies {
     // end::junit5config[]
-    // checkstyle "com.puppycrawl.tools:checkstyle:8.3"
+    checkstyle "com.puppycrawl.tools:checkstyle:8.4"
 
     compile "org.springframework.boot:spring-boot-starter-data-jpa"
     compile "org.springframework.boot:spring-boot-starter-web"

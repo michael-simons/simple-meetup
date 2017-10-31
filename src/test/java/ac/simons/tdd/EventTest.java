@@ -15,7 +15,11 @@
  */
 package ac.simons.tdd;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.TestFactory;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 
 import java.time.Clock;
@@ -25,7 +29,10 @@ import java.time.ZoneId;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 /**
@@ -34,61 +41,64 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 // tag::eventStructureTest[]
 @TestInstance(Lifecycle.PER_CLASS) // <1>
 class EventTest {
-  @BeforeAll // <2>
-  public void prepareEventClock() {
-    Event.clock = Clock.fixed(Instant.parse("2018-01-01T08:00:00.00Z"), ZoneId.systemDefault());
-  }
-
-  @Nested // <3>
-  class Preconditions {
-    @TestFactory // <4>
-    Stream<DynamicTest> constructor() {
-      return Stream.of(LocalDate.of(2017, 10, 31), null) // <5>
-          .map(date -> dynamicTest(
-              "Constructor should not allow invalid events", () ->
-                  assertEquals("Event requires a date in the future.",
-                      assertThrows(
-                          IllegalArgumentException.class,
-                          () -> new Event(date, "test")
-                      ).getMessage()))
-          );
+    @BeforeAll // <2>
+    public void prepareEventClock() {
+        Event.CLOCK.set(
+            Clock.fixed(Instant.parse("2018-01-01T08:00:00.00Z"), ZoneId.systemDefault()));
     }
 
-    // end::eventStructureTest[]
-    @TestFactory
-    Stream<DynamicTest> setName() {
-      final Event event = new Event(LocalDate.of(2018, 1, 2), "test", 20);
-      return Stream.of(null, "", "\t", " ")
-          .map(name -> dynamicTest(
-              "setName should not accept invalid names", () ->
-                  assertEquals("Event requires a non-empty name.",
-                      assertThrows(
-                          IllegalArgumentException.class,
-                          () -> event.setName(name)
-                      ).getMessage()))
-          );
-    }
-    // tag::eventStructureTest[]
-  }
-
-  @Nested // <6>
-  class Postconditions {
-    @TestFactory
-    Stream<DynamicTest> constructor() {
-      return Stream.of(23, null)
-          .map(numberOfSeats -> dynamicTest(
-              "Constructor should create valid events", () -> {
-                final Event event = new Event(LocalDate.of(2018, 1, 2), "test", numberOfSeats);
-                assertAll( // <7>
-                    () -> assertTrue(event.isOpen()),
-                    () -> assertEquals(
-                        Optional.ofNullable(numberOfSeats).orElse(20),
-                        event.getNumberOfSeats()
-                    )
+    @Nested // <3>
+    class Preconditions {
+        @TestFactory // <4>
+        Stream<DynamicTest> constructor() {
+            return Stream.of(LocalDate.of(2017, 10, 31), null) // <5>
+                .map(date -> dynamicTest(
+                    "Constructor should not allow invalid events", () ->
+                        assertEquals("Event requires a date in the future.",
+                            assertThrows(
+                                IllegalArgumentException.class,
+                                () -> new Event(date, "test")
+                            ).getMessage()))
                 );
-              })
-          );
+        }
+
+        // end::eventStructureTest[]
+        @TestFactory
+        Stream<DynamicTest> setName() {
+            final Event event = new Event(
+                LocalDate.of(2018, 1, 2),  "test", 20);
+            return Stream.of(null, "", "\t", " ")
+                .map(name -> dynamicTest(
+                    "setName should not accept invalid names", () ->
+                        assertEquals("Event requires a non-empty name.",
+                            assertThrows(
+                                IllegalArgumentException.class,
+                                () -> event.setName(name)
+                            ).getMessage()))
+                );
+        }
+        // tag::eventStructureTest[]
     }
-  }
+
+    @Nested // <6>
+    class Postconditions {
+        @TestFactory
+        Stream<DynamicTest> constructor() {
+            return Stream.of(23, null)
+                .map(numberOfSeats -> dynamicTest(
+                    "Constructor should create valid events", () -> {
+                        final Event event = new Event(
+                            LocalDate.of(2018, 1, 2), "test", numberOfSeats);
+                        assertAll(
+                            () -> assertTrue(event.isOpen()),
+                            () -> assertEquals(
+                                Optional.ofNullable(numberOfSeats).orElse(20),
+                                event.getNumberOfSeats()
+                            )
+                        ); // <7>
+                    })
+                );
+        }
+    }
 }
 // end::eventStructureTest[]
