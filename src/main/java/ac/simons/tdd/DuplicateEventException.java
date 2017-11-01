@@ -15,23 +15,13 @@
  */
 package ac.simons.tdd;
 
-import org.springframework.stereotype.Service;
-
 /**
- * @author Michael J. Simons, 2017-10-31
+ * @author Michael J. Simons, 2017-11-01
  */
-@Service
-public final class EventService {
-    private final EventRepository eventRepository;
+public final class DuplicateEventException extends RuntimeException {
+    private static final long serialVersionUID = -5505327906932793357L;
 
-    public EventService(final EventRepository eventRepository) {
-        this.eventRepository = eventRepository;
-    }
-
-    public Event createNewEvent(final Event newEvent) {
-        this.eventRepository.findOneByHeldOn(newEvent.getHeldOn()).ifPresent(e -> {
-            throw new DuplicateEventException(e);
-        });
-        return this.eventRepository.save(newEvent);
+    public DuplicateEventException(final Event event) {
+        super(String.format("Duplicate event on %s: %s", event.getHeldOn(), event.getName()));
     }
 }

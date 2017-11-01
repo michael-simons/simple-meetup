@@ -29,5 +29,7 @@ import java.util.Optional;
 // tag::eventRepositoryStructure[]
 public interface EventRepository extends Repository<Event, Integer> {
     Optional<Event> findOneByHeldOn(LocalDate heldOn);
+
+    Event save(Event newEvent);
 }
 // end::eventRepositoryStructure[]

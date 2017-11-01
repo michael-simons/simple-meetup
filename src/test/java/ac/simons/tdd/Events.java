@@ -15,23 +15,16 @@
  */
 package ac.simons.tdd;
 
-import org.springframework.stereotype.Service;
+import java.time.LocalDate;
 
 /**
- * @author Michael J. Simons, 2017-10-31
+ * @author Michael J. Simons, 2017-11-01
  */
-@Service
-public final class EventService {
-    private final EventRepository eventRepository;
-
-    public EventService(final EventRepository eventRepository) {
-        this.eventRepository = eventRepository;
+final class Events {
+    private Events() {
     }
 
-    public Event createNewEvent(final Event newEvent) {
-        this.eventRepository.findOneByHeldOn(newEvent.getHeldOn()).ifPresent(e -> {
-            throw new DuplicateEventException(e);
-        });
-        return this.eventRepository.save(newEvent);
+    static Event halloween() {
+        return new Event(LocalDate.of(2018, 10, 31), "halloween");
     }
 }

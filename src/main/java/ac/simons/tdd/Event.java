@@ -42,7 +42,7 @@ import java.util.Objects;
 @Table(
     name = "events",
     uniqueConstraints = {
-        @UniqueConstraint(name = "events_uk", columnNames = {"held_on", "name"})
+        @UniqueConstraint(name = "events_uk", columnNames = {"held_on"})
     }
 )
 @SuppressWarnings({"checkstyle:DesignForExtension"})
