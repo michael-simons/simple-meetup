@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ac.simons.tdd;
+package ac.simons.tdd.domain;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +30,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Optional;
 
-import static ac.simons.tdd.Events.halloween;
+import static ac.simons.tdd.domain.Events.halloween;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;

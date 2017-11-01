@@ -13,18 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ac.simons.tdd;
-
-import java.time.LocalDate;
+package ac.simons.tdd.domain;
 
 /**
  * @author Michael J. Simons, 2017-11-01
  */
-final class Events {
-    private Events() {
-    }
+public final class DuplicateEventException extends RuntimeException {
+    private static final long serialVersionUID = -5505327906932793357L;
 
-    static Event halloween() {
-        return new Event(LocalDate.of(2018, 10, 31), "halloween");
+    public DuplicateEventException(final Event event) {
+        super(String.format("Duplicate event on %s: %s", event.getHeldOn(), event.getName()));
     }
 }

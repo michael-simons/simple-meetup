@@ -13,18 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ac.simons.tdd;
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * @author Michael J. Simons, 2017-10-31
+ * Contains the application logic.
  */
-@SpringBootApplication
-public class EventsApplication {
-
-   public static void main(final String[] args) {
-      SpringApplication.run(EventsApplication.class, args);
-   }
-}
+package ac.simons.tdd.app;

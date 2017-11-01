@@ -80,7 +80,7 @@ Die Entwicklung beginnt mit der Domain und Unit-Tests. Ich verwende in diesem Pr
 [source,java]
 .Event.java
 ----
-include::../main/java/ac/simons/tdd/Event.java[tags=eventStructure]
+include::../main/java/ac/simons/tdd/domain/Event.java[tags=eventStructure]
 ----
 <1> Ein Event muss verschiedene Zeitpunkte verarbeiten, eine Registrierung ist abhängig davon, ob das Event schon stattfand oder nicht. Naiv auf `LocalDate.now()` zu Vergleichen, macht die Klasse schwerer testbar, da `now()` keine Seiteneffektfreie Funktion ist. Offensichtlich wird je nach Zeitpunkt ein anderer Wert zurückgegeben. Über die Java-8-Klasse `Clock` kann für Testfälle ein fester Wert genutzt werden.
 
@@ -89,7 +89,7 @@ Die Klasse `Event` macht deutlich, dass es keiner Vielzahl Schichten und Service
 [source,java]
 .EventTest.java
 ----
-include::../test/java/ac/simons/tdd/EventTest.java[tags=eventStructureTest]
+include::../test/java/ac/simons/tdd/domain/EventTest.java[tags=eventStructureTest]
 ----
 <1> Tests sollen in Isolation ablaufen. Das Ergebnis eines Tests darf andere nicht ändern. Ältere Versionen von JUnit haben per Default die Testklasse für jeden Test neu erzeugt. Methoden, die vor jedem Test ablaufen, mussten daher statisch sein. JUnit 5 hat einen neuen Lebenszyklus `PER_CLASS`, der hier angewandt wird.
 <2> Wird vor jedem Test -- auch den Tests in verschachtelten Klassen -- aufgerufen, wenn der Lebenszyklus `PER_CLASS` genutzt wird. Die Methode muss nicht statisch sein. Hier wird sichergestellt, dass sich der Test der Event-Klasse immer auf ein bestimmtes Datum bezieht.
@@ -107,7 +107,7 @@ Nachdem wir sichergestellt haben, dass die Klasse `Event`, das Root-Aggregate di
 [source,java]
 .EventTest.java
 ----
-include::../main/java/ac/simons/tdd/EventRepository.java[tags=eventRepositoryStructure]
+include::../main/java/ac/simons/tdd/domain/EventRepository.java[tags=eventRepositoryStructure]
 ----
 
 Das Repository bleibt angenehm frei von Annotationen. Spring-Data-Repositorys werden überlicherweise nur als Interfaces deklariert. Spring Boot konfiguriert Spring Data automatisch und Spring Data sorgt dafür, dass zur Laufzeit eine Implementierung dieses Interface zur Verfügung steht, das die deklarierten Methoden bereitstellt. Üblicherweise teste ich diese Methoden nicht mehr, es sei denn, sie basieren auf SQL-Abfragen. Das ist dann allerdings ein Fall für einen Integrationstest.

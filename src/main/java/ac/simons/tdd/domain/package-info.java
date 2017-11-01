@@ -13,23 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ac.simons.tdd;
-
-// tag::eventRepositoryStructure[]
-import org.springframework.data.repository.Repository;
-
-import java.time.LocalDate;
-import java.util.Optional;
-
-// end::eventRepositoryStructure[]
 
 /**
- * @author Michael J. Simons, 2017-10-31
+ * Contains all classes relevant to the actual domain.
  */
-// tag::eventRepositoryStructure[]
-public interface EventRepository extends Repository<Event, Integer> {
-    Optional<Event> findOneByHeldOn(LocalDate heldOn);
-
-    Event save(Event newEvent);
-}
-// end::eventRepositoryStructure[]
+package ac.simons.tdd.domain;

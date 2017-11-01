@@ -13,25 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ac.simons.tdd;
+package ac.simons.tdd.app;
 
-import org.springframework.stereotype.Service;
+import ac.simons.tdd.domain.EventService;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author Michael J. Simons, 2017-10-31
  */
-@Service
-public final class EventService {
-    private final EventRepository eventRepository;
+@RestController
+public class EventsApi {
+    private final EventService eventService;
 
-    public EventService(final EventRepository eventRepository) {
-        this.eventRepository = eventRepository;
-    }
-
-    public Event createNewEvent(final Event newEvent) {
-        this.eventRepository.findOneByHeldOn(newEvent.getHeldOn()).ifPresent(e -> {
-            throw new DuplicateEventException(e);
-        });
-        return this.eventRepository.save(newEvent);
+    public EventsApi(final EventService eventService) {
+        this.eventService = eventService;
     }
 }

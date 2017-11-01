@@ -13,15 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ac.simons.tdd;
 
 /**
- * @author Michael J. Simons, 2017-11-01
+ * Unit and partial integration tests best on Spring Boot Test and Test-Slices.
  */
-public final class DuplicateEventException extends RuntimeException {
-    private static final long serialVersionUID = -5505327906932793357L;
-
-    public DuplicateEventException(final Event event) {
-        super(String.format("Duplicate event on %s: %s", event.getHeldOn(), event.getName()));
-    }
-}
+package ac.simons.tdd.domain;
