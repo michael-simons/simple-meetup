@@ -32,6 +32,9 @@ class EventsApiTest {
    @MockBean
    private EventService eventService;
 
+   @MockBean
+   private EventResourceAssembler eventResourceAssembler;
+
    @Test
    public void registerForEvent() {
 

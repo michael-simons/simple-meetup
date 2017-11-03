@@ -81,6 +81,7 @@ public class Event implements Serializable {
 
     // end::eventStructure[]
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     // tag::eventStructure[]
     private Status status;
 

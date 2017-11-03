@@ -18,6 +18,9 @@ package ac.simons.tdd.domain;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * The service is the central element for the application logic to interact with events and registrations. It represents
@@ -32,6 +35,15 @@ public class EventService {
 
     public EventService(final EventRepository eventRepository) {
         this.eventRepository = eventRepository;
+    }
+
+    /**
+     * @param heldOn
+     * @param name
+     * @return The event with the given date and name
+     */
+    public Optional<Event> getEvent(final LocalDate heldOn, final String name) {
+        return this.eventRepository.findOne(new Event(heldOn, name).asExample());
     }
 
     /**
@@ -59,5 +71,12 @@ public class EventService {
               this.eventRepository.findOne(event.asExample()).orElseThrow(NoSuchEventException::new);
         persistentEvent.registerFor(newRegistration);
         return persistentEvent;
+    }
+
+    /**
+     * @return a list of open events in the future
+     */
+    public List<Event> getOpenEvents() {
+        return this.eventRepository.findAllOpenEvents();
     }
 }
