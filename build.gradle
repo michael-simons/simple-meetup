@@ -7,7 +7,6 @@ buildscript {
         springBootVersion = "2.0.0.M5"
         // tag::junit5config[]
         jUnitPlatformVersion = "1.0.1" // <1>
-        jUnitVersion = "5.0.1"
     }
     // end::junit5config[]
     repositories {
@@ -68,8 +67,8 @@ dependencies {
     testCompileOnly('org.apiguardian:apiguardian-api:1.0.0')
 
     // tag::junit5config[]
-    testCompile "org.junit.jupiter:junit-jupiter-api:${jUnitVersion}" // <4>
-    testRuntime "org.junit.jupiter:junit-jupiter-engine:${jUnitVersion}" // <5>
+    testCompile "org.junit.jupiter:junit-jupiter-api" // <4>
+    testRuntime "org.junit.jupiter:junit-jupiter-engine" // <5>
 }
 
 // end::junit5config[]
