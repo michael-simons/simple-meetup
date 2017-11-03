@@ -15,9 +15,13 @@
  */
 package ac.simons.tdd.domain;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
 /**
  * @author Michael J. Simons, 2017-11-01
  */
+@ResponseStatus(HttpStatus.BAD_REQUEST)
 public final class DuplicateEventException extends RuntimeException {
     private static final long serialVersionUID = -5505327906932793357L;
 

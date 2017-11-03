@@ -13,19 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ac.simons.tdd.domain;
+package ac.simons.tdd.app;
 
-// tag::eventRepositoryStructure[]
-import org.springframework.data.repository.Repository;
-import org.springframework.data.repository.query.QueryByExampleExecutor;
-
-// end::eventRepositoryStructure[]
+import ac.simons.tdd.domain.EventService;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /**
- * @author Michael J. Simons, 2017-10-31
+ * @author Michael J. Simons, 2017-11-02
  */
-// tag::eventRepositoryStructure[]
-interface EventRepository extends Repository<Event, Integer>, QueryByExampleExecutor<Event> {
-    Event save(Event newEvent);
+@ExtendWith(SpringExtension.class)
+@WebMvcTest(controllers = EventsApi.class)
+class EventsApiTest {
+
+   @MockBean
+   private EventService eventService;
+
+   @Test
+   public void registerForEvent() {
+
+   }
 }
-// end::eventRepositoryStructure[]

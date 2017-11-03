@@ -15,6 +15,8 @@
  */
 package ac.simons.tdd.domain;
 
+import org.springframework.test.util.ReflectionTestUtils;
+
 import java.time.LocalDate;
 
 /**
@@ -25,6 +27,30 @@ final class Events {
     }
 
     static Event halloween() {
-        return new Event(LocalDate.of(2018, 10, 31), "halloween");
+        return new Event(LocalDate.of(2018, 10, 31), "Halloween");
+    }
+
+    static Event closedEvent() {
+        final Event event = new Event(LocalDate.of(2018, 1, 2), "closedEvent");
+        event.close();
+        return event;
+    }
+
+    static Event pastEvent() {
+        final Event event = new Event(LocalDate.of(2018, 1, 2), "pastEvent");
+        ReflectionTestUtils.setField(event, "heldOn", LocalDate.of(2017, 1, 2));
+        return event;
+    }
+
+    static Event fullEvent() {
+        final Event event = new Event(LocalDate.of(2018, 1, 2), "fullEvent");
+        ReflectionTestUtils.setField(event, "numberOfSeats", 0);
+        return event;
+    }
+
+    static Event alreadyRegisteredEvent() {
+        final Event event = new Event(LocalDate.of(2018, 1, 2), "alreadyRegisteredEvent");
+        event.registerFor(new Registration("test@test.com", "test"));
+        return event;
     }
 }

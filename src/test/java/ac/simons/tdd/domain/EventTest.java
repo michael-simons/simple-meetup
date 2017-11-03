@@ -23,7 +23,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -33,6 +32,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import static ac.simons.tdd.domain.Events.alreadyRegisteredEvent;
+import static ac.simons.tdd.domain.Events.closedEvent;
+import static ac.simons.tdd.domain.Events.fullEvent;
+import static ac.simons.tdd.domain.Events.pastEvent;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -55,7 +58,7 @@ class EventTest {
     class Preconditions {
         @TestFactory // <4>
         Stream<DynamicTest> constructor() {
-            return Stream.of(LocalDate.of(2017, 10, 31), null) // <5>
+            return Stream.concat(Stream.of(LocalDate.of(2017, 10, 31), null) // <5>
                 .map(date -> dynamicTest(
                     "Constructor should not allow invalid events", () ->
                         assertEquals("Event requires a date in the future.",
@@ -63,25 +66,17 @@ class EventTest {
                                 IllegalArgumentException.class,
                                 () -> new Event(date, "test")
                             ).getMessage()))
-                );
-        }
+                ), Stream.of(null, "", "\t", " ")
+                  .map(name -> dynamicTest(
+                        "Constructor should not allow invalid events", () ->
+                              assertEquals("Event requires a non-empty name.",
+                                    assertThrows(
+                                          IllegalArgumentException.class,
+                                          () -> new Event(LocalDate.of(2018, 1, 2), name)
+                                    ).getMessage()))
+                  ));
 
-        // end::eventStructureTest[]
-        @TestFactory
-        Stream<DynamicTest> setName() {
-            final Event event = new Event(
-                LocalDate.of(2018, 1, 2),  "test", 20);
-            return Stream.of(null, "", "\t", " ")
-                .map(name -> dynamicTest(
-                    "setName should not accept invalid names", () ->
-                        assertEquals("Event requires a non-empty name.",
-                            assertThrows(
-                                IllegalArgumentException.class,
-                                () -> event.setName(name)
-                            ).getMessage()))
-                );
         }
-        // tag::eventStructureTest[]
     }
 
     @Nested
@@ -108,7 +103,6 @@ class EventTest {
         final Map<Event, Class<? extends Exception>> events = new HashMap<>();
         events.put(closedEvent(), IllegalStateException.class);
         events.put(pastEvent(), IllegalStateException.class);
-
         // end::eventStructureTest[]
         events.put(fullEvent(), IllegalStateException.class);
         events.put(alreadyRegisteredEvent(), IllegalArgumentException.class);
@@ -118,36 +112,10 @@ class EventTest {
             dynamicTest("Should not be able to register to event with wrong state", () ->
                 assertThrows(
                     entry.getValue(),
-                    () -> entry.getKey().registerWith(new Registration("test@test.com", "test"))
+                    () -> entry.getKey().registerFor(new Registration("test@test.com", "test"))
                 )
             ));
     }
-
-    Event closedEvent() {
-        final Event event = new Event(LocalDate.of(2018, 1, 2), "closedEvent");
-        event.close();
-        return event;
-    }
-
-    Event pastEvent() {
-        final Event event = new Event(LocalDate.of(2018, 1, 2), "pastEvent");
-        ReflectionTestUtils.setField(event, "heldOn", LocalDate.of(2017, 1, 2));
-        return event;
-    }
-    // end::eventStructureTest[]
-
-    Event fullEvent() {
-        final Event event = new Event(LocalDate.of(2018, 1, 2), "fullEvent");
-        ReflectionTestUtils.setField(event, "numberOfSeats", 0);
-        return event;
-    }
-
-    Event alreadyRegisteredEvent() {
-        final Event event = new Event(LocalDate.of(2018, 1, 2), "alreadyRegisteredEvent");
-        event.registerWith(new Registration("test@test.com", "test"));
-        return event;
-    }
-
     // tag::eventStructureTest[]
 }
 // end::eventStructureTest[]

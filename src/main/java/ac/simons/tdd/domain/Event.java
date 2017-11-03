@@ -15,6 +15,9 @@
  */
 package ac.simons.tdd.domain;
 
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
+
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -42,7 +45,7 @@ import java.util.Objects;
 @Table(
     name = "events",
     uniqueConstraints = {
-        @UniqueConstraint(name = "events_uk", columnNames = {"held_on"})
+        @UniqueConstraint(name = "events_uk", columnNames = {"held_on", "name"})
     }
 )
 @SuppressWarnings({"checkstyle:DesignForExtension"})
@@ -103,10 +106,13 @@ public class Event implements Serializable {
         if (heldOn == null || heldOn.isBefore(LocalDate.now(CLOCK.get()))) {
             throw new IllegalArgumentException("Event requires a date in the future.");
         }
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Event requires a non-empty name.");
+        }
 
         this.heldOn = heldOn;
+        this.name = name;
 
-        this.setName(name);
         this.setNumberOfSeats(numberOfSeats);
 
         this.status = Status.open;
@@ -124,13 +130,6 @@ public class Event implements Serializable {
 
     public String getName() {
         return name;
-    }
-
-    public void setName(final String name) {
-        if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("Event requires a non-empty name.");
-        }
-        this.name = name;
     }
 
     public Integer getNumberOfSeats() {
@@ -166,7 +165,7 @@ public class Event implements Serializable {
     }
 
     // tag::eventStructure[]
-    public void registerWith(final Registration registration) {
+    public void registerFor(final Registration registration) {
         // end::eventStructure[]
         if (isClosed()) {
             throw new IllegalStateException("Cannot register for a closed event.");
@@ -188,6 +187,15 @@ public class Event implements Serializable {
         this.registrations.put(registration.getEmail(), registration.getName());
     }
     // end::eventStructure[]
+
+    Example<Event> asExample() {
+        return Example.of(this, ExampleMatcher.matching()
+              .withIgnoreNullValues()
+              .withIgnorePaths("numberOfSeats", "status")
+              .withMatcher("heldOn", match -> match.exact())
+              .withMatcher("name", match -> match.exact())
+        );
+    }
 
     @Override
     public int hashCode() {

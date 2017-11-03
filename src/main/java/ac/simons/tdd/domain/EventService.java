@@ -17,23 +17,47 @@ package ac.simons.tdd.domain;
 
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 /**
- * The service is the central element for the application logic to interact with events and registrations.
+ * The service is the central element for the application logic to interact with events and registrations. It represents
+ * a transaction boundary.
  *
  * @author Michael J. Simons, 2017-10-31
  */
 @Service
-public final class EventService {
+@Transactional
+public class EventService {
     private final EventRepository eventRepository;
 
     public EventService(final EventRepository eventRepository) {
         this.eventRepository = eventRepository;
     }
 
+    /**
+     * Creates a new event and checks first wether the event already exists or not.
+     *
+     * @param newEvent
+     * @return
+     */
     public Event createNewEvent(final Event newEvent) {
-        this.eventRepository.findOneByHeldOn(newEvent.getHeldOn()).ifPresent(e -> {
+        this.eventRepository.findOne(newEvent.asExample()).ifPresent(e -> {
             throw new DuplicateEventException(e);
         });
         return this.eventRepository.save(newEvent);
+    }
+
+    /**
+     * Registers for a new event.
+     *
+     * @param event
+     * @param newRegistration
+     * @return
+     */
+    public Event registerFor(final Event event, final Registration newRegistration) {
+        final Event persistentEvent =
+              this.eventRepository.findOne(event.asExample()).orElseThrow(NoSuchEventException::new);
+        persistentEvent.registerFor(newRegistration);
+        return persistentEvent;
     }
 }

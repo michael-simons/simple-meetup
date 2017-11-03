@@ -59,9 +59,8 @@ class EventServiceTest {
     void initializeMocks() {
         MockitoAnnotations.initMocks(this);
 
-        when(eventRepository.findOneByHeldOn(OCTOBER_31_ST)).thenReturn(Optional.of(halloween()));
-
-        when(eventRepository.findOneByHeldOn(NOVEMBER_1_ST)).thenReturn(Optional.empty());
+        when(eventRepository.findOne(halloween().asExample())).thenReturn(Optional.of(halloween()));
+        when(eventRepository.findOne(new Event(NOVEMBER_1_ST, "test").asExample())).thenReturn(Optional.empty());
         when(eventRepository.save(any(Event.class))).then(returnsFirstArg());
     }
 
@@ -76,6 +75,7 @@ class EventServiceTest {
     @DisplayName("A new event should be created just fine")
     void shouldCreateEvents() {
         final EventService eventService = new EventService(this.eventRepository);
+
         final Event test = new Event(NOVEMBER_1_ST, "test");
         final Event newEvent = eventService.createNewEvent(test);
         assertEquals(test, newEvent);

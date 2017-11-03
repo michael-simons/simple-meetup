@@ -41,7 +41,7 @@ Unit-Tests sind -- die richtige Herangehensweise vorausgesetzt -- einfach zu ers
 
 .Das Beispiel
 ****
-Gestestet werden soll ein Service, der Events und dazugehörige Registrierungen verwaltet. Ein einem Tag findet nur ein Event statt, Events haben eine begrenzte Teilnehmeranzahl. Interesierte Besucher melden sich mit Namen und einer E-Mail-Adresse an und sollen sich nicht mehrfach anmelden können. Von einem Event soll zum vorherigen und nächstem Event navigiert werden können. Der Dienst stellt dazu eine einfache Oberfläche zur Verfügung.
+Gestestet werden soll ein Service, der Events und dazugehörige Registrierungen verwaltet. Ein einem Tag können mehrere Events stattfinden, die Namen der Events müssen dabei eindeutig sein. Events haben eine begrenzte Teilnehmeranzahl. Interesierte Besucher melden sich mit Namen und einer E-Mail-Adresse an und sollen sich nicht mehrfach anmelden können. Von einem Event soll zum vorherigen und nächstem Event navigiert werden können. Der Dienst stellt dazu eine einfache Oberfläche zur Verfügung.
 ****
 
 == Test-Werkzeuge
@@ -98,7 +98,7 @@ include::../test/java/ac/simons/tdd/domain/EventTest.java[tags=eventStructureTes
 <5> Die TestFactory testet hier sowohl ein Datum in der Vergangenheit als auch ein ungültiges Datum. Pro Eintrag im Stream wird ein dynamischer Test erzeugt, der sowohl die Art der ausgelösten Exception als auch ihre Nachricht überprüft
 <6> Natürlich sollten Sie nicht nur die Pre Conditions, sondern auch die Post Conditions überprüfen, sprich bei gültiger Eingabe ist ein gültiges Ergebnis zu erwarten. Dieser Test hier ist auf klassische Art als `@Test` annotiert und beinhaltet nur einen Testfall.
 <7> `assertAll` überprüft alle verschachtelte Assertion. Ich würde `assertAll` immer dann nutzen, um eine Menge von Behauptung nach der Benutzung einer defininierten Menge von Parametern zu überprüfen, nicht um verschiedene Parameter zu testen.
-<8> Der Test der Registrierungslogik basiert dann wieder auf `@TestFactory`, um kompakt alle Testfälle abdecken zu können. Ich arbeite an dieser Stelle mit Template-Methoden, die mir das zu testende Objekt im passenden Zustand erzeugen. Wenn Sie genau hinschauen bemerken Sie, dass ich auch nicht davor zurückscheue, mir einen Testkandidat mit Hilfe von Reflection im passenden Zustand zu erzeugen, ich betrachte diesen Unittest explizit als White-Box Test.
+<8> Der Test der Registrierungslogik basiert dann wieder auf `@TestFactory`, um kompakt alle Testfälle abdecken zu können. Ich arbeite an dieser Stelle mit Template-Methoden, die mir das zu testende Objekt, zum Beispiel ein Event in der Vergangenheit (`pastEvent`), erzeugen. Diese Methoden sind hier nicht weiter dargestellt.
 
 === Der Event-Service
 

@@ -22,10 +22,10 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Michael J. Simons, 2017-10-31
  */
 @RestController
-public class EventsApi {
+public final class EventsApi {
     private final EventService eventService;
 
     public EventsApi(final EventService eventService) {
         this.eventService = eventService;
     }
-}
+ }
