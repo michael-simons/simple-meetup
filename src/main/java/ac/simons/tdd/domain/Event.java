@@ -15,6 +15,8 @@
  */
 package ac.simons.tdd.domain;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 
@@ -38,6 +40,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
+
 /**
  * @author Michael J. Simons, 2017-10-31
  */
@@ -48,6 +52,7 @@ import java.util.Objects;
         @UniqueConstraint(name = "events_uk", columnNames = {"held_on", "name"})
     }
 )
+@JsonAutoDetect(fieldVisibility = NONE, getterVisibility = NONE, isGetterVisibility = NONE)
 @SuppressWarnings({"checkstyle:DesignForExtension"})
 // tag::eventStructure[]
 public class Event implements Serializable {
@@ -66,11 +71,13 @@ public class Event implements Serializable {
     private Integer id;
 
     @Column(name = "held_on", nullable = false)
+    @JsonProperty
     // tag::eventStructure[]
     private LocalDate heldOn;
 
     // end::eventStructure[]
     @Column(length = 512, nullable = false)
+    @JsonProperty
     // tag::eventStructure[]
     private String name;
 
@@ -163,6 +170,11 @@ public class Event implements Serializable {
 
     public void close() {
         this.status = Status.closed;
+    }
+
+    @JsonProperty
+    public Integer getNumberOfFreeSeats() {
+        return this.numberOfSeats - this.registrations.size();
     }
 
     // tag::eventStructure[]

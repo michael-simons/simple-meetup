@@ -16,30 +16,21 @@
 package ac.simons.tdd.app;
 
 import ac.simons.tdd.domain.Event;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import org.springframework.hateoas.ResourceSupport;
-
-import java.time.LocalDate;
+import org.springframework.hateoas.core.Relation;
 
 /**
  * @author Michael J. Simons, 2017-11-03
  */
 @SuppressWarnings({"checkstyle:DesignForExtension"})
+@Relation(value = "event", collectionRelation = "events")
 public class EventResource extends ResourceSupport {
 
-    private final LocalDate heldOn;
-
-    private final String name;
+    @JsonUnwrapped
+    private final Event event;
 
     EventResource(final Event event) {
-        this.heldOn = event.getHeldOn();
-        this.name = event.getName();
-    }
-
-    public LocalDate getHeldOn() {
-        return heldOn;
-    }
-
-    public String getName() {
-        return name;
+        this.event = event;
     }
 }
