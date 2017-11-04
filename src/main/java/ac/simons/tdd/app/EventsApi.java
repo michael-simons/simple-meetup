@@ -15,16 +15,22 @@
  */
 package ac.simons.tdd.app;
 
+import ac.simons.tdd.domain.Event;
 import ac.simons.tdd.domain.EventService;
 import ac.simons.tdd.domain.NoSuchEventException;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.hateoas.Resources;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -51,6 +57,13 @@ public class EventsApi {
     public Resources<EventResource> events() {
         final List<EventResource> eventResources = eventResourceAssembler.toResources(this.eventService.getOpenEvents());
         return new Resources<EventResource>(eventResources, linkTo(methodOn(this.getClass()).events()).withRel("self"));
+    }
+
+    @PostMapping
+    public HttpEntity<EventResource> events(@RequestBody final Event newEvent) {
+        final EventResource eventResource = this.eventResourceAssembler
+            .toResource(this.eventService.createNewEvent(newEvent));
+        return ResponseEntity.created(URI.create(eventResource.getId().getHref())).body(eventResource);
     }
 
     @GetMapping("/{heldOn}/{name}")

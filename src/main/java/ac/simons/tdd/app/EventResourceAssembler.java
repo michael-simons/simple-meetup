@@ -16,12 +16,16 @@
 package ac.simons.tdd.app;
 
 import ac.simons.tdd.domain.Event;
+import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
 import org.springframework.stereotype.Component;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+/**
+ * @author Michael J. Simons, 2017-11-03
+ */
 @Component
 final class EventResourceAssembler extends ResourceAssemblerSupport<Event, EventResource> {
     EventResourceAssembler() {
@@ -31,7 +35,10 @@ final class EventResourceAssembler extends ResourceAssemblerSupport<Event, Event
     @Override
     public EventResource toResource(final Event entity) {
         final EventResource resource = new EventResource(entity);
-        resource.add(linkTo(methodOn(EventsApi.class).event(entity.getHeldOn(), entity.getName())).withRel("self"));
+        final ControllerLinkBuilder linkBuilder =
+            linkTo(methodOn(EventsApi.class).event(entity.getHeldOn(), entity.getName()));
+        resource.add(linkBuilder.withRel("self"));
+        resource.add(linkBuilder.withRel("event"));
         return resource;
     }
 }

@@ -16,6 +16,7 @@
 package ac.simons.tdd.domain;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -105,7 +106,8 @@ public class Event implements Serializable {
     Event() {
     }
 
-    public Event(final LocalDate heldOn, final String name) {
+    @JsonCreator
+    public Event(@JsonProperty("heldOn") final LocalDate heldOn, @JsonProperty("name") final String name) {
         this(heldOn, name, 20);
     }
 
