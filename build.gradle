@@ -31,6 +31,7 @@ repositories {
     mavenCentral()
     maven { url "https://repo.spring.io/snapshot" }
     maven { url "https://repo.spring.io/milestone" }
+    maven { url "https://dl.bintray.com/palantir/releases" }
 }
 
 dependencies {
@@ -45,10 +46,40 @@ dependencies {
     compile "org.springframework.boot:spring-boot-devtools"
 
     runtime "com.h2database:h2"
+    runtime "org.postgresql:postgresql"
 
     testCompile "org.springframework.boot:spring-boot-starter-test"
     testCompile "org.springframework.restdocs:spring-restdocs-mockmvc"
+    testCompile "com.palantir.docker.compose:docker-compose-rule-junit4:0.32.1"
 }
+
+sourceSets {
+    integrationTest {
+        java {
+            srcDir 'src/integrationTest/java'
+        }
+        resources {
+            srcDir 'src/integrationTest/resources'
+        }
+        compileClasspath += sourceSets.test.compileClasspath
+        runtimeClasspath += sourceSets.test.runtimeClasspath
+    }
+}
+
+task integrationTest(type: Test) {
+    group = LifecycleBasePlugin.VERIFICATION_GROUP
+    description = 'Runs the integration tests.'
+
+    systemProperty "spring.profiles.active", "it"
+
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
+
+    outputs.upToDateWhen { false }
+}
+
+check.dependsOn integrationTest
+integrationTest.mustRunAfter test
 
 asciidoctor {
     sourceDir = file("src/article")

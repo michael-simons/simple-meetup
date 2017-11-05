@@ -1,0 +1,7 @@
+version: '3.3'
+
+services:
+  it-database:
+    image: postgres:9.5.4
+    ports:
+      - 5432
