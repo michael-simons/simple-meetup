@@ -27,6 +27,7 @@ buildscript {
 
 plugins {
     id "java"
+    id "idea"
     id "checkstyle"
     id "org.asciidoctor.convert" version "1.5.6"
 }
