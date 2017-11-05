@@ -112,7 +112,7 @@ class EventTest {
             dynamicTest("Should not be able to register to event with wrong state", () ->
                 assertThrows(
                     entry.getValue(),
-                    () -> entry.getKey().registerFor(new Registration("test@test.com", "test"))
+                    () -> entry.getKey().register(new Person("test@test.com", "test"))
                 )
             ));
     }

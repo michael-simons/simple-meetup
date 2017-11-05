@@ -31,19 +31,17 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import java.io.Serializable;
 import java.time.Clock;
 import java.time.LocalDate;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
-import static java.util.stream.Collectors.toList;
 
 /**
  * @author Michael J. Simons, 2017-10-31
@@ -98,10 +96,8 @@ public class Event implements Serializable {
     // end::eventStructure[]
     @ElementCollection
     @CollectionTable(name = "registrations", joinColumns = @JoinColumn(name = "event_id"))
-    @MapKeyColumn(name = "email", length = 1024, nullable = false)
-    @Column(name = "name", length = 512, nullable = false)
     // tag::eventStructure[]
-    private Map<String, String> registrations = new HashMap<>();
+    private List<Registration> registrations = new ArrayList<>();
 
     // end::eventStructure[]
     Event() {
@@ -156,9 +152,7 @@ public class Event implements Serializable {
     }
 
     public List<Registration> getRegistrations() {
-        return this.registrations.entrySet().stream()
-            .map(e -> new Registration(e.getKey(), e.getValue()))
-            .collect(toList());
+        return Collections.unmodifiableList(this.registrations);
     }
 
     public boolean isPastEvent() {
@@ -187,7 +181,7 @@ public class Event implements Serializable {
     }
 
     // tag::eventStructure[]
-    public void registerFor(final Registration registration) {
+    public Registration register(final Person person) {
         // end::eventStructure[]
         if (isClosed()) {
             throw new IllegalStateException("Cannot register for a closed event.");
@@ -202,11 +196,13 @@ public class Event implements Serializable {
 
         // Weitere Bedingungen ausgeblendet
         // end::eventStructure[]
-        if (this.registrations.containsKey(registration.getEmail())) {
-            throw new IllegalArgumentException("Already registered with email-addess" + registration.getEmail());
+        final Registration registration = new Registration(person);
+        if (this.registrations.contains(registration)) {
+            throw new IllegalArgumentException("Already registered with email-addess" + person.getEmail());
         }
         // tag::eventStructure[]
-        this.registrations.put(registration.getEmail(), registration.getName());
+        this.registrations.add(registration);
+        return registration;
     }
     // end::eventStructure[]
 
@@ -220,31 +216,22 @@ public class Event implements Serializable {
     }
 
     @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 97 * hash + Objects.hashCode(this.heldOn);
-        hash = 97 * hash + Objects.hashCode(this.name);
-        return hash;
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Event event = (Event) o;
+        return Objects.equals(heldOn, event.heldOn) && Objects.equals(name, event.name);
     }
 
     @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Event other = (Event) obj;
-        if (!Objects.equals(this.name, other.name)) {
-            return false;
-        }
-        return Objects.equals(this.heldOn, other.heldOn);
+    public int hashCode() {
+        return Objects.hash(heldOn, name);
     }
 
-    // tag::eventStructure[]
+// tag::eventStructure[]
 }
 // end::eventStructure[]

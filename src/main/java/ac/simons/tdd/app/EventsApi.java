@@ -18,6 +18,7 @@ package ac.simons.tdd.app;
 import ac.simons.tdd.domain.Event;
 import ac.simons.tdd.domain.EventService;
 import ac.simons.tdd.domain.NoSuchEventException;
+import ac.simons.tdd.domain.Person;
 import ac.simons.tdd.domain.Registration;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
@@ -105,10 +106,10 @@ public class EventsApi {
         @PathVariable
         final String name,
         @RequestBody
-        final Registration newRegistration
+        final Person person
     ) {
         return new ResponseEntity<>(
-            this.eventService.registerFor(new Event(heldOn, name), newRegistration),
+            this.eventService.registerFor(new Event(heldOn, name), person),
             HttpStatus.CREATED
         );
     }

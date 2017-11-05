@@ -50,7 +50,7 @@ final class Events {
 
     static Event alreadyRegisteredEvent() {
         final Event event = new Event(LocalDate.of(2018, 1, 2), "alreadyRegisteredEvent");
-        event.registerFor(new Registration("test@test.com", "test"));
+        event.register(new Person("test@test.com", "test"));
         return event;
     }
 }

@@ -15,30 +15,29 @@
  */
 package ac.simons.tdd.domain;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import java.util.Objects;
 
 /**
  * Represents a registration value.
  *
  * @author Michael J. Simons, 2017-10-31
  */
+@Embeddable
 public final class Registration {
-    private final String email;
+    @Column(name = "email", length = 1024, nullable = false)
+    private String email;
 
-    private final String name;
+    @Column(name = "name", length = 512, nullable = false)
+    private String name;
 
-    @JsonCreator
-    public Registration(@JsonProperty("email") final String email, @JsonProperty("name") final String name) {
-        if (email == null || email.trim().isEmpty()) {
-            throw new IllegalArgumentException("Registration requires a non-empty email-address.");
-        }
-        if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("Registration requires a non-empty name.");
-        }
+    Registration() {
+    }
 
-        this.email = email;
-        this.name = name;
+    public Registration(final Person person) {
+        this.email = person.getEmail();
+        this.name = person.getName();
     }
 
     public String getEmail() {
@@ -47,5 +46,22 @@ public final class Registration {
 
     public String getName() {
         return name;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Registration registration = (Registration) o;
+        return Objects.equals(email, registration.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(email);
     }
 }
