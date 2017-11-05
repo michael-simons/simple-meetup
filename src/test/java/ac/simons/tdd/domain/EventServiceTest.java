@@ -15,14 +15,12 @@
  */
 package ac.simons.tdd.domain;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -31,8 +29,8 @@ import java.time.ZoneId;
 import java.util.Optional;
 
 import static ac.simons.tdd.domain.Events.halloween;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -40,14 +38,14 @@ import static org.mockito.Mockito.when;
 /**
  * @author Michael J. Simons, 2017-11-01
  */
-@TestInstance(Lifecycle.PER_CLASS)
-class EventServiceTest {
+@RunWith(MockitoJUnitRunner.class)
+public class EventServiceTest {
 
     public static final LocalDate OCTOBER_31_ST = LocalDate.of(2018, 10, 31);
     public static final LocalDate NOVEMBER_1_ST = LocalDate.of(2018, 11, 1);
 
-    @BeforeAll
-    void prepareEventClock() {
+    @BeforeClass
+    public static void prepareEventClock() {
         Event.CLOCK.set(
             Clock.fixed(Instant.parse("2018-01-01T08:00:00.00Z"), ZoneId.systemDefault()));
     }
@@ -55,29 +53,28 @@ class EventServiceTest {
     @Mock
     private EventRepository eventRepository;
 
-    @BeforeEach
-    void initializeMocks() {
-        MockitoAnnotations.initMocks(this);
-
+    @Before
+    public void initializeMocks() {
         when(eventRepository.findOne(halloween().asExample())).thenReturn(Optional.of(halloween()));
         when(eventRepository.findOne(new Event(NOVEMBER_1_ST, "test").asExample())).thenReturn(Optional.empty());
         when(eventRepository.save(any(Event.class))).then(returnsFirstArg());
     }
 
     @Test
-    @DisplayName("Creating an event on the same day should throw an exception")
-    void shouldNotCreateDuplicateEvents() {
+    public void shouldNotCreateDuplicateEvents() {
         final EventService eventService = new EventService(this.eventRepository);
-        assertThrows(DuplicateEventException.class, () -> eventService.createNewEvent(halloween()));
+
+        assertThatThrownBy(() -> eventService.createNewEvent(halloween()))
+            .isInstanceOf(DuplicateEventException.class);
     }
 
     @Test
-    @DisplayName("A new event should be created just fine")
-    void shouldCreateEvents() {
+    public void shouldCreateEvents() {
         final EventService eventService = new EventService(this.eventRepository);
 
         final Event test = new Event(NOVEMBER_1_ST, "test");
         final Event newEvent = eventService.createNewEvent(test);
-        assertEquals(test, newEvent);
+
+        assertThat(newEvent).isEqualTo(test);
     }
 }

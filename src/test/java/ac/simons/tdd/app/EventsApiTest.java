@@ -16,18 +16,18 @@
 package ac.simons.tdd.app;
 
 import ac.simons.tdd.domain.EventService;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * @author Michael J. Simons, 2017-11-02
  */
-@ExtendWith(SpringExtension.class)
+@RunWith(SpringRunner.class)
 @WebMvcTest(controllers = EventsApi.class)
-class EventsApiTest {
+public class EventsApiTest {
 
    @MockBean
    private EventService eventService;

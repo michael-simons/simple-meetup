@@ -15,14 +15,15 @@
  */
 package ac.simons.tdd.domain;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.DynamicTest;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestFactory;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestInstance.Lifecycle;
+import ac.simons.tdd.domain.EventTest.Logic;
+import ac.simons.tdd.domain.EventTest.Postconditions;
+import ac.simons.tdd.domain.EventTest.Preconditions;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.RunnerBuilder;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -36,86 +37,75 @@ import static ac.simons.tdd.domain.Events.alreadyRegisteredEvent;
 import static ac.simons.tdd.domain.Events.closedEvent;
 import static ac.simons.tdd.domain.Events.fullEvent;
 import static ac.simons.tdd.domain.Events.pastEvent;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.DynamicTest.dynamicTest;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * @author Michael J. Simons, 2017-10-31
  */
-// tag::eventStructureTest[]
-@TestInstance(Lifecycle.PER_CLASS) // <1>
-class EventTest {
-    @BeforeAll // <2>
-    public void prepareEventClock() {
+@RunWith(EventTest.class)
+@Suite.SuiteClasses({Preconditions.class, Postconditions.class, Logic.class})
+public class EventTest extends Suite {
+
+    public EventTest(final Class<?> klass, final RunnerBuilder builder) throws InitializationError {
+        super(klass, builder);
+    }
+
+    @BeforeClass
+    public static void prepareEventClock() {
         Event.CLOCK.set(
             Clock.fixed(Instant.parse("2018-01-01T08:00:00.00Z"), ZoneId.systemDefault()));
     }
 
-    @Nested // <3>
-    class Preconditions {
-        @TestFactory // <4>
-        Stream<DynamicTest> constructor() {
-            return Stream.concat(Stream.of(LocalDate.of(2017, 10, 31), null) // <5>
-                .map(date -> dynamicTest(
-                    "Constructor should not allow invalid events", () ->
-                        assertEquals("Event requires a date in the future.",
-                            assertThrows(
-                                IllegalArgumentException.class,
-                                () -> new Event(date, "test")
-                            ).getMessage()))
-                ), Stream.of(null, "", "\t", " ")
-                  .map(name -> dynamicTest(
-                        "Constructor should not allow invalid events", () ->
-                              assertEquals("Event requires a non-empty name.",
-                                    assertThrows(
-                                          IllegalArgumentException.class,
-                                          () -> new Event(LocalDate.of(2018, 1, 2), name)
-                                    ).getMessage()))
-                  ));
+    public static class Preconditions {
+        @Test
+        public void constructorShouldNotAllowInvalidDates() {
+            Stream.of(LocalDate.of(2017, 10, 31), null).forEach(date ->
+                assertThatThrownBy(() -> new Event(date, "test"))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("Event requires a date in the future.")
+            );
+        }
 
+        @Test
+        public void constructorShouldNotAllowInvalidNames() {
+            Stream.of(null, "", "\t", " ").forEach(name ->
+                assertThatThrownBy(() -> new Event(LocalDate.of(2018, 1, 2), name))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("Event requires a non-empty name.")
+            );
         }
     }
 
-    @Nested
-    class Postconditions { // <6>
+    public static class Postconditions {
         @Test
-        @DisplayName("Constructor should create valid events")
-        void constructor() {
+        public void constructorShouldCreateValidEvents() {
             final Integer numberOfSeats = 23;
             final LocalDate heldOn = LocalDate.of(2018, 1, 2);
             final Event event = new Event(
                 heldOn, "test", numberOfSeats);
-            assertAll(
-                () -> assertEquals(heldOn, event.getHeldOn()),
-                () -> assertEquals("test", event.getName()),
-                () -> assertEquals(numberOfSeats, event.getNumberOfSeats()),
-                () -> assertTrue(event.isOpen())
-            ); // <7>
+
+            assertThat(event.getHeldOn()).isEqualTo(heldOn);
+            assertThat(event.getName()).isEqualTo("test");
+            assertThat(event.getNumberOfSeats()).isEqualTo(numberOfSeats);
+            assertThat(event.isOpen()).isTrue();
         }
     }
 
-    @TestFactory
-    @DisplayName("Registration logic should work")
-    Stream<DynamicTest> registrationShouldWork() {  // <8>
-        final Map<Event, Class<? extends Exception>> events = new HashMap<>();
-        events.put(closedEvent(), IllegalStateException.class);
-        events.put(pastEvent(), IllegalStateException.class);
-        // end::eventStructureTest[]
-        events.put(fullEvent(), IllegalStateException.class);
-        events.put(alreadyRegisteredEvent(), IllegalArgumentException.class);
-        // tag::eventStructureTest[]
+    public static class Logic {
+        @Test
+        public void registrationShouldWork() {
+            final Map<Event, Class<? extends Exception>> events = new HashMap<>();
+            events.put(closedEvent(), IllegalStateException.class);
+            events.put(pastEvent(), IllegalStateException.class);
+            events.put(fullEvent(), IllegalStateException.class);
+            events.put(alreadyRegisteredEvent(), IllegalArgumentException.class);
 
-        return events.entrySet().stream().map(entry ->
-            dynamicTest("Should not be able to register to event with wrong state", () ->
-                assertThrows(
-                    entry.getValue(),
-                    () -> entry.getKey().register(new Person("test@test.com", "test"))
-                )
-            ));
+            events.entrySet().stream().map(entry ->
+                assertThatThrownBy(() -> entry.getKey().register(new Person("test@test.com", "test")))
+                    .isInstanceOf(entry.getValue())
+                    .withFailMessage("Should not be able to register to event with wrong state")
+            );
+        }
     }
-    // tag::eventStructureTest[]
 }
-// end::eventStructureTest[]
