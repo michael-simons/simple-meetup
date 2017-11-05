@@ -18,10 +18,13 @@ package ac.simons.tdd.app;
 import ac.simons.tdd.domain.Event;
 import ac.simons.tdd.domain.EventService;
 import ac.simons.tdd.domain.NoSuchEventException;
+import ac.simons.tdd.domain.Registration;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.hateoas.Resources;
+import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,11 +49,11 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 public class EventsApi {
     private final EventService eventService;
 
-    private final EventResourceAssembler eventResourceAssembler;
+    private final ResourceAssemblerSupport<Event, EventResource> eventResourceAssembler;
 
-    public EventsApi(final EventService eventService, final EventResourceAssembler eventResourceAssembler) {
+    public EventsApi(final EventService eventService) {
         this.eventService = eventService;
-        this.eventResourceAssembler = eventResourceAssembler;
+        this.eventResourceAssembler = EventResource.assembler();
     }
 
     @GetMapping
@@ -77,5 +80,36 @@ public class EventsApi {
             .getEvent(heldOn, name)
             .map(eventResourceAssembler::toResource)
             .orElseThrow(NoSuchEventException::new);
+    }
+
+    @GetMapping("/{heldOn}/{name}/registrations")
+    public Resources<Registration> registrations(
+        @PathVariable @DateTimeFormat(iso = ISO.DATE)
+        final LocalDate heldOn,
+        @PathVariable
+        final String name
+    ) {
+        final Event event = this.eventService
+            .getEvent(heldOn, name)
+            .orElseThrow(NoSuchEventException::new);
+        return new Resources<>(
+            event.getRegistrations(),
+            linkTo(methodOn(this.getClass()).registrations(event.getHeldOn(), event.getName())).withRel("self")
+        );
+    }
+
+    @PostMapping("/{heldOn}/{name}/registrations")
+    public HttpEntity<Registration> registrations(
+        @PathVariable @DateTimeFormat(iso = ISO.DATE)
+        final LocalDate heldOn,
+        @PathVariable
+        final String name,
+        @RequestBody
+        final Registration newRegistration
+    ) {
+        return new ResponseEntity<>(
+            this.eventService.registerFor(new Event(heldOn, name), newRegistration),
+            HttpStatus.CREATED
+        );
     }
  }

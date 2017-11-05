@@ -6,5 +6,6 @@
     <suppress checks="DesignForExtension" files=".+Config\.java" />
     <suppress checks="DesignForExtension" files=".+Entity\.java" />
     <suppress checks="DesignForExtension" files=".+Repository\.java" />
-    <suppress checks="DesignForExtension" files=".+Service\.java" />    
+    <suppress checks="DesignForExtension" files=".+Service\.java" />
+    <suppress checks="DesignForExtension" files=".+Resource\.java" />
 </suppressions>

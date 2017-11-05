@@ -38,10 +38,12 @@ import java.io.Serializable;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author Michael J. Simons, 2017-10-31
@@ -95,8 +97,7 @@ public class Event implements Serializable {
 
     // end::eventStructure[]
     @ElementCollection
-    @CollectionTable(name = "registrations")
-    @JoinColumn(name = "event_id")
+    @CollectionTable(name = "registrations", joinColumns = @JoinColumn(name = "event_id"))
     @MapKeyColumn(name = "email", length = 1024, nullable = false)
     @Column(name = "name", length = 512, nullable = false)
     // tag::eventStructure[]
@@ -152,6 +153,12 @@ public class Event implements Serializable {
         }
 
         this.numberOfSeats = numberOfSeats;
+    }
+
+    public List<Registration> getRegistrations() {
+        return this.registrations.entrySet().stream()
+            .map(e -> new Registration(e.getKey(), e.getValue()))
+            .collect(toList());
     }
 
     public boolean isPastEvent() {

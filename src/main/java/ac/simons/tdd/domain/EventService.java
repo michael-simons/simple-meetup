@@ -64,13 +64,13 @@ public class EventService {
      *
      * @param event
      * @param newRegistration
-     * @return
+     * @return The confirmed registration
      */
-    public Event registerFor(final Event event, final Registration newRegistration) {
+    public Registration registerFor(final Event event, final Registration newRegistration) {
         final Event persistentEvent =
               this.eventRepository.findOne(event.asExample()).orElseThrow(NoSuchEventException::new);
         persistentEvent.registerFor(newRegistration);
-        return persistentEvent;
+        return newRegistration;
     }
 
     /**

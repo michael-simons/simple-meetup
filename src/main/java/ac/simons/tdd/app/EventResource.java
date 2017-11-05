@@ -19,13 +19,33 @@ import ac.simons.tdd.domain.Event;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import org.springframework.hateoas.ResourceSupport;
 import org.springframework.hateoas.core.Relation;
+import org.springframework.hateoas.mvc.ControllerLinkBuilder;
+import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
+
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 /**
  * @author Michael J. Simons, 2017-11-03
  */
-@SuppressWarnings({"checkstyle:DesignForExtension"})
 @Relation(value = "event", collectionRelation = "events")
 public class EventResource extends ResourceSupport {
+
+    static ResourceAssemblerSupport<Event, EventResource> assembler() {
+        return new ResourceAssemblerSupport<Event, EventResource>(EventsApi.class, EventResource.class) {
+            @Override
+            public EventResource toResource(final Event entity) {
+                final EventResource resource = new EventResource(entity);
+                final ControllerLinkBuilder linkBuilder =
+                    linkTo(methodOn(EventsApi.class).event(entity.getHeldOn(), entity.getName()));
+                resource.add(linkBuilder.withRel("self"));
+                resource.add(linkBuilder.withRel("event"));
+                resource.add(linkTo(methodOn(EventsApi.class).registrations(entity.getHeldOn(), entity.getName()))
+                    .withRel("registrations"));
+                return resource;
+            }
+        };
+    }
 
     @JsonUnwrapped
     private final Event event;

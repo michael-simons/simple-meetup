@@ -15,6 +15,9 @@
  */
 package ac.simons.tdd.domain;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Represents a registration value.
  *
@@ -25,7 +28,8 @@ public final class Registration {
 
     private final String name;
 
-    public Registration(final String email, final String name) {
+    @JsonCreator
+    public Registration(@JsonProperty("email") final String email, @JsonProperty("name") final String name) {
         if (email == null || email.trim().isEmpty()) {
             throw new IllegalArgumentException("Registration requires a non-empty email-address.");
         }
