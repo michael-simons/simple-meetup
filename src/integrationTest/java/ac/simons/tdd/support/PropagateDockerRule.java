@@ -20,6 +20,9 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
+/**
+ * @author Michael J. Simons, 2017-11-06
+ */
 public final class PropagateDockerRule implements TestRule {
 
     private final DockerComposeRule docker;

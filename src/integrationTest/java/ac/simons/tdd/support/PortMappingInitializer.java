@@ -24,6 +24,9 @@ import org.springframework.test.context.support.TestPropertySourceUtils;
 
 import java.io.IOException;
 
+/**
+ * @author Michael J. Simons, 2017-11-06
+ */
 public final class PortMappingInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
     static final ThreadLocal<DockerComposeRule> DOCKER =
@@ -42,7 +45,6 @@ public final class PortMappingInitializer implements ApplicationContextInitializ
                             container.getContainerName() + ".port = " + p.getExternalPort());
                     });
                 }
-                ;
             } catch (InterruptedException | IOException e) {
                 throw new RuntimeException(e);
             }
