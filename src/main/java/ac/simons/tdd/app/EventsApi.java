@@ -60,7 +60,7 @@ public class EventsApi {
     @GetMapping
     public Resources<EventResource> events() {
         final List<EventResource> eventResources = eventResourceAssembler.toResources(this.eventService.getOpenEvents());
-        return new Resources<EventResource>(eventResources, linkTo(methodOn(this.getClass()).events()).withRel("self"));
+        return new Resources<>(eventResources, linkTo(methodOn(this.getClass()).events()).withSelfRel());
     }
 
     @PostMapping
