@@ -2,7 +2,8 @@ import java.nio.file.Paths
 
 buildscript {
     ext {
-        springBootVersion = "2.0.0.M5"
+        springBootVersion = "2.0.0.M6"
+        generatedApiDoc = file(Paths.get(project.buildDir.toString(), "generated-api-doc"))
     }
     repositories {
         mavenCentral()
@@ -53,6 +54,10 @@ dependencies {
     testCompile "com.palantir.docker.compose:docker-compose-rule-junit4:0.32.1"
 }
 
+test {
+    outputs.dir generatedApiDoc
+}
+
 sourceSets {
     integrationTest {
         java {
@@ -82,7 +87,10 @@ check.dependsOn integrationTest
 integrationTest.mustRunAfter test
 
 asciidoctor {
+    dependsOn check
+
     sourceDir = file("src/article")
+    inputs.dir generatedApiDoc
     outputDir = file(Paths.get(project.buildDir.toString(), "article"))
     resources {
         from(sourceDir) {

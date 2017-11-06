@@ -119,6 +119,12 @@ Das Repository bleibt angenehm frei von Annotationen. Spring-Data-Repositorys we
 * pro weniger tests
 
 
+== Just testing
+
+include::../../build/generated-api-doc/get-event/curl-request.adoc[]
+include::../../build/generated-api-doc/get-event/http-response.adoc[]
+include::../../build/generated-api-doc/get-event/response-fields.adoc[]
+
 == Über den Autor
 
 {author} arbeit als Senior Consultant bei https://www.innoq.com/de/[innoQ Deutschland]. Er ist Mitglied des NetBeans Dream Team und Gründer der Euregio JUG. Michael schreibt in seinem http://info.michael-simons.eu[Blog] über Java, Spring und Softwarearchitektur. {firstname} ist Autor des im Januar 2018 erscheinenden Spring Boot Buches.
