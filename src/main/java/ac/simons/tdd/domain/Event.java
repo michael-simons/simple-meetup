@@ -18,6 +18,7 @@ package ac.simons.tdd.domain;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.data.domain.AbstractAggregateRoot;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 
@@ -56,7 +57,7 @@ import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
 @JsonAutoDetect(fieldVisibility = NONE, getterVisibility = NONE, isGetterVisibility = NONE)
 @SuppressWarnings({"checkstyle:DesignForExtension"})
 // tag::eventStructure[]
-public class Event implements Serializable {
+public class Event extends AbstractAggregateRoot<Event> implements Serializable {
 
     public enum Status {
 
