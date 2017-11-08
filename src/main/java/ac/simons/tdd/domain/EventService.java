@@ -15,6 +15,7 @@
  */
 package ac.simons.tdd.domain;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -30,12 +31,9 @@ import java.util.Optional;
  */
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class EventService {
     private final EventRepository eventRepository;
-
-    public EventService(final EventRepository eventRepository) {
-        this.eventRepository = eventRepository;
-    }
 
     /**
      * @param heldOn

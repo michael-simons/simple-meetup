@@ -18,7 +18,7 @@ package ac.simons.tdd.domain;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.data.domain.AbstractAggregateRoot;
+import lombok.Getter;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 
@@ -55,19 +55,20 @@ import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
     }
 )
 @JsonAutoDetect(fieldVisibility = NONE, getterVisibility = NONE, isGetterVisibility = NONE)
+@Getter
 @SuppressWarnings({"checkstyle:DesignForExtension"})
 // tag::eventStructure[]
-public class Event extends AbstractAggregateRoot<Event> implements Serializable {
+public class Event implements Serializable {
 
     public enum Status {
 
         open, closed
     }
 
+    // end::eventStructure[]
     static final ThreadLocal<Clock> CLOCK =
         ThreadLocal.withInitial(() -> Clock.systemDefaultZone()); // <1>
 
-    // end::eventStructure[]
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -110,7 +111,7 @@ public class Event extends AbstractAggregateRoot<Event> implements Serializable 
     }
 
     // tag::eventStructure[]
-    public Event(final LocalDate heldOn, final String name, final Integer numberOfSeats) {
+    public Event(final LocalDate heldOn, final String name, final Integer numberOfSeats) { // <1>
         if (heldOn == null || heldOn.isBefore(LocalDate.now(CLOCK.get()))) {
             throw new IllegalArgumentException("Event requires a date in the future.");
         }
@@ -120,25 +121,12 @@ public class Event extends AbstractAggregateRoot<Event> implements Serializable 
 
         this.heldOn = heldOn;
         this.name = name;
+        this.status = Status.open;
 
         this.setNumberOfSeats(numberOfSeats);
-
-        this.status = Status.open;
     }
 
     // end::eventStructure[]
-
-    public Integer getId() {
-        return id;
-    }
-
-    public LocalDate getHeldOn() {
-        return heldOn;
-    }
-
-    public String getName() {
-        return name;
-    }
 
     public Integer getNumberOfSeats() {
         return numberOfSeats;
@@ -182,7 +170,7 @@ public class Event extends AbstractAggregateRoot<Event> implements Serializable 
     }
 
     // tag::eventStructure[]
-    public Registration register(final Person person) {
+    public Registration register(final Person person) { // <2>
         // end::eventStructure[]
         if (isClosed()) {
             throw new IllegalStateException("Cannot register for a closed event.");
@@ -209,10 +197,10 @@ public class Event extends AbstractAggregateRoot<Event> implements Serializable 
 
     Example<Event> asExample() {
         return Example.of(this, ExampleMatcher.matching()
-              .withIgnoreNullValues()
-              .withIgnorePaths("numberOfSeats", "status")
-              .withMatcher("heldOn", match -> match.exact())
-              .withMatcher("name", match -> match.exact())
+            .withIgnoreNullValues()
+            .withIgnorePaths("numberOfSeats", "status")
+            .withMatcher("heldOn", match -> match.exact())
+            .withMatcher("name", match -> match.exact())
         );
     }
 
