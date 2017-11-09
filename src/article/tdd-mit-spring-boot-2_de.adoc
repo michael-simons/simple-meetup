@@ -104,7 +104,7 @@ Ich möchte Ihnen anhand einer einfachen Fachlichkeit zeigen, wie Spring Boot 2 
 
 Gestestet werden soll ein Service, der Events und dazugehörige Registrierungen verwaltet. Ein einem Tag können mehrere Events stattfinden, die Namen der Events müssen dabei eindeutig sein. Events haben eine begrenzte Teilnehmeranzahl. Interesierte Besucher melden sich mit Namen und einer E-Mail-Adresse an und sollen sich nicht mehrfach anmelden können. Von einem Event soll zum vorherigen und nächstem Event navigiert werden können. Der Dienst stellt dazu eine einfache Oberfläche zur Verfügung.
 
-Das Thema könnte Teil einer größeren Anwendung sein und als sogenannter Bounded-Context, einem Begriff aus dem Domain-Driven Design, identifiziert worden sein.
+Das Thema könnte Teil einer größeren Anwendung sein und als sogenannter Bounded-Context, einem Begriff aus dem Domain-Driven Design, identifiziert worden sein. Sie finden den vollständigen Quelltext dieses Artikels auf https://github.com/michael-simons/tdd-mit-spring-boot-2[GitHub].
 
 Die Fachlichkeit eignet sich außerdem sehr gut, zu zeigen, dass Tests auf Modulebene nicht nur sehr einfach zu realisieren, sondern auch oftmals die wichtigsten Aspekte Ihrer Domain bereits erfassen. Betrachten Sie folgende Java-Klasse
 
@@ -122,6 +122,55 @@ Ansonsten ist die Klasse frei von Spring typischen Annotationen. Schauen Sie in 
 
 === Auf Modul-(Unit)-Ebene
 
+Die Klasse `Event` wird in einem Domain-driven Design Ansatz als Aggregate-Root bezeichnet, als Kern Ihrer Domain. Sie ist Kernbestandteil dessen, was Sie mit Ihrer Software erreichen möchten. Mit den eingangs erwähnten Starter erhalten Sie alle Bausteine, um diese Klasse einem Unit-Test zu unterziehen. Testen Sie ganz klassisch Pre- und Postconditions, wie die Listings <<EventTest-1>> und <<EventTest-2>> zeigen.
+
+[source,java]
+[[EventTest-1]]
+.Preconditions
+----
+include::../test/java/ac/simons/tdd/domain/EventTest.java[tags=unitTestExamplePre,indent=0]
+----
+<1> Signalisiert, dass diese Methode von JUnit als Testmethode ausgeführt werden soll
+<2> Hier sehen Sie eine AssertJ-Assertion. AssertJ bietet unter anderem eine schöne Möglichkeit an, zu testen, ob eine bestimmte Exception geworfen wurde oder nicht.
+<3> Weiterhin ist es möglich, Assertions aufeinander aufzubauen: Wenn die Exception dem erwarteten Typen entsprach, wird zusätzlich die entsprechende Mitteilung überprüft.
+
+[source,java]
+[[EventTest-2]]
+.Postconditions
+----
+include::../test/java/ac/simons/tdd/domain/EventTest.java[tags=unitTestExamplePost,indent=0]
+----
+
+Der Test der Logik ist ähnlich aufgebaut. Der Test ist klar strukturiert und gut lesbar, insbesondere weil die zu testende Klasse die Domain gut wiederspiegelt. Mit wenig Aufwand haben Sie den Kern Ihres Geschäftes fast vollständig getestet. Sie haben fast keinen Aufwand in das Aufsetzen einer Testumgebung oder die Bereitstellung von Kollaborateuren der Testklasse stecken mmüssen. Der Test ist also sehr günstig zu haben. Nutzen Sie diese Tatsache aus.
+
+.Warum nicht JUnit 5?
+****
+Die Klassen in den Listings sind statische Klassen. Das bedeutet, sie sind Bestandteil äußerer Klassen. In unserem Beispiel hat das technische Gründe. Ich möchte die Tests der Klasse `Event` sinnvoll strukturieren. Dabei benötige ich Lösungen, die mir Version 4 von JUnit zur Verfügung stellt. Es wird dabei eine Testsuite auf Basis statischer, innerer Klassen zusammengestellt. Das ist ein wenig sperrig, aber funktioniert.
+
+JUnit 5 erschien im Herbst 2017. Es hat viele neue Funktionen, unter anderem die Möglichkeit, Testklassen als `@Nested` zu markieren. Darüber hinaus vereinfacht es den Umgang mit parametrisierten Tests und das Testen von Exceptions. JUnit 5 kann dynamische Tests (das sind Tests, die erst zur Laufzeit generiert werden) ausführen und mit `@DisplayName` sinnvolle Namen vergeben. Default-Methoden in Interfaces können als `@Test` annotiert werden und so als Mix-In in andere Tests gebracht werden. Die aktuelle Version des Spring-Frameworks unterstützt JUnit 5 ebenfalls und kann zum Beispiel Tests auf Basis des Spring-Containers deaktivieren.
+
+Warum also nicht direkt in diesem Artikel JUnit 5 nutzen? Ich sprach eingangs davon, dass es wichtig ist, dass Tests einfach bereitgestellt werden können. Bürden Sie Ihren Entwicklern zuviel Aufwand zum Testen auf, wird nicht getestet. Während die Unterstützung von JUnit 5 in den großen IDEs wie Eclipse und IntelliJ IDEA bereits sehr gut ist, funktioniert die Build-Tool-Unterstützung noch nicht wie erwartet. Das Beispielprojekt zum Artikel arbeitete ursprünglich mit JUnit 5 und ich hätte Stand November 2017 einen eigenen Aufsatz darüber schreiben können, wie man Gradle beziehungsweise Maven dazu bringt, ähnlich gut mit JUnit 5 zusammenzuarbeiten wie mit Version 4. Ich habe mich bewusst dagegen entschieden, um tatsächlich den Fokus auf einfaches Testen zu legen.
+****
+
+=== Fließende Grenzen
+
+Die Events kommen aber nicht aus dem luftleeren Raum. Sie werden in einer Datenbank gespeichert und es muss eine Schnittstelle geben, sie abzurufen. Ich empfehle für Datenbankzugriff vielfältiger Art eines der vielen http://projects.spring.io/spring-data/[Spring-Data-Module]. Spring Data implementiert für Domain-Klassen das Repository-Pattern. Ein Repository dient als Schnittstelle zwischen der Domainschicht und dem technischen Zugriff auf Daten. Nach außen stellt es sich oftmals als eine Art Liste von Domainobjekten da. Spring Data arbeitet dabei deklarativ. <<SpringDataRepository>> zeigt den notwendigen Code für ein Repository von Events.
+
+[source,java]
+[[SpringDataRepository]]
+.EventRepository.java
+----
+include::../main/java/ac/simons/tdd/domain/EventRepository.java[tags=eventRepositoryStructure,indent=0]
+----
+
+In einer Spring-Boot-Anwendung, die den entsprechenden Spring-Data-Starter als Abhängigkeit deklariert, ist das alles, was Sie tun müssen, um ein Repository dieser Art zur Laufzeit zu erhalten. Dieses Repository müssen Sie nicht testen. In dieser Form gehe ich davon aus, dass das Spring-Data-Team den Code getestet hat, der zur Laufzeit die `save`-Methode implementiert. Was ist aber mit dem Domain-Service in <<EventService>>, der sicherstellt, dass keine doppelten Events gespeichert werden?
+
+[source,java]
+[[EventService]]
+.Speichern von Events
+----
+include::../main/java/ac/simons/tdd/domain/EventService.java[tags=eventServiceSaveEvents,indent=0]
+----
 
 
 == Weitere Herausforderungen

@@ -41,7 +41,6 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class EventServiceTest {
 
-    public static final LocalDate OCTOBER_31_ST = LocalDate.of(2018, 10, 31);
     public static final LocalDate NOVEMBER_1_ST = LocalDate.of(2018, 11, 1);
 
     @BeforeClass
@@ -53,15 +52,10 @@ public class EventServiceTest {
     @Mock
     private EventRepository eventRepository;
 
-    @Before
-    public void initializeMocks() {
-        when(eventRepository.findOne(halloween().asExample())).thenReturn(Optional.of(halloween()));
-        when(eventRepository.findOne(new Event(NOVEMBER_1_ST, "test").asExample())).thenReturn(Optional.empty());
-        when(eventRepository.save(any(Event.class))).then(returnsFirstArg());
-    }
-
     @Test
     public void shouldNotCreateDuplicateEvents() {
+        when(eventRepository.findOne(halloween().asExample())).thenReturn(Optional.of(halloween()));
+
         final EventService eventService = new EventService(this.eventRepository);
 
         assertThatThrownBy(() -> eventService.createNewEvent(halloween()))
@@ -70,6 +64,9 @@ public class EventServiceTest {
 
     @Test
     public void shouldCreateEvents() {
+        when(eventRepository.findOne(new Event(NOVEMBER_1_ST, "test").asExample())).thenReturn(Optional.empty());
+        when(eventRepository.save(any(Event.class))).then(returnsFirstArg());
+
         final EventService eventService = new EventService(this.eventRepository);
 
         final Event test = new Event(NOVEMBER_1_ST, "test");

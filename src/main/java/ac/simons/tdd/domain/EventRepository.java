@@ -15,14 +15,13 @@
  */
 package ac.simons.tdd.domain;
 
-// tag::eventRepositoryStructure[]
 import org.springframework.data.jpa.repository.Query;
+// tag::eventRepositoryStructure[]
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.QueryByExampleExecutor;
 
-import java.util.List;
-
 // end::eventRepositoryStructure[]
+import java.util.List;
 
 /**
  * @author Michael J. Simons, 2017-10-31
@@ -30,7 +29,7 @@ import java.util.List;
 // tag::eventRepositoryStructure[]
 interface EventRepository extends Repository<Event, Integer>, QueryByExampleExecutor<Event> {
     Event save(Event newEvent);
-
+    // end::eventRepositoryStructure[]
     @Query(value
         = "Select e from Event e "
         + " where e.status = 'open' "
@@ -38,5 +37,6 @@ interface EventRepository extends Repository<Event, Integer>, QueryByExampleExec
         + " order by e.heldOn asc"
     )
     List<Event> findAllOpenEvents();
+    // tag::eventRepositoryStructure[]
 }
 // end::eventRepositoryStructure[]

@@ -22,6 +22,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerBuilder;
 
@@ -43,10 +44,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 /**
  * @author Michael J. Simons, 2017-10-31
  */
+// tag::suiteExample[]
 @RunWith(EventTest.class)
-@Suite.SuiteClasses({Preconditions.class, Postconditions.class, Logic.class})
+@SuiteClasses({Preconditions.class, Postconditions.class, Logic.class})
 public class EventTest extends Suite {
-
+    // end::suiteExample[]
     public EventTest(final Class<?> klass, final RunnerBuilder builder) throws InitializationError {
         super(klass, builder);
     }
@@ -57,7 +59,9 @@ public class EventTest extends Suite {
             Clock.fixed(Instant.parse("2018-01-01T08:00:00.00Z"), ZoneId.systemDefault()));
     }
 
+    // tag::unitTestExamplePre[]
     public static class Preconditions {
+        // end::unitTestExamplePre[]
         @Test
         public void constructorShouldNotAllowInvalidDates() {
             Stream.of(LocalDate.of(2017, 10, 31), null).forEach(date ->
@@ -67,16 +71,19 @@ public class EventTest extends Suite {
             );
         }
 
-        @Test
+        // tag::unitTestExamplePre[]
+        @Test // <1>
         public void constructorShouldNotAllowInvalidNames() {
             Stream.of(null, "", "\t", " ").forEach(name ->
-                assertThatThrownBy(() -> new Event(LocalDate.of(2018, 1, 2), name))
+                assertThatThrownBy(() -> new Event(LocalDate.of(2018, 1, 2), name))  // <2>
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("Event requires a non-empty name.")
+                    .hasMessage("Event requires a non-empty name.")  // <3>
             );
         }
     }
+    // end::unitTestExamplePre[]
 
+    // tag::unitTestExamplePost[]
     public static class Postconditions {
         @Test
         public void constructorShouldCreateValidEvents() {
@@ -84,13 +91,15 @@ public class EventTest extends Suite {
             final LocalDate heldOn = LocalDate.of(2018, 1, 2);
             final Event event = new Event(
                 heldOn, "test", numberOfSeats);
-
+            // end::unitTestExamplePost[]
             assertThat(event.getHeldOn()).isEqualTo(heldOn);
             assertThat(event.getName()).isEqualTo("test");
+            // tag::unitTestExamplePost[]
             assertThat(event.getNumberOfSeats()).isEqualTo(numberOfSeats);
             assertThat(event.isOpen()).isTrue();
         }
     }
+    // end::unitTestExamplePost[]
 
     public static class Logic {
         @Test
@@ -108,4 +117,6 @@ public class EventTest extends Suite {
             );
         }
     }
+    // tag::suiteExample[]
 }
+// end::suiteExample[]
