@@ -1,3 +1,4 @@
+import org.asciidoctor.gradle.AsciidoctorTask
 import java.nio.file.Paths
 
 buildscript {
@@ -38,6 +39,7 @@ repositories {
 // tag::test-dependencies[]
 dependencies {
 // end::test-dependencies[]
+    asciidoctor 'org.asciidoctor:asciidoctorj-pdf:1.5.0-alpha.15'
     checkstyle "com.puppycrawl.tools:checkstyle:8.4"
 
     compile "org.springframework.boot:spring-boot-starter-data-jpa"
@@ -94,8 +96,15 @@ task integrationTest(type: Test) {
 check.dependsOn integrationTest
 integrationTest.mustRunAfter test
 
-asciidoctor {
-    dependsOn check
+// common settings for asciidoctor
+tasks.withType(AsciidoctorTask) { docTask ->
+    //dependsOn check
+
+    attributes \
+          'source-highlighter': 'coderay',
+            'toc': 'left',
+            'icons': 'font',
+            'sourceDir': "$projectDir/src/"
 
     sourceDir = file("src/article")
     inputs.dir generatedApiDoc
@@ -105,6 +114,47 @@ asciidoctor {
             include '*.png'
         }
     }
+
+    // good to see what the build is doing...
+    logDocuments = true
 }
 
-defaultTasks "clean", "build", "asciidoctor"
+task generateHTML (
+        type: AsciidoctorTask,
+        group: 'docToolchain',
+        description: 'use html5 as asciidoc backend') {
+
+    backends = ['html5']
+}
+
+task generatePDF (
+        type: AsciidoctorTask,
+        group: 'docToolchain',
+        description: 'use pdf as asciidoc backend') {
+
+    backends = ['pdf']
+}
+
+task generateDocBook (
+        type: AsciidoctorTask,
+        group: 'docToolchain',
+        description: 'use docbook as asciidoc backend') {
+
+    backends = ['docbook']
+}
+
+task convertToDocx (
+        dependsOn: 'generateDocBook',
+        group: 'docToolchain',
+        type: Exec
+) {
+    workingDir 'build/article/docbook'
+    executable = "pandoc"
+    new File('build/article/docx/').mkdirs()
+    args = ['-r','docbook',
+            '-t','docx',
+            '-o','../docx/tdd-mit-spring-boot-2_de.docx',
+            'tdd-mit-spring-boot-2_de.xml']
+}
+
+defaultTasks "clean", "build", "generateHTML", "generatePDF", "convertToDocx"
