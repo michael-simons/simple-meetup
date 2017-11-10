@@ -98,7 +98,7 @@ integrationTest.mustRunAfter test
 
 // common settings for asciidoctor
 tasks.withType(AsciidoctorTask) { docTask ->
-    //dependsOn check
+    dependsOn check
 
     attributes \
           'source-highlighter': 'coderay',
