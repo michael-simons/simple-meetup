@@ -157,4 +157,4 @@ task convertToDocx (
             'tdd-mit-spring-boot-2_de.xml']
 }
 
-defaultTasks "clean", "build", "generateHTML", "generatePDF", "convertToDocx"
+defaultTasks "clean", "build", "generateHTML", "generatePDF"
