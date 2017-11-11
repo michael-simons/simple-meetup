@@ -39,7 +39,6 @@ repositories {
 // tag::test-dependencies[]
 dependencies {
 // end::test-dependencies[]
-    asciidoctor 'org.asciidoctor:asciidoctorj-pdf:1.5.0-alpha.15'
     checkstyle "com.puppycrawl.tools:checkstyle:8.4"
 
     compile "org.springframework.boot:spring-boot-starter-data-jpa"
@@ -60,6 +59,8 @@ dependencies {
     // end::test-dependencies[]
     testCompile "org.springframework.restdocs:spring-restdocs-mockmvc"
     testCompile "com.palantir.docker.compose:docker-compose-rule-junit4:0.32.1"
+
+    asciidoctor 'org.asciidoctor:asciidoctorj-pdf:1.5.0-alpha.15'
 // tag::test-dependencies[]
 }
 // end::test-dependencies[]
@@ -102,9 +103,9 @@ tasks.withType(AsciidoctorTask) { docTask ->
 
     attributes \
           'source-highlighter': 'coderay',
-            'toc': 'left',
-            'icons': 'font',
-            'sourceDir': "$projectDir/src/"
+          'toc': 'left',
+          'icons': 'font',
+          'sourceDir': "$projectDir/src/"
 
     sourceDir = file("src/article")
     inputs.dir generatedApiDoc
