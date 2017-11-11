@@ -49,64 +49,71 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * @author Michael J. Simons, 2017-11-02
  */
-@RunWith(SpringRunner.class)
-@WebMvcTest(controllers = EventsApi.class)
-@AutoConfigureRestDocs(
-      outputDir = "build/generated-api-doc",
-      uriHost = "coolevents.localhost",
-      uriPort = 80
-)
+// tag::eventApiEvent[]
+@RunWith(SpringRunner.class) // <1>
+@WebMvcTest(controllers = EventsApi.class) // <2>
+@AutoConfigureRestDocs // <3>
 public class EventsApiTest {
 
-   @MockBean
-   private EventService eventService;
+    // end::eventApiEvent[]
+    @MockBean
+    private EventService eventService;
 
-   @Autowired
-   private MockMvc mockMvc;
+    @Autowired
+    private MockMvc mockMvc;
 
-   private final LinksSnippet selfLink = links(linkWithRel("self").ignored().optional());
+    private final LinksSnippet selfLink = links(linkWithRel("self").ignored().optional());
 
-   @Before
-   public void initializeMocks() {
-      final Event event1 = new Event(LocalDate.now(), "Event-1");
-      when(eventService.getOpenEvents()).thenReturn(
+    @Before
+    public void initializeMocks() {
+        final Event event1 = new Event(LocalDate.now(), "Event-1");
+        when(eventService.getOpenEvents()).thenReturn(
             Arrays.asList(event1, new Event(LocalDate.now().plusDays(1), "Event-2"))
-      );
-      when(eventService.getEvent(event1.getHeldOn(), event1.getName())).thenReturn(Optional.of(event1));
-   }
+        );
+        when(eventService.getEvent(event1.getHeldOn(), event1.getName())).thenReturn(Optional.of(event1));
+    }
 
-   @Test
-   public void eventsShouldWork() throws Exception {
-      this.mockMvc
+    @Test
+    public void eventsShouldWork() throws Exception {
+        this.mockMvc
             .perform(get("/api/events").accept(HAL_JSON))
             .andExpect(status().isOk())
             .andDo(document("get-events",
-                  preprocessRequest(prettyPrint()),
-                  preprocessResponse(prettyPrint()),
-                  selfLink,
-                  responseFields(
-                        subsectionWithPath("_embedded.events").description("An array of Event resources"),
-                        subsectionWithPath("_links").description("Links to other resources")
-                  )));
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                selfLink,
+                responseFields(
+                    subsectionWithPath("_embedded.events").description("An array of Event resources"),
+                    subsectionWithPath("_links").description("Links to other resources")
+                )));
 
-   }
+    }
 
-   @Test
-   public void eventShouldWork() throws Exception {
-      this.mockMvc
-            .perform(get("/api/events/{heldOn}/{name}", LocalDate.now(), "Event-1").accept(HAL_JSON))
-            .andExpect(status().isOk())
-            .andDo(document("get-event",
-                  preprocessRequest(prettyPrint()),
-                  preprocessResponse(prettyPrint()),
-                  selfLink.and(
-                        linkWithRel("registrations").description("Registrations for this event."),
-                        linkWithRel("event").description("This event.")),
-                  responseFields(
-                        fieldWithPath("heldOn").description("The date of this event."),
-                        fieldWithPath("name").description("The name of this event."),
-                        fieldWithPath("numberOfFreeSeats").description("Number of free seats left."),
-                        subsectionWithPath("_links").description("Links to other resources")
-                  )));
-   }
+    // tag::eventApiEvent[]
+    @Test
+    public void eventShouldWork() throws Exception {
+        this.mockMvc
+            .perform(
+                get("/api/events/{heldOn}/{name}",
+                    LocalDate.now(), "Event-1"
+                ).accept(HAL_JSON)) // <4>
+            .andExpect(status().isOk()) // <5>
+            .andDo(document("get-event", // <6>
+                // end::eventApiEvent[]
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                selfLink.and(
+                    linkWithRel("registrations").description("Registrations for this event."),
+                    linkWithRel("event").description("This event.")),
+                // tag::eventApiEvent[]
+                responseFields(
+                    fieldWithPath("heldOn").description("The date of this event."),
+                    fieldWithPath("name").description("The name of this event."),
+                    fieldWithPath("numberOfFreeSeats")
+                        .description("Number of free seats left."),
+                    subsectionWithPath("_links")
+                        .description("Links to other resources")
+                )));
+    }
 }
+// end::eventApiEvent[]

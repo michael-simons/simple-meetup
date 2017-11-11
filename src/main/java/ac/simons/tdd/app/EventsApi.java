@@ -44,11 +44,17 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 /**
  * @author Michael J. Simons, 2017-10-31
  */
+// tag::eventApiEvent[]
 @RestController
 @RequestMapping("/api/events")
+// end::eventApiEvent[]
 @SuppressWarnings({"checkstyle:DesignForExtension"})
+// tag::eventApiEvent[]
 public class EventsApi {
+
     private final EventService eventService;
+
+    // end::eventApiEvent[]
 
     private final ResourceAssemblerSupport<Event, EventResource> eventResourceAssembler;
 
@@ -70,25 +76,24 @@ public class EventsApi {
         return ResponseEntity.created(URI.create(eventResource.getId().getHref())).body(eventResource);
     }
 
+    // tag::eventApiEvent[]
     @GetMapping("/{heldOn}/{name}")
     public EventResource event(
         @PathVariable @DateTimeFormat(iso = ISO.DATE)
         final LocalDate heldOn,
-        @PathVariable
-        final String name
+        @PathVariable final String name
     ) {
         return this.eventService
             .getEvent(heldOn, name)
             .map(eventResourceAssembler::toResource)
             .orElseThrow(NoSuchEventException::new);
     }
+    // end::eventApiEvent[]
 
     @GetMapping("/{heldOn}/{name}/registrations")
     public Resources<Registration> registrations(
-        @PathVariable @DateTimeFormat(iso = ISO.DATE)
-        final LocalDate heldOn,
-        @PathVariable
-        final String name
+        @PathVariable @DateTimeFormat(iso = ISO.DATE) final LocalDate heldOn,
+        @PathVariable final String name
     ) {
         final Event event = this.eventService
             .getEvent(heldOn, name)
@@ -101,16 +106,15 @@ public class EventsApi {
 
     @PostMapping("/{heldOn}/{name}/registrations")
     public HttpEntity<Registration> registrations(
-        @PathVariable @DateTimeFormat(iso = ISO.DATE)
-        final LocalDate heldOn,
-        @PathVariable
-        final String name,
-        @RequestBody
-        final Person person
+        @PathVariable @DateTimeFormat(iso = ISO.DATE) final LocalDate heldOn,
+        @PathVariable final String name,
+        @RequestBody final Person person
     ) {
         return new ResponseEntity<>(
             this.eventService.registerFor(new Event(heldOn, name), person),
             HttpStatus.CREATED
         );
     }
- }
+    // tag::eventApiEvent[]
+}
+// end::eventApiEvent[]

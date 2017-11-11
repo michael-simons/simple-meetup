@@ -37,8 +37,10 @@ import static org.mockito.Mockito.when;
 /**
  * @author Michael J. Simons, 2017-11-01
  */
-@RunWith(MockitoJUnitRunner.class)
+// tag::eventServiceSaveEvents[]
+@RunWith(MockitoJUnitRunner.class) // <1>
 public class EventServiceTest {
+    // end::eventServiceSaveEvents[]
 
     public static final LocalDate NOVEMBER_1_ST = LocalDate.of(2018, 11, 1);
 
@@ -48,18 +50,21 @@ public class EventServiceTest {
             Clock.fixed(Instant.parse("2018-01-01T08:00:00.00Z"), ZoneId.systemDefault()));
     }
 
-    @Mock
+    // tag::eventServiceSaveEvents[]
+    @Mock // <2>
     private EventRepository eventRepository;
 
     @Test
     public void shouldNotCreateDuplicateEvents() {
-        when(eventRepository.findOne(halloween().asExample())).thenReturn(Optional.of(halloween()));
+        when(eventRepository.findOne(halloween().asExample()))
+            .thenReturn(Optional.of(halloween())); // <3>
 
         final EventService eventService = new EventService(this.eventRepository);
 
         assertThatThrownBy(() -> eventService.createNewEvent(halloween()))
             .isInstanceOf(DuplicateEventException.class);
     }
+    // end::eventServiceSaveEvents[]
 
     @Test
     public void shouldCreateEvents() {
@@ -73,4 +78,7 @@ public class EventServiceTest {
 
         assertThat(newEvent).isEqualTo(test);
     }
+
+    // tag::eventServiceSaveEvents[]
 }
+// end::eventServiceSaveEvents[]

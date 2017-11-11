@@ -1,4 +1,4 @@
-= Test-driven Development mit Spring Boot 2: Keine Ausreden gegen Integrationstest
+= Domain- und Test-driven Development mit Spring Boot 2
 Michael Simons <michael.simons@innoq.com>
 :doctype: article
 :source-highlighter: coderay
@@ -163,7 +163,7 @@ Die Events kommen aber nicht aus dem luftleeren Raum. Sie werden in einer Datenb
 include::../main/java/ac/simons/tdd/domain/EventRepository.java[tags=eventRepositoryStructure,indent=0]
 ----
 
-In einer Spring-Boot-Anwendung, die den entsprechenden Spring-Data-Starter als Abhängigkeit deklariert, ist das alles, was Sie tun müssen, um ein Repository dieser Art zur Laufzeit zu erhalten. Dieses Repository müssen Sie nicht testen. In dieser Form gehe ich davon aus, dass das Spring-Data-Team den Code getestet hat, der zur Laufzeit die `save`-Methode implementiert. Was ist aber mit dem Domain-Service in <<EventService>>, der sicherstellt, dass keine doppelten Events gespeichert werden?
+In einer Spring-Boot-Anwendung, die den entsprechenden Spring-Data-Starter als Abhängigkeit deklariert, ist das alles, was Sie tun müssen, um ein Repository dieser Art zur Laufzeit zu erhalten. Dieses Repository müssen Sie nicht testen. In dieser Form gehe ich davon aus, dass das Spring-Data-Team den Code getestet hat, der zur Laufzeit die `save`-Methode implementiert. Was ist aber mit dem Domain-Service in <<EventService>>, der sicherstellt, dass keine doppelten Events gespeichert werden? Dieser Service nutzt das Repository und eine der zur Laufzeit bereitgestellten Query-Methoden:
 
 [source,java]
 [[EventService]]
@@ -171,6 +171,45 @@ In einer Spring-Boot-Anwendung, die den entsprechenden Spring-Data-Starter als A
 ----
 include::../main/java/ac/simons/tdd/domain/EventService.java[tags=eventServiceSaveEvents,indent=0]
 ----
+
+An dieser Stelle sind zwei Dinge zu testen: Funktioniert die Methode `asExample` auf der Domain-Klasse wie erwartet und reagiert der Service wie erwartet auf das Vorhandensein von Events. Um die Logik des Service zu testen, nutze ich einen Mock. Ein Mock ist ein Attrappe, ein Platzhalter der in Unit-Tests genutzt werden kann und so tut, als ob er notwendige Funktionalität implementiert. Spring Boot stellt Ihnen im entsprechenden Starter alle Werkzeuge zur Verfügung:
+
+[source,java]
+[[EventServiceTest]]
+.Test des Service
+----
+include::../test/java/ac/simons/tdd/domain/EventServiceTest.java[tags=eventServiceSaveEvents,indent=0]
+----
+<1> Instruiiert JUnit, die Tests mit Mockito auszuführen.
+<2> Das ist notwendig, damit automatisch "Attrappen" zur Verfügung stehen
+<3> Stellt das Szenario her, die Suche nach "Halloween" ergibt ein nicht leeres Ergebnis
+
+Spring ist unter anderem eine Implementierung eines "Context- and Dependency-Injection"-Containers. Die Kollaborateure des Services -- im Beispiel nur das Repository -- werden von außen hereingereicht. Althergebracht ging das über Attribute. Aber wie stellen Sie das in einem Test nach? Spring -- und andere Container -- können das mittlerweile problemlos über den Konstruktor. Nutzen Sie das. Es wird ihre Tests einfacher und stabiler machen.
+
+=== Gezielte Tests technischer Schichten
+
+Spring Boot stellt Ihnen unter dem Begriff "Test-Slices" eine Möglichkeit zur Verfügung, gezielt technische Schichten einer Anwendung im Kontext des laufenden Spring Containers zu testen. Technische Schichten sind zum Beispiel Datenbankzugriff oder der Weblayer. Für Ihren Tests hat das den großen Vorteil, dass er schlanker sein kann. Möchten Sie gezielt eine REST-API testen, können Sie oftmals auf eine echte Datenbank oder andere unterstützende Diense im Hintergrund verzichten.
+
+Betrachten Sie die Implementierung einer API im Listing <<EventsApi>>
+
+[source,java]
+[[EventsApi]]
+.Events API
+----
+include::../main/java/ac/simons/tdd/app/EventsApi.java[tags=eventApiEvent,indent=0]
+----
+
+An dieser Stelle ist es schwierig, ohne Spring-spezifische Annotationen auszukommen. Im Beispiel besagen sie, dass unter der URL `/api/events/2017-12-24/Weihnachten` ein Event mit seinen Eigenschaften abrufbar sein soll. Die API benötigt dazu den Event-Service. An dieser Stelle möchte ich sicherstellen, dass die Abbildung der Funktion auf URLs und die Serializierung der Event-Daten korrekt funktioniert. Es ist also weniger ein Unit-Tests der Komponenten `EventsApi` und `EventService` als vielmehr ein Test der Integration mit Spring. Spring Boot stellt Ihnen für diese Schicht `@WebMvcTest` zur Verfügung. Listing <<EventsApiTest>> zeigt die Verwendung:
+
+[source,java]
+[[EventsApi]]
+.Test der API
+----
+include::../test/java/ac/simons/tdd/app/EventsApiTest.java[tags=eventApiEvent,indent=0]
+----
+
+
+=== Integrationstests
 
 
 == Weitere Herausforderungen
@@ -182,9 +221,9 @@ include::../main/java/ac/simons/tdd/domain/EventService.java[tags=eventServiceSa
 
 == Just testing
 
-include::../../build/generated-api-doc/get-event/curl-request.adoc[]
-include::../../build/generated-api-doc/get-event/http-response.adoc[]
-include::../../build/generated-api-doc/get-event/response-fields.adoc[]
+include::../../build/generated-snippets/get-event/curl-request.adoc[]
+include::../../build/generated-snippets/get-event/http-response.adoc[]
+include::../../build/generated-snippets/get-event/response-fields.adoc[]
 
 == Über den Autor
 
