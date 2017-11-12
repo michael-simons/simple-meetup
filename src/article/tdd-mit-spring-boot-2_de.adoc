@@ -107,7 +107,7 @@ Die Fachlichkeit eignet sich außerdem sehr gut, zu zeigen, dass Tests auf Modul
 [[Event]]
 .Event.java
 ----
-include::../main/java/ac/simons/tdd/domain/Event.java[tags=eventStructure]
+include::../main/java/ac/simons/simplemeetup/domain/Event.java[tags=eventStructure]
 ----
 <1> Der Konstruktor überprüft alle geforderten Vorbedingungen. Client-Code kann kein ungültiges Event herstellen
 <2> Die Registrierung selber: Es ist nicht notwendig, Logik dieser Art über einen Service zu implementieren und das Event auf ein blutleeres Modell (anemic domain model) zu reduzieren.
@@ -124,9 +124,9 @@ Die Klasse `Event` wird in einem Domain-driven Design Ansatz als Aggregate-Root 
 [[EventTest-1]]
 .Unit Tests von Pre- und Postconditions
 ----
-include::../test/java/ac/simons/tdd/domain/EventTest.java[tags=unitTestExamplePre,indent=0]
+include::../test/java/ac/simons/simplemeetup/domain/EventTest.java[tags=unitTestExamplePre,indent=0]
 
-include::../test/java/ac/simons/tdd/domain/EventTest.java[tags=unitTestExamplePost,indent=0]
+include::../test/java/ac/simons/simplemeetup/domain/EventTest.java[tags=unitTestExamplePost,indent=0]
 ----
 <1> Signalisiert, dass diese Methode von JUnit als Testmethode ausgeführt werden soll
 <2> Hier sehen Sie eine AssertJ-Assertion. AssertJ bietet unter anderem eine schöne Möglichkeit an, zu testen, ob eine bestimmte Exception geworfen wurde oder nicht.
@@ -152,7 +152,7 @@ Die Events kommen aber nicht aus dem luftleeren Raum. Sie werden in einer Datenb
 [[SpringDataRepository]]
 .EventRepository.java
 ----
-include::../main/java/ac/simons/tdd/domain/EventRepository.java[tags=eventRepositoryStructure,indent=0]
+include::../main/java/ac/simons/simplemeetup/domain/EventRepository.java[tags=eventRepositoryStructure,indent=0]
 ----
 
 In einer Spring-Boot-Anwendung, die den entsprechenden Spring-Data-Starter als Abhängigkeit deklariert, ist das alles, was Sie tun müssen, um ein Repository dieser Art zur Laufzeit zu erhalten. Dieses Repository müssen Sie nicht testen. In dieser Form gehe ich davon aus, dass das Spring-Data-Team den Code getestet hat, der zur Laufzeit die `save`-Methode implementiert. Was ist aber mit dem Domain-Service in <<EventService>>, der sicherstellt, dass keine doppelten Events gespeichert werden? Dieser Service nutzt das Repository und eine der zur Laufzeit bereitgestellten Query-Methoden:
@@ -161,7 +161,7 @@ In einer Spring-Boot-Anwendung, die den entsprechenden Spring-Data-Starter als A
 [[EventService]]
 .Speichern von Events
 ----
-include::../main/java/ac/simons/tdd/domain/EventService.java[tags=eventServiceSaveEvents,indent=0]
+include::../main/java/ac/simons/simplemeetup/domain/EventService.java[tags=eventServiceSaveEvents,indent=0]
 ----
 
 An dieser Stelle sind zwei Dinge zu testen: Funktioniert die Methode `asExample` auf der Domain-Klasse wie erwartet und reagiert der Service wie erwartet auf das Vorhandensein von Events. Um die Logik des Service zu testen, nutze ich einen Mock. Ein Mock ist ein Attrappe, ein Platzhalter der in Unit-Tests genutzt werden kann und so tut, als ob er notwendige Funktionalität implementiert. Spring Boot stellt Ihnen im entsprechenden Starter alle Werkzeuge zur Verfügung:
@@ -170,7 +170,7 @@ An dieser Stelle sind zwei Dinge zu testen: Funktioniert die Methode `asExample`
 [[EventServiceTest]]
 .Test des Service
 ----
-include::../test/java/ac/simons/tdd/domain/EventServiceTest.java[tags=eventServiceSaveEvents,indent=0]
+include::../test/java/ac/simons/simplemeetup/domain/EventServiceTest.java[tags=eventServiceSaveEvents,indent=0]
 ----
 <1> Instruiiert JUnit, die Tests mit Mockito auszuführen.
 <2> Das ist notwendig, damit automatisch "Attrappen" zur Verfügung stehen
@@ -186,7 +186,7 @@ Spring Boot stellt Ihnen unter dem Begriff "Test-Slices" eine Möglichkeit zur V
 [[EventsApi]]
 .Events API
 ----
-include::../main/java/ac/simons/tdd/app/EventsApi.java[tags=eventApiEvent,indent=0]
+include::../main/java/ac/simons/simplemeetup/app/EventsApi.java[tags=eventApiEvent,indent=0]
 ----
 
 An dieser Stelle ist es schwierig, ohne Spring-spezifische Annotationen auszukommen. Im Beispiel besagen sie, dass unter der URL `/api/events/2017-12-24/Weihnachten` ein Event mit seinen Eigenschaften abrufbar sein soll. Die API benötigt dazu den Event-Service. An dieser Stelle möchte ich sicherstellen, dass die Abbildung der Funktion auf URLs und die Serializierung der Event-Daten korrekt funktioniert. Es ist also weniger ein Unit-Tests der Komponenten `EventsApi` und `EventService` als vielmehr ein Test der Integration mit Spring. Spring Boot stellt Ihnen für diese Schicht `@WebMvcTest` zur Verfügung. <<EventsApiTest>> zeigt die Verwendung:
@@ -195,7 +195,7 @@ An dieser Stelle ist es schwierig, ohne Spring-spezifische Annotationen auszukom
 [[EventsApiTest]]
 .Test der API
 ----
-include::../test/java/ac/simons/tdd/app/EventsApiTest.java[tags=eventApiEvent,indent=0]
+include::../test/java/ac/simons/simplemeetup/app/EventsApiTest.java[tags=eventApiEvent,indent=0]
 ----
 <1> Hier wird ein spezieller Runner benötigt, der den Spring-Kontext startet
 <2> Damit der Test schneller startet, soll er nur die in <<EventsApi>> gezeigte Klasse beinhalten
@@ -219,7 +219,7 @@ Der erste "wirkliche" Integrationstests im Beispiel wird mit der Deklaration ein
 [[EventRepositoryQuery]]
 .Events API
 ----
-include::../main/java/ac/simons/tdd/domain/EventRepository.java[tags=eventRepositoryITNeeded,indent=0]
+include::../main/java/ac/simons/simplemeetup/domain/EventRepository.java[tags=eventRepositoryITNeeded,indent=0]
 ----
 
 Es ist sinnvoll, diese echten Integrationstests von Unittests zu trennen, zum Beispiel erkennbar am Namen, besser noch durch separate Sourcen. Mit Gradle und dem eingebauten JUnit-Plugin ist das für eine Spring-Boot-Anwendung schnell und nachvollziebar gemacht, wie <<GradleIntegrationTest>> zeigt.
@@ -240,7 +240,7 @@ Integrationstests gegen Datenbanken können heikel sein. Schwergewichtige Datenb
 [[EventRepositoryIT]]
 .Integrationstests gegenüber einer Datenbank
 ----
-include::../integrationTest/java/ac/simons/tdd/domain/EventRepositoryIT.java[tags=eventRepositoryIT,indent=0]
+include::../integrationTest/java/ac/simons/simplemeetup/domain/EventRepositoryIT.java[tags=eventRepositoryIT,indent=0]
 ----
 
 Durch den Einsatz einer klassenweiten JUnit-Regel, der https://github.com/palantir/docker-compose-rule[Docker-Compose-Rule] kann Docker zusammen mit werden Docker-Compose genutzt werden, um die benötigten, externen Systeme zu starten. Dieses System kann alle notwendigen Daten enthalten oder vom Spring-Kontext noch initialisiert werden.
