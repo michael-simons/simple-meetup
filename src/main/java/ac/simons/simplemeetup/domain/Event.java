@@ -73,7 +73,7 @@ public class Event implements Serializable {
     }
 
     static final ThreadLocal<Clock> CLOCK =
-        ThreadLocal.withInitial(() -> Clock.systemDefaultZone());
+        ThreadLocal.withInitial(Clock::systemDefaultZone);
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

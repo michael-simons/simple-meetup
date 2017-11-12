@@ -18,6 +18,7 @@ package ac.simons.simplemeetup.domain;
 import ac.simons.simplemeetup.domain.EventTest.Logic;
 import ac.simons.simplemeetup.domain.EventTest.Postconditions;
 import ac.simons.simplemeetup.domain.EventTest.Preconditions;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -117,6 +118,12 @@ public class EventTest extends Suite {
             );
         }
     }
+
+    @AfterClass
+    public static void resetEventClock() {
+        Event.CLOCK.set(Clock.systemDefaultZone());
+    }
+
     // tag::suiteExample[]
 }
 // end::suiteExample[]
