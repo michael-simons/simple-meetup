@@ -1,5 +1,7 @@
 = Simple Meetup
 
+image:https://travis-ci.org/michael-simons/simple-meetup.svg?branch=master["Build Status", link="https://travis-ci.org/michael-simons/simple-meetup"]
+
 A sample project to explore
 
 * Gradle
@@ -7,7 +9,7 @@ A sample project to explore
 * Test-driven Development
 * Living documentation
 
-based on a Spring Boot application-
+based on a Spring Boot application.
 
 == Domain
 
