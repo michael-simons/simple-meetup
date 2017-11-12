@@ -4,7 +4,6 @@ import java.nio.file.Paths
 buildscript {
     ext {
         springBootVersion = "2.0.0.M6"
-        generatedApiDoc = file(Paths.get(project.buildDir.toString(), "generated-api-doc"))
     }
     repositories {
         mavenCentral()
@@ -71,10 +70,6 @@ dependencies {
 }
 // end::test-dependencies[]
 
-test {
-    outputs.dir generatedApiDoc
-}
-
 // tag::integration-test-setup[]
 sourceSets { // <1>
     integrationTest {
@@ -135,9 +130,8 @@ tasks.withType(AsciidoctorTask) { docTask ->
     attributes \
           'sourceDir': "$projectDir/src/"
 
-    sourceDir = file("src/article")
-    inputs.dir generatedApiDoc
-    outputDir = file(Paths.get(project.buildDir.toString(), "article"))
+    sourceDir = file("src/articles")
+    outputDir = file(Paths.get(project.buildDir.toString(), "articles"))
     resources {
         from(sourceDir) {
             include '*.png'
@@ -177,13 +171,13 @@ task convertToDocx (
         group: 'docToolchain',
         type: Exec
 ) {
-    workingDir 'build/article/docbook'
+    workingDir 'build/articles/docbook'
     executable = "pandoc"
-    new File('build/article/docx/').mkdirs()
+    new File('build/articles/docx/').mkdirs()
     args = ['-r','docbook',
             '-t','docx',
-            '-o','../docx/tdd-mit-spring-boot-2_de.docx',
-            'tdd-mit-spring-boot-2_de.xml']
+            '-o','../docx/ddd-und-tdd-mit-spring-boot-2_de.docx',
+            'ddd-und-tdd-mit-spring-boot-2_de.xml']
 }
 
 defaultTasks "clean", "build", "generateHTML", "generatePDF"
