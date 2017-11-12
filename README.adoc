@@ -1,0 +1,14 @@
+= Simple Meetup
+
+A sample project to explore
+
+* Gradle
+* Domain-driven Design
+* Test-driven Development
+* Living documentation
+
+based on a Spring Boot application-
+
+== Domain
+
+The application should provide a REST-API for managing events and registering for those events. Events must be unique by name on a given day. They can be open and close and have a number of seats available. The number of free seats must be computed by through the current number of registrations. A person can register exactly one time with a given email address.
