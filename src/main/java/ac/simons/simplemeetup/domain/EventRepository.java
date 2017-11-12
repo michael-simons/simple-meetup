@@ -16,28 +16,28 @@
 package ac.simons.simplemeetup.domain;
 
 import org.springframework.data.jpa.repository.Query;
-// tag::eventRepositoryStructure[]
+// tag::event-repository[]
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.QueryByExampleExecutor;
 
-// end::eventRepositoryStructure[]
+// end::event-repository[]
 import java.util.List;
 
 /**
  * @author Michael J. Simons, 2017-10-31
  */
-// tag::eventRepositoryStructure[]
+// tag::event-repository[]
 interface EventRepository extends Repository<Event, Integer>, QueryByExampleExecutor<Event> {
     Event save(Event newEvent);
-    // end::eventRepositoryStructure[]
-    // tag::eventRepositoryITNeeded[]
+    // end::event-repository[]
+    // tag::event-repository-custom-query[]
     @Query("Select e from Event e "
         + " where e.status = 'open' "
         + "   and e.heldOn > current_date"
         + " order by e.heldOn asc"
     )
     List<Event> findAllOpenEvents();
-    // end::eventRepositoryITNeeded[]
-    // tag::eventRepositoryStructure[]
+    // end::event-repository-custom-query[]
+    // tag::event-repository[]
 }
-// end::eventRepositoryStructure[]
+// end::event-repository[]

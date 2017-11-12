@@ -57,10 +57,10 @@ import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
 @JsonAutoDetect(fieldVisibility = NONE, getterVisibility = NONE, isGetterVisibility = NONE)
 @Getter
 @SuppressWarnings({"checkstyle:DesignForExtension"})
-// tag::eventStructure[]
+// tag::event-entity[]
 public class Event implements Serializable {
 
-    // end::eventStructure[]
+    // end::event-entity[]
     public enum Status {
 
         open, closed
@@ -75,33 +75,33 @@ public class Event implements Serializable {
 
     @Column(name = "held_on", nullable = false)
     @JsonProperty
-    // tag::eventStructure[]
+    // tag::event-entity[]
     private LocalDate heldOn;
 
-    // end::eventStructure[]
+    // end::event-entity[]
     @Column(length = 512, nullable = false)
     @JsonProperty
-    // tag::eventStructure[]
+    // tag::event-entity[]
     private String name;
 
-    // end::eventStructure[]
+    // end::event-entity[]
     @Column(name = "number_of_seats", nullable = false)
-    // tag::eventStructure[]
+    // tag::event-entity[]
     private Integer numberOfSeats;
 
-    // end::eventStructure[]
+    // end::event-entity[]
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    // tag::eventStructure[]
+    // tag::event-entity[]
     private Status status;
 
-    // end::eventStructure[]
+    // end::event-entity[]
     @ElementCollection
     @CollectionTable(name = "registrations", joinColumns = @JoinColumn(name = "event_id"))
-    // tag::eventStructure[]
+    // tag::event-entity[]
     private List<Registration> registrations = new ArrayList<>();
 
-    // end::eventStructure[]
+    // end::event-entity[]
     Event() {
     }
 
@@ -110,7 +110,7 @@ public class Event implements Serializable {
         this(heldOn, name, 20);
     }
 
-    // tag::eventStructure[]
+    // tag::event-entity[]
     public Event(final LocalDate heldOn, final String name, final Integer numberOfSeats) { // <1>
         if (heldOn == null || heldOn.isBefore(LocalDate.now(CLOCK.get()))) {
             throw new IllegalArgumentException("Event requires a date in the future.");
@@ -126,7 +126,7 @@ public class Event implements Serializable {
         this.setNumberOfSeats(numberOfSeats);
     }
 
-    // end::eventStructure[]
+    // end::event-entity[]
 
     public Integer getNumberOfSeats() {
         return numberOfSeats;
@@ -169,13 +169,13 @@ public class Event implements Serializable {
         return this.numberOfSeats - this.registrations.size();
     }
 
-    // tag::eventStructure[]
+    // tag::event-entity[]
     public Registration register(final Person person) { // <2>
-        // end::eventStructure[]
+        // end::event-entity[]
         if (isClosed()) {
             throw new IllegalStateException("Cannot register for a closed event.");
         }
-        // tag::eventStructure[]
+        // tag::event-entity[]
         if (isPastEvent()) {
             throw new IllegalStateException("Cannot register for a past event.");
         }
@@ -184,16 +184,16 @@ public class Event implements Serializable {
         }
 
         // Weitere Bedingungen ausgeblendet
-        // end::eventStructure[]
+        // end::event-entity[]
         final Registration registration = new Registration(person);
         if (this.registrations.contains(registration)) {
             throw new IllegalArgumentException("Already registered with email-addess" + person.getEmail());
         }
-        // tag::eventStructure[]
+        // tag::event-entity[]
         this.registrations.add(registration);
         return registration;
     }
-    // end::eventStructure[]
+    // end::event-entity[]
 
     Example<Event> asExample() {
         return Example.of(this, ExampleMatcher.matching()
@@ -229,6 +229,6 @@ public class Event implements Serializable {
             + ", status=" + status
             + '}';
     }
-// tag::eventStructure[]
+// tag::event-entity[]
 }
-// end::eventStructure[]
+// end::event-entity[]

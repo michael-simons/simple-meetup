@@ -77,10 +77,10 @@ Spring-Boot-Anwendungen sind ganz normale Java-Anwendungen, die in der Regel mit
 
 Spring Boot arbeitet mit sogenannten Startern. Diese Starter stellen Ihnen alle für ein gegebenes Thema notwendigen Abhängigkeiten zur Verfügung. So einen Starter gibt es auch für das Thema Testen.
 
-Die Deklaration der Abhängigkeit in einem Gradle-Build-File (`build.gradle`) ist sehr einfach, wie <<TestDependencies>> zeigt.
+Die Deklaration der Abhängigkeit in einem Gradle-Build-File (`build.gradle`) ist sehr einfach, wie <<test-dependencies>> zeigt.
 
 [source,groovy]
-[[TestDependencies]]
+[[test-dependencies]]
 .build-gradle
 ----
 include::../../build.gradle[tags=test-dependencies]
@@ -101,13 +101,13 @@ Gestestet werden soll ein Service, der Events und dazugehörige Registrierungen 
 
 Das Thema könnte Teil einer größeren Anwendung sein und als sogenannter Bounded-Context, einem Begriff aus dem Domain-Driven Design, identifiziert worden sein. Sie finden den vollständigen Quelltext dieses Artikels auf https://github.com/michael-simons/tdd-mit-spring-boot-2[GitHub].
 
-Die Fachlichkeit eignet sich außerdem sehr gut, zu zeigen, dass Tests auf Modulebene nicht nur sehr einfach zu realisieren, sondern auch oftmals die wichtigsten Aspekte Ihrer Domain bereits erfassen. Betrachten Sie die Klassen `Event` in <<Event>>.
+Die Fachlichkeit eignet sich außerdem sehr gut, zu zeigen, dass Tests auf Modulebene nicht nur sehr einfach zu realisieren, sondern auch oftmals die wichtigsten Aspekte Ihrer Domain bereits erfassen. Betrachten Sie die Klasse `Event` in <<event-entity>>.
 
 [source,java]
-[[Event]]
+[[event-entity]]
 .Event.java
 ----
-include::../main/java/ac/simons/simplemeetup/domain/Event.java[tags=eventStructure]
+include::../main/java/ac/simons/simplemeetup/domain/Event.java[tags=event-entity]
 ----
 <1> Der Konstruktor überprüft alle geforderten Vorbedingungen. Client-Code kann kein ungültiges Event herstellen
 <2> Die Registrierung selber: Es ist nicht notwendig, Logik dieser Art über einen Service zu implementieren und das Event auf ein blutleeres Modell (anemic domain model) zu reduzieren.
@@ -118,20 +118,19 @@ Ansonsten ist die Klasse frei von Spring typischen Annotationen. Schauen Sie in 
 
 === Auf Modul-(Unit)-Ebene
 
-Die Klasse `Event` wird in einem Domain-driven Design Ansatz als Aggregate-Root bezeichnet, als Kern Ihrer Domain. Sie ist Kernbestandteil dessen, was Sie mit Ihrer Software erreichen möchten. Mit den eingangs erwähnten Starter erhalten Sie alle Bausteine, um diese Klasse einem Unit-Test zu unterziehen. Testen Sie ganz klassisch Pre- und Postconditions, wie <<EventTest-1>> zeigt.
+Die Klasse `Event` wird in einem Domain-driven Design Ansatz als Aggregate-Root bezeichnet, als Kern Ihrer Domain. Sie ist Kernbestandteil dessen, was Sie mit Ihrer Software erreichen möchten. Mit den eingangs erwähnten Starter erhalten Sie alle Bausteine, um diese Klasse einem Unit-Test zu unterziehen. Testen Sie ganz klassisch Pre- und Postconditions, wie <<event-entity-tests>> zeigt.
 
 [source,java]
-[[EventTest-1]]
+[[event-entity-tests]]
 .Unit Tests von Pre- und Postconditions
 ----
-include::../test/java/ac/simons/simplemeetup/domain/EventTest.java[tags=unitTestExamplePre,indent=0]
+include::../test/java/ac/simons/simplemeetup/domain/EventTest.java[tags=event-entity-tests,indent=0]
 
-include::../test/java/ac/simons/simplemeetup/domain/EventTest.java[tags=unitTestExamplePost,indent=0]
+include::../test/java/ac/simons/simplemeetup/domain/EventTest.java[tags=event-entity-tests,indent=0]
 ----
 <1> Signalisiert, dass diese Methode von JUnit als Testmethode ausgeführt werden soll
 <2> Hier sehen Sie eine AssertJ-Assertion. AssertJ bietet unter anderem eine schöne Möglichkeit an, zu testen, ob eine bestimmte Exception geworfen wurde oder nicht.
 <3> Weiterhin ist es möglich, Assertions aufeinander aufzubauen: Wenn die Exception dem erwarteten Typen entsprach, wird zusätzlich die entsprechende Mitteilung überprüft.
-
 
 Der Test der Logik ist ähnlich aufgebaut. Der Test ist klar strukturiert und gut lesbar, insbesondere weil die zu testende Klasse die Domain gut wiederspiegelt. Mit wenig Aufwand haben Sie den Kern Ihres Geschäftes fast vollständig getestet. Sie haben fast keinen Aufwand in das Aufsetzen einer Testumgebung oder die Bereitstellung von Kollaborateuren der Testklasse stecken mmüssen. Der Test ist also sehr günstig zu haben. Nutzen Sie diese Tatsache aus.
 
@@ -146,31 +145,31 @@ Warum also nicht direkt in diesem Artikel JUnit 5 nutzen? Ich sprach eingangs da
 
 === Fließende Grenzen
 
-Die Events kommen aber nicht aus dem luftleeren Raum. Sie werden in einer Datenbank gespeichert und es muss eine Schnittstelle geben, sie abzurufen. Ich empfehle für Datenbankzugriff vielfältiger Art eines der vielen http://projects.spring.io/spring-data/[Spring-Data-Module]. Spring Data implementiert für Domain-Klassen das Repository-Pattern. Ein Repository dient als Schnittstelle zwischen der Domainschicht und dem technischen Zugriff auf Daten. Nach außen stellt es sich oftmals als eine Art Liste von Domainobjekten da. Spring Data arbeitet dabei deklarativ. <<SpringDataRepository>> zeigt den notwendigen Code für ein Repository von Events.
+Die Events kommen aber nicht aus dem luftleeren Raum. Sie werden in einer Datenbank gespeichert und es muss eine Schnittstelle geben, sie abzurufen. Ich empfehle für Datenbankzugriff vielfältiger Art eines der vielen http://projects.spring.io/spring-data/[Spring-Data-Module]. Spring Data implementiert für Domain-Klassen das Repository-Pattern. Ein Repository dient als Schnittstelle zwischen der Domainschicht und dem technischen Zugriff auf Daten. Nach außen stellt es sich oftmals als eine Art Liste von Domainobjekten da. Spring Data arbeitet dabei deklarativ. <<event-repository>> zeigt den notwendigen Code für ein Repository von Events.
 
 [source,java]
-[[SpringDataRepository]]
+[[event-repository]]
 .EventRepository.java
 ----
-include::../main/java/ac/simons/simplemeetup/domain/EventRepository.java[tags=eventRepositoryStructure,indent=0]
+include::../main/java/ac/simons/simplemeetup/domain/EventRepository.java[tags=event-repository,indent=0]
 ----
 
-In einer Spring-Boot-Anwendung, die den entsprechenden Spring-Data-Starter als Abhängigkeit deklariert, ist das alles, was Sie tun müssen, um ein Repository dieser Art zur Laufzeit zu erhalten. Dieses Repository müssen Sie nicht testen. In dieser Form gehe ich davon aus, dass das Spring-Data-Team den Code getestet hat, der zur Laufzeit die `save`-Methode implementiert. Was ist aber mit dem Domain-Service in <<EventService>>, der sicherstellt, dass keine doppelten Events gespeichert werden? Dieser Service nutzt das Repository und eine der zur Laufzeit bereitgestellten Query-Methoden:
+In einer Spring-Boot-Anwendung, die den entsprechenden Spring-Data-Starter als Abhängigkeit deklariert, ist das alles, was Sie tun müssen, um ein Repository dieser Art zur Laufzeit zu erhalten. Dieses Repository müssen Sie nicht testen. In dieser Form gehe ich davon aus, dass das Spring-Data-Team den Code getestet hat, der zur Laufzeit die `save`-Methode implementiert. Was ist aber mit dem Domain-Service in <<event-repository-usage>>, der sicherstellt, dass keine doppelten Events gespeichert werden? Dieser Service nutzt das Repository und eine der zur Laufzeit bereitgestellten Query-Methoden:
 
 [source,java]
-[[EventService]]
+[[event-repository-usage]]
 .Speichern von Events
 ----
-include::../main/java/ac/simons/simplemeetup/domain/EventService.java[tags=eventServiceSaveEvents,indent=0]
+include::../main/java/ac/simons/simplemeetup/domain/EventService.java[tags=event-repository-usage,indent=0]
 ----
 
 An dieser Stelle sind zwei Dinge zu testen: Funktioniert die Methode `asExample` auf der Domain-Klasse wie erwartet und reagiert der Service wie erwartet auf das Vorhandensein von Events. Um die Logik des Service zu testen, nutze ich einen Mock. Ein Mock ist ein Attrappe, ein Platzhalter der in Unit-Tests genutzt werden kann und so tut, als ob er notwendige Funktionalität implementiert. Spring Boot stellt Ihnen im entsprechenden Starter alle Werkzeuge zur Verfügung:
 
 [source,java]
-[[EventServiceTest]]
+[[event-repository-usage-test]]
 .Test des Service
 ----
-include::../test/java/ac/simons/simplemeetup/domain/EventServiceTest.java[tags=eventServiceSaveEvents,indent=0]
+include::../test/java/ac/simons/simplemeetup/domain/EventServiceTest.java[tags=event-repository-usage-test,indent=0]
 ----
 <1> Instruiiert JUnit, die Tests mit Mockito auszuführen.
 <2> Das ist notwendig, damit automatisch "Attrappen" zur Verfügung stehen
@@ -180,22 +179,22 @@ Spring ist unter anderem eine Implementierung eines "Context- and Dependency-Inj
 
 === Gezielte Tests technischer Schichten
 
-Spring Boot stellt Ihnen unter dem Begriff "Test-Slices" eine Möglichkeit zur Verfügung, gezielt technische Schichten einer Anwendung im Kontext des laufenden Spring Containers zu testen. Technische Schichten sind zum Beispiel Datenbankzugriff oder der Weblayer. Für Ihren Tests hat das den großen Vorteil, dass er schlanker sein kann. Möchten Sie gezielt eine REST-API testen, können Sie oftmals auf eine echte Datenbank oder andere unterstützende Diense im Hintergrund verzichten. Gegeben sei die API in <<EventsApi>>.
+Spring Boot stellt Ihnen unter dem Begriff "Test-Slices" eine Möglichkeit zur Verfügung, gezielt technische Schichten einer Anwendung im Kontext des laufenden Spring Containers zu testen. Technische Schichten sind zum Beispiel Datenbankzugriff oder der Weblayer. Für Ihren Tests hat das den großen Vorteil, dass er schlanker sein kann. Möchten Sie gezielt eine REST-API testen, können Sie oftmals auf eine echte Datenbank oder andere unterstützende Diense im Hintergrund verzichten. Gegeben sei die API in <<domain-usage-single-event>>.
 
 [source,java]
-[[EventsApi]]
+[[domain-usage-single-event]]
 .Events API
 ----
-include::../main/java/ac/simons/simplemeetup/app/EventsApi.java[tags=eventApiEvent,indent=0]
+include::../main/java/ac/simons/simplemeetup/app/EventsApi.java[tags=domain-usage-single-event,indent=0]
 ----
 
-An dieser Stelle ist es schwierig, ohne Spring-spezifische Annotationen auszukommen. Im Beispiel besagen sie, dass unter der URL `/api/events/2017-12-24/Weihnachten` ein Event mit seinen Eigenschaften abrufbar sein soll. Die API benötigt dazu den Event-Service. An dieser Stelle möchte ich sicherstellen, dass die Abbildung der Funktion auf URLs und die Serializierung der Event-Daten korrekt funktioniert. Es ist also weniger ein Unit-Tests der Komponenten `EventsApi` und `EventService` als vielmehr ein Test der Integration mit Spring. Spring Boot stellt Ihnen für diese Schicht `@WebMvcTest` zur Verfügung. <<EventsApiTest>> zeigt die Verwendung:
+An dieser Stelle ist es schwierig, ohne Spring-spezifische Annotationen auszukommen. Im Beispiel besagen sie, dass unter der URL `/api/events/2017-12-24/Weihnachten` ein Event mit seinen Eigenschaften abrufbar sein soll. Die API benötigt dazu den Event-Service. An dieser Stelle möchte ich sicherstellen, dass die Abbildung der Funktion auf URLs und die Serializierung der Event-Daten korrekt funktioniert. Es ist also weniger ein Unit-Tests der Komponenten `EventsApi` und `EventService` als vielmehr ein Test der Integration mit Spring. Spring Boot stellt Ihnen für diese Schicht `@WebMvcTest` zur Verfügung. <<domain-usage-single-event-test>> zeigt die Verwendung:
 
 [source,java]
-[[EventsApiTest]]
+[[domain-usage-single-event-test]]
 .Test der API
 ----
-include::../test/java/ac/simons/simplemeetup/app/EventsApiTest.java[tags=eventApiEvent,indent=0]
+include::../test/java/ac/simons/simplemeetup/app/EventsApiTest.java[tags=domain-usage-single-event-test,indent=0]
 ----
 <1> Hier wird ein spezieller Runner benötigt, der den Spring-Kontext startet
 <2> Damit der Test schneller startet, soll er nur die in <<EventsApi>> gezeigte Klasse beinhalten
@@ -204,7 +203,7 @@ include::../test/java/ac/simons/simplemeetup/app/EventsApiTest.java[tags=eventAp
 <5> Ausdruck des erwarteten Ergebnis
 <6> Ausdruck einer weiterten Erwartung: Es wird ein JSON-Dokument mit den Feldern `heldOn`, `name` und so weiter erwartet
 
-Der Test in <<EventsApiTest>> ist durchaus komplex: Es wird ein Spring-Kontext und das Web-Framework gestartet; dennoch ist der Test lesbar und die Erwartungen sind klar erkennbar. Durch die Integration mit https://projects.spring.io/spring-restdocs/[Spring REST Docs] generiert er darüber hinaus eine Dokumentation der API, die nicht nur dynamisch ist, sondern aktiver Teil des Tests: Fallen die hier beschriebenen Felder auf einmal weg, bricht der Tests. Die Dokumentation kann in verschiedenen Formaten generiert werden. Das Beispielprojekt nutzt das AsciiDoc-Format, der Auszug in <<GetEventsResponseFields>> ist Teil des Builds.
+Der Test in <<domain-usage-single-event-test>> ist durchaus komplex: Es wird ein Spring-Kontext und das Web-Framework gestartet; dennoch ist der Test lesbar und die Erwartungen sind klar erkennbar. Durch die Integration mit https://projects.spring.io/spring-restdocs/[Spring REST Docs] generiert er darüber hinaus eine Dokumentation der API, die nicht nur dynamisch ist, sondern aktiver Teil des Tests: Fallen die hier beschriebenen Felder auf einmal weg, bricht der Tests. Die Dokumentation kann in verschiedenen Formaten generiert werden. Das Beispielprojekt nutzt das AsciiDoc-Format, der Auszug in <<GetEventsResponseFields>> ist Teil des Builds.
 
 [table]
 [[GetEventsResponseFields]]
@@ -213,19 +212,19 @@ include::../../build/generated-snippets/get-event/response-fields.adoc[]
 
 === Integrationstests
 
-Der erste "wirkliche" Integrationstests im Beispiel wird mit der Deklaration einer Datenbankabfrage in <<EventRepositoryQuery>> benötigt. Diese Abfrage wurde zwar in JPQL, der _Java Persistence Query Language_ aufgeschrieben und sollte damit einigermaßen portabel sein, aber Sie müssen trotzdem sicherstellen, dass sich keine Tippfehler eingeschlichen haben oder die geplante Zieldatenbank Ihre Abfrage umsetzen kann.
+Der erste "wirkliche" Integrationstests im Beispiel wird mit der Deklaration einer Datenbankabfrage in <<event-repository-custom-query>> benötigt. Diese Abfrage wurde zwar in JPQL, der _Java Persistence Query Language_ aufgeschrieben und sollte damit einigermaßen portabel sein, aber Sie müssen trotzdem sicherstellen, dass sich keine Tippfehler eingeschlichen haben oder die geplante Zieldatenbank Ihre Abfrage umsetzen kann.
 
 [source,java]
-[[EventRepositoryQuery]]
+[[event-repository-custom-query]]
 .Events API
 ----
-include::../main/java/ac/simons/simplemeetup/domain/EventRepository.java[tags=eventRepositoryITNeeded,indent=0]
+include::../main/java/ac/simons/simplemeetup/domain/EventRepository.java[tags=event-repository-custom-query,indent=0]
 ----
 
-Es ist sinnvoll, diese echten Integrationstests von Unittests zu trennen, zum Beispiel erkennbar am Namen, besser noch durch separate Sourcen. Mit Gradle und dem eingebauten JUnit-Plugin ist das für eine Spring-Boot-Anwendung schnell und nachvollziebar gemacht, wie <<GradleIntegrationTest>> zeigt.
+Es ist sinnvoll, diese echten Integrationstests von Unittests zu trennen, zum Beispiel erkennbar am Namen, besser noch durch separate Sourcen. Mit Gradle und dem eingebauten JUnit-Plugin ist das für eine Spring-Boot-Anwendung schnell und nachvollziebar gemacht, wie <<integration-test-setup>> zeigt.
 
 [source,groovy]
-[[GradleIntegrationTest]]
+[[integration-test-setup]]
 .Separate Quellen für Integrationstests mit Gradle
 ----
 include::../../build.gradle[tags=integration-test-setup]
@@ -234,18 +233,18 @@ include::../../build.gradle[tags=integration-test-setup]
 <2> Definition eines Tasks, der vom Test-Task erbent, aber auf anderen Quellen arbeitet
 <3> Aktivierung eines Spring-Profiles, um passende Konfigurationseigenschaften zu aktivieren
 
-Integrationstests gegen Datenbanken können heikel sein. Schwergewichtige Datenbanken wie eine Oracle-Datenbank nur für einen Tests zu starten, kann dauern. Gegen In-Memory-Datenbanken zu testen bildet nicht die Realität ab. Eine Alternative ist die Generierung unterschiedlicher Schemas für Tests zwecke. Das Beispielprojekt des Artikels geht den konsequenten Weg und startet die Zieldatenbank, eine PostgreSQL-Instanz, während der Integrationstests per https://www.docker.com[Docker]. Die Datenbank wird mit den Mitteln von Spring-Boot initialisiert und der vollständige Test ergibt sich in <<EventRepositoryIT>>.
+Integrationstests gegen Datenbanken können heikel sein. Schwergewichtige Datenbanken wie eine Oracle-Datenbank nur für einen Tests zu starten, kann dauern. Gegen In-Memory-Datenbanken zu testen bildet nicht die Realität ab. Eine Alternative ist die Generierung unterschiedlicher Schemas für Tests zwecke. Das Beispielprojekt des Artikels geht den konsequenten Weg und startet die Zieldatenbank, eine PostgreSQL-Instanz, während der Integrationstests per https://www.docker.com[Docker]. Die Datenbank wird mit den Mitteln von Spring-Boot initialisiert und der vollständige Test ergibt sich in <<event-repository-custom-query-test>>.
 
 [source,java]
-[[EventRepositoryIT]]
+[[event-repository-custom-query-test]]
 .Integrationstests gegenüber einer Datenbank
 ----
-include::../integrationTest/java/ac/simons/simplemeetup/domain/EventRepositoryIT.java[tags=eventRepositoryIT,indent=0]
+include::../integrationTest/java/ac/simons/simplemeetup/domain/EventRepositoryIT.java[tags=event-repository-custom-query-test,indent=0]
 ----
 
 Durch den Einsatz einer klassenweiten JUnit-Regel, der https://github.com/palantir/docker-compose-rule[Docker-Compose-Rule] kann Docker zusammen mit werden Docker-Compose genutzt werden, um die benötigten, externen Systeme zu starten. Dieses System kann alle notwendigen Daten enthalten oder vom Spring-Kontext noch initialisiert werden.
 
-In <<EventRepositoryIT>> wird der Test-Slice `@DataJpaTest` benutzt, der die Datenbankschicht startet. Möchten Sie auf Funktionalitäten Ihrer neuen Anwendung von externen System zugreifen, so nutzen Sie `@SpringBootTest`. Damit fahren Sie die Spring-Boot-Anwendung vollständig während eines Tests hoch.
+In <<event-repository-custom-query-test>> wird der Test-Slice `@DataJpaTest` benutzt, der die Datenbankschicht startet. Möchten Sie auf Funktionalitäten Ihrer neuen Anwendung von externen System zugreifen, so nutzen Sie `@SpringBootTest`. Damit fahren Sie die Spring-Boot-Anwendung vollständig während eines Tests hoch.
 
 === Überprüfung der Testabdeckung
 
@@ -253,13 +252,13 @@ Als Testabdeckung wird das Verhältnis der getroffenen Aussagen eines Tests gege
 
 Betrachten Sie lieber gültige Eingabebereiche für Module und Grenzfälle. Nehmen Sie Daten, die zu Fehlern geführt haben, in Ihre Tests auf. Um die Qualität ihrer Tests selber zu verbessern kann "Mutationstesting" sinnvoll sein. Dabei wird während der Ausführung von Tests der zu testende Code mutiert, so dass es zu Fehlern kommt. Werden diese Fehler von Ihren Tests nicht erkannt, müssen die Testfälle anders gewählt werden.
 
-Die Veränderung der Testabdeckung, insbesondere nach unten, kann dennoch eine Metrik zur Steuerung eines Projektes sein. Ein bekanntes Tool in der Java-Welt ist http://www.eclemma.org/jacoco/[JaCoCo]. <<GradleJaCoCo>> zeigt, dass JaCoCo mit nur wenigen Zeilen in Ihr Gradle-Build-File eingebaut werden kann. Es wird überprüft, ob mindest 60% aller Statements abedeckt sind.
+Die Veränderung der Testabdeckung, insbesondere nach unten, kann dennoch eine Metrik zur Steuerung eines Projektes sein. Ein bekanntes Tool in der Java-Welt ist http://www.eclemma.org/jacoco/[JaCoCo]. <<jacoco-setup>> zeigt, dass JaCoCo mit nur wenigen Zeilen in Ihr Gradle-Build-File eingebaut werden kann. Es wird überprüft, ob mindest 60% aller Statements abedeckt sind.
 
 [source,groovy]
-[[GradleJaCoCo]]
+[[jacoco-setup]]
 .Überprüfung der Testabdeckung mit JaCoCo
 ----
-include::../../build.gradle[tags=jacoco]
+include::../../build.gradle[tags=jacoco-setup]
 ----
 
 == Fazit

@@ -38,11 +38,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Michael J. Simons, 2017-11-05
  */
-// tag::eventRepositoryIT[]
+// tag::event-repository-custom-query-test[]
 @RunWith(SpringRunner.class)
-// end::eventRepositoryIT[]
+// end::event-repository-custom-query-test[]
 @ActiveProfiles("it")
-// tag::eventRepositoryIT[]
+// tag::event-repository-custom-query-test[]
 @DataJpaTest
 @ContextConfiguration(initializers = PortMappingInitializer.class)
 public class EventRepositoryIT {
@@ -73,4 +73,4 @@ public class EventRepositoryIT {
             .isEqualTo(19);
     }
 }
-// end::eventRepositoryIT[]
+// end::event-repository-custom-query-test[]

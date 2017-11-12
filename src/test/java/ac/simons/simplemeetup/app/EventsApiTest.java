@@ -49,13 +49,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * @author Michael J. Simons, 2017-11-02
  */
-// tag::eventApiEvent[]
+// tag::domain-usage-single-event-test[]
 @RunWith(SpringRunner.class) // <1>
 @WebMvcTest(controllers = EventsApi.class) // <2>
 @AutoConfigureRestDocs // <3>
 public class EventsApiTest {
 
-    // end::eventApiEvent[]
+    // end::domain-usage-single-event-test[]
     @MockBean
     private EventService eventService;
 
@@ -89,7 +89,7 @@ public class EventsApiTest {
 
     }
 
-    // tag::eventApiEvent[]
+    // tag::domain-usage-single-event-test[]
     @Test
     public void eventShouldWork() throws Exception {
         this.mockMvc
@@ -99,13 +99,13 @@ public class EventsApiTest {
                 ).accept(HAL_JSON)) // <4>
             .andExpect(status().isOk()) // <5>
             .andDo(document("get-event", // <6>
-                // end::eventApiEvent[]
+                // end::domain-usage-single-event-test[]
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 selfLink.and(
                     linkWithRel("registrations").description("Registrations for this event."),
                     linkWithRel("event").description("This event.")),
-                // tag::eventApiEvent[]
+                // tag::domain-usage-single-event-test[]
                 responseFields(
                     fieldWithPath("heldOn").description("The date of this event."),
                     fieldWithPath("name").description("The name of this event."),
@@ -116,4 +116,4 @@ public class EventsApiTest {
                 )));
     }
 }
-// end::eventApiEvent[]
+// end::domain-usage-single-event-test[]

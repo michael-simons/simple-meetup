@@ -32,11 +32,11 @@ import java.util.Optional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-// tag::eventServiceSaveEvents[]
+// tag::event-repository-usage[]
 public class EventService {
     private final EventRepository eventRepository;
 
-    // end::eventServiceSaveEvents[]
+    // end::event-repository-usage[]
 
     /**
      * @param heldOn
@@ -53,7 +53,7 @@ public class EventService {
      * @param newEvent
      * @return
      */
-    // tag::eventServiceSaveEvents[]
+    // tag::event-repository-usage[]
     public Event createNewEvent(final Event newEvent) {
         this.eventRepository.findOne(newEvent.asExample())
             .ifPresent(e -> {
@@ -61,7 +61,7 @@ public class EventService {
             });
         return this.eventRepository.save(newEvent);
     }
-    // end::eventServiceSaveEvents[]
+    // end::event-repository-usage[]
 
     /**
      * Registers for a new event.
@@ -82,6 +82,6 @@ public class EventService {
     public List<Event> getOpenEvents() {
         return this.eventRepository.findAllOpenEvents();
     }
-    // tag::eventServiceSaveEvents[]
+    // tag::event-repository-usage[]
 }
-// end::eventServiceSaveEvents[]
+// end::event-repository-usage[]

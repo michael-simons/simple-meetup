@@ -59,9 +59,9 @@ public class EventTest extends Suite {
             Clock.fixed(Instant.parse("2018-01-01T08:00:00.00Z"), ZoneId.systemDefault()));
     }
 
-    // tag::unitTestExamplePre[]
+    // tag::event-entity-tests[]
     public static class Preconditions {
-        // end::unitTestExamplePre[]
+        // end::event-entity-tests[]
         @Test
         public void constructorShouldNotAllowInvalidDates() {
             Stream.of(LocalDate.of(2017, 10, 31), null).forEach(date ->
@@ -71,7 +71,7 @@ public class EventTest extends Suite {
             );
         }
 
-        // tag::unitTestExamplePre[]
+        // tag::event-entity-tests[]
         @Test // <1>
         public void constructorShouldNotAllowInvalidNames() {
             Stream.of(null, "", "\t", " ").forEach(name ->
@@ -81,9 +81,9 @@ public class EventTest extends Suite {
             );
         }
     }
-    // end::unitTestExamplePre[]
+    // end::event-entity-tests[]
 
-    // tag::unitTestExamplePost[]
+    // tag::event-entity-tests[]
     public static class Postconditions {
         @Test
         public void constructorShouldCreateValidEvents() {
@@ -91,15 +91,15 @@ public class EventTest extends Suite {
             final LocalDate heldOn = LocalDate.of(2018, 1, 2);
             final Event event = new Event(
                 heldOn, "test", numberOfSeats);
-            // end::unitTestExamplePost[]
+            // end::event-entity-tests[]
             assertThat(event.getHeldOn()).isEqualTo(heldOn);
             assertThat(event.getName()).isEqualTo("test");
-            // tag::unitTestExamplePost[]
+            // tag::event-entity-tests[]
             assertThat(event.getNumberOfSeats()).isEqualTo(numberOfSeats);
             assertThat(event.isOpen()).isTrue();
         }
     }
-    // end::unitTestExamplePost[]
+    // end::event-entity-tests[]
 
     public static class Logic {
         @Test

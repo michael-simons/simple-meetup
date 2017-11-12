@@ -44,17 +44,17 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 /**
  * @author Michael J. Simons, 2017-10-31
  */
-// tag::eventApiEvent[]
+// tag::domain-usage-single-event[]
 @RestController
 @RequestMapping("/api/events")
-// end::eventApiEvent[]
+// end::domain-usage-single-event[]
 @SuppressWarnings({"checkstyle:DesignForExtension"})
-// tag::eventApiEvent[]
+// tag::domain-usage-single-event[]
 public class EventsApi {
 
     private final EventService eventService;
 
-    // end::eventApiEvent[]
+    // end::domain-usage-single-event[]
 
     private final ResourceAssemblerSupport<Event, EventResource> eventResourceAssembler;
 
@@ -76,7 +76,7 @@ public class EventsApi {
         return ResponseEntity.created(URI.create(eventResource.getId().getHref())).body(eventResource);
     }
 
-    // tag::eventApiEvent[]
+    // tag::domain-usage-single-event[]
     @GetMapping("/{heldOn}/{name}")
     public EventResource event(
         @PathVariable @DateTimeFormat(iso = ISO.DATE)
@@ -88,7 +88,7 @@ public class EventsApi {
             .map(eventResourceAssembler::toResource)
             .orElseThrow(NoSuchEventException::new);
     }
-    // end::eventApiEvent[]
+    // end::domain-usage-single-event[]
 
     @GetMapping("/{heldOn}/{name}/registrations")
     public Resources<Registration> registrations(
@@ -115,6 +115,6 @@ public class EventsApi {
             HttpStatus.CREATED
         );
     }
-    // tag::eventApiEvent[]
+    // tag::domain-usage-single-event[]
 }
-// end::eventApiEvent[]
+// end::domain-usage-single-event[]
