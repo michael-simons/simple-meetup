@@ -215,7 +215,6 @@ include::../../build/generated-snippets/get-event/response-fields.adoc[]
 
 Der erste "wirkliche" Integrationstests im Beispiel wird mit der Deklaration einer Datenbankabfrage in <<EventRepositoryQuery>> benötigt. Diese Abfrage wurde zwar in JPQL, der _Java Persistence Query Language_ aufgeschrieben und sollte damit einigermaßen portabel sein, aber Sie müssen trotzdem sicherstellen, dass sich keine Tippfehler eingeschlichen haben oder die geplante Zieldatenbank Ihre Abfrage umsetzen kann.
 
-
 [source,java]
 [[EventRepositoryQuery]]
 .Events API
@@ -235,7 +234,7 @@ include::../../build.gradle[tags=integration-test-setup]
 <2> Definition eines Tasks, der vom Test-Task erbent, aber auf anderen Quellen arbeitet
 <3> Aktivierung eines Spring-Profiles, um passende Konfigurationseigenschaften zu aktivieren
 
-Integrationstests gegen Datenbanken können heikel sein. Schwergewichtige Datenbanken wie eine Oracle-Datenbank nur für einen Tests zu starten, kann dauern. Gegen In-Memory-Datenbanken zu testen bildet nicht die Realität ab. Eine Alternative ist die Generierung unterschiedlicher Schemas für Tests zwecke. Das Beispielprojekt des Artikels geht den konsequenten Weg und startet die Zieldatenbank, eine PostgreS-Instanz, während der Integrationstests per Docker. Die Datenbank wird mit den Mitteln von Spring-Boot initialisiert und der vollständige Test ergibt sich in <<EventRepositoryIT>>.
+Integrationstests gegen Datenbanken können heikel sein. Schwergewichtige Datenbanken wie eine Oracle-Datenbank nur für einen Tests zu starten, kann dauern. Gegen In-Memory-Datenbanken zu testen bildet nicht die Realität ab. Eine Alternative ist die Generierung unterschiedlicher Schemas für Tests zwecke. Das Beispielprojekt des Artikels geht den konsequenten Weg und startet die Zieldatenbank, eine PostgreSQL-Instanz, während der Integrationstests per https://www.docker.com[Docker]. Die Datenbank wird mit den Mitteln von Spring-Boot initialisiert und der vollständige Test ergibt sich in <<EventRepositoryIT>>.
 
 [source,java]
 [[EventRepositoryIT]]
@@ -244,9 +243,24 @@ Integrationstests gegen Datenbanken können heikel sein. Schwergewichtige Datenb
 include::../integrationTest/java/ac/simons/tdd/domain/EventRepositoryIT.java[tags=eventRepositoryIT,indent=0]
 ----
 
-Durch den Einsatz einer klassenweiten JUnit-Regel werden Docker-Compose-Definitionen genutzt, um die benötigten, externen Systeme zu starten. Dieses System kann alle notwendigen Daten enthalten oder vom Spring-Kontext noch initialisiert werden.
+Durch den Einsatz einer klassenweiten JUnit-Regel, der https://github.com/palantir/docker-compose-rule[Docker-Compose-Rule] kann Docker zusammen mit werden Docker-Compose genutzt werden, um die benötigten, externen Systeme zu starten. Dieses System kann alle notwendigen Daten enthalten oder vom Spring-Kontext noch initialisiert werden.
 
 In <<EventRepositoryIT>> wird der Test-Slice `@DataJpaTest` benutzt, der die Datenbankschicht startet. Möchten Sie auf Funktionalitäten Ihrer neuen Anwendung von externen System zugreifen, so nutzen Sie `@SpringBootTest`. Damit fahren Sie die Spring-Boot-Anwendung vollständig während eines Tests hoch.
+
+=== Überprüfung der Testabdeckung
+
+Als Testabdeckung wird das Verhältnis der getroffenen Aussagen eines Tests gegenüber den möglichen Aussagen bezeichnet. Dabei spielen unterschiedliche Kriterien wie Funktions-, Statement und Zweigabdeckung oder auch Abdeckung von Bedingungen eine Rolle. Auch für einfachste Funktionen ergibt sich schnell eine extrem hohe Anzahl verschiedener Pfade. Fordern Sie daher nicht von Ihrer Entwicklung, eine Testabdeckung von 100% für die komplette Software zu erreichen, die Kosten würden den Nutzen schnell überschreiten. Darüberhinaus ist die Versuchung groß, Code und Tests zu produzieren, die die Abdeckung in die Höhe treiben ohne inhaltlich zu testen.
+
+Betrachten Sie lieber gültige Eingabebereiche für Module und Grenzfälle. Nehmen Sie Daten, die zu Fehlern geführt haben, in Ihre Tests auf. Um die Qualität ihrer Tests selber zu verbessern kann "Mutationstesting" sinnvoll sein. Dabei wird während der Ausführung von Tests der zu testende Code mutiert, so dass es zu Fehlern kommt. Werden diese Fehler von Ihren Tests nicht erkannt, müssen die Testfälle anders gewählt werden.
+
+Die Veränderung der Testabdeckung, insbesondere nach unten, kann dennoch eine Metrik zur Steuerung eines Projektes sein. Ein bekanntes Tool in der Java-Welt ist http://www.eclemma.org/jacoco/[JaCoCo]. <<GradleJaCoCo>> zeigt, dass JaCoCo mit nur wenigen Zeilen in Ihr Gradle-Build-File eingebaut werden kann. Es wird überprüft, ob mindest 60% aller Statements abedeckt sind.
+
+[source,groovy]
+[[GradleJaCoCo]]
+.Überprüfung der Testabdeckung mit JaCoCo
+----
+include::../../build.gradle[tags=jacoco]
+----
 
 == Fazit
 
@@ -266,17 +280,17 @@ Ob Sie dabei tatsächlich immer hunderprozentig testgetrieben vorgehen, sei dahi
 
 Gerade in Hinblick auf das Thema _continous delivery_, also der kontinuierliche Auslieferung von Bausteinen eines Systems, kommen weitere Testarten ins Spiel. Eine continous delivery pipeline bringt eine Software durch verschiedene Phasen kontinuierlich in Produktion. Diese Phasen beinhalten Akzeptanz- und Kapazitätstests und auch explorative Tests.
 
-Aus der Sicht von User-Stories sind Akzeptanztests das Fundament einer weiteren Testpyramide, insbesondere wenn Backend und Frontend nicht als Teil eines gemeinsamen http://scs-architecture.org[Self-contained system] entwickelt werden: Während das Backend als fertig getestete Library angeliefert wird, wird das Frontend vernachlässigt. Das sollte so nicht sein. Beide Pyramiden können sich wunderbar zu einer gemeinsamen Vertikalen ergänzen.
+Aus der Sicht von User-Stories sind Akzeptanztests das Fundament einer weiteren Testpyramide, insbesondere wenn Backend und Frontend nicht als Teil eines gemeinsamen http://scs-architecture.org[Self-contained system] entwickelt werden. Die Schwerpunkte sind also vertauscht. Während das Backend als fertig getestete Library angeliefert wird, darf der Test des Frontends nicht vernachlässigt werden. Beide Pyramiden können sich wunderbar zu einer gemeinsamen Vertikalen ergänzen.
 
 Die hier vorgestellten Werkzeuge sprechen also nur einen Teil der Aufgaben an. Setzen Sie auf eine Microservicearchitektur, um Bausteine unabhängig voneinander entwickeln zu können, muss ihr System muss so geschnitten sein, dass die einzelnen Bausteine auch unabhängig voneinander getestet werden können und tatsächlich für sich genommen kontinuierlich und schnell getestet und deployed werden können.
 
 === Eine integrierte Lösung
 
-Die absolute Menge an Tests und die relativen Mengen unterschiedlicher Testarten hängen immer von der größe des Kontexts einer Anwendung ab. Nutzen Sie die Idee der Bounded-Contextsdes Domain-driven Designs, um zum einen die schiere Menge unterschiedlicher Dinge zu begrenzen und darüberhinaus eine klare Definition der Dinge zu haben, die zu einem Thema gehören. Nicht nur Ihre Anwendung wird damit verständlicher, sondern auch die Tests derselben.
+Die absolute Menge an Tests und die relativen Mengen unterschiedlicher Testarten hängen auch immer vom Schnitt einer Anwendung ab. Nutzen Sie die Idee der Bounded-Contexts des Domain-driven Designs, um zum einen die schiere Menge unterschiedlicher Dinge zu begrenzen und darüberhinaus eine klare Definition der Dinge zu haben, die zu einem Thema gehören. Nicht nur Ihre Anwendung wird damit verständlicher, sondern auch die Tests derselben.
 
-Dieser Artikel wird direkt aus dem Repository des Beispielprojekts (https://github.com/michael-simons/tdd-mit-spring-boot-2) generiert. Er ist Teil des Buildprozess. Der Queltext wird nur dann verarbeitet, wenn alle Tests erfolgreich waren und die generierten Dokumentationsschnippsel verfügbar sind. Damit ist ein Test nicht mehr nur vertrauensbildende Maßnahme, sondern trägt zu einer lebenden Dokumentation bei. Gerade bei einer öffentlich konsumierten API ein nicht zu unterschätzender Vorteil.
+Dieser Artikel wird direkt aus dem Repository des Beispielprojekts (https://github.com/michael-simons/tdd-mit-spring-boot-2) generiert. Er ist Teil des Buildprozess. Der Queltext wird nur dann verarbeitet, wenn alle Tests erfolgreich waren und die generierten Dokumentationsschnippsel verfügbar sind. Damit ist ein Test nicht mehr nur vertrauensbildende Maßnahme, sondern trägt zu einer lebenden Dokumentation bei. Gerade bei einer öffentlich konsumierten API ein nicht zu unterschätzender Vorteil. In einem klar definierten Kontext führt dieser Ansatz auch hinsichtlich Test und Dokumentation zu einem self-contained System.
 
-In einem klar definierten Kontext führt dieser Ansatz auch hinsichtlich Test und Dokumentation zu einem self-contained System.
+Auf einige der Vorteile, die JUnit 5 für Tests aller Art bringt, wurde im Beispiel bewusst verzichtet, um die Integration von JUnit 4 in die Build-Management-Tools Gradle und Maven zu nutzen. Wiederverwendbare, dokumentierte Lösungen überwiegen an dieser Stelle andere Vorteile. Mit Hilfsmitteln wie https://joel-costigliola.github.io/assertj/[AssertJ] gelingt es ebenfalls, sehr klare und sprechende Tests zu schreiben.
 
 == Über den Autor
 
