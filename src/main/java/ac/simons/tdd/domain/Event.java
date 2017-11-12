@@ -60,12 +60,12 @@ import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
 // tag::eventStructure[]
 public class Event implements Serializable {
 
+    // end::eventStructure[]
     public enum Status {
 
         open, closed
     }
 
-    // end::eventStructure[]
     static final ThreadLocal<Clock> CLOCK =
         ThreadLocal.withInitial(() -> Clock.systemDefaultZone()); // <1>
 
@@ -221,6 +221,14 @@ public class Event implements Serializable {
         return Objects.hash(heldOn, name);
     }
 
+    @Override
+    public String toString() {
+        return "Event{"
+            + "heldOn=" + heldOn
+            + ", name='" + name + '\''
+            + ", status=" + status
+            + '}';
+    }
 // tag::eventStructure[]
 }
 // end::eventStructure[]

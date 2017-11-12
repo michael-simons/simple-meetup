@@ -30,11 +30,19 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.time.LocalDate;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
 /**
  * @author Michael J. Simons, 2017-11-05
  */
+// tag::eventRepositoryIT[]
 @RunWith(SpringRunner.class)
+// end::eventRepositoryIT[]
 @ActiveProfiles("it")
+// tag::eventRepositoryIT[]
 @DataJpaTest
 @ContextConfiguration(initializers = PortMappingInitializer.class)
 public class EventRepositoryIT {
@@ -53,6 +61,16 @@ public class EventRepositoryIT {
 
     @Test
     public void someTest() {
+        final List<Event> openEvents =
+            this.eventRepository.findAllOpenEvents();
+
+        final Event expectedEvent
+            = new Event(LocalDate.now().plusDays(1), "Open Event");
+        assertThat(openEvents)
+            .containsExactly(expectedEvent)
+            .extracting(Event::getNumberOfFreeSeats)
+            .first()
+            .isEqualTo(19);
     }
 }
-
+// end::eventRepositoryIT[]

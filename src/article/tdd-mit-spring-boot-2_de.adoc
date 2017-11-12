@@ -1,18 +1,19 @@
 = Domain- und Test-driven Development mit Spring Boot 2
 Michael Simons <michael.simons@innoq.com>
 :doctype: article
+:lang: de
+:listing-caption: Listing
 :source-highlighter: coderay
 :icons: font
-:sectlink: true,
-:sectanchors: true,
+:sectlink: true
+:sectanchors: true
 :numbered: true
+:xrefstyle: short
 
 [abstract]
 --
-Am Anfang eines Projektes wird heutzutage in der Regel Wert auf Tests gelegt. Projekte werden sogar als Test-getrieben aufgesetzt (Test-driven-development, TDD). Schleicht sich Streß ein oder lässt die Begeisterung nach, kann es passieren, dass das Thema Tests, obwohl wichtig, vernachlässigt werden. Das gilt umso mehr, je schwieriger Komponenten eines Systems zu testen sind, unabhängig, ob sie einzeln oder integriert betrachtet werden.
+Am Anfang eines Projektes wird heutzutage in der Regel Wert auf Tests gelegt. Projekte werden sogar als Test-getrieben aufgesetzt (Test-driven-development, TDD). Schleicht sich Streß ein oder lässt die Begeisterung nach, kann es passieren, dass das Thema Tests, obwohl wichtig, vernachlässigt werden. Das gilt umso mehr, je schwieriger Komponenten eines Systems zu testen sind, unabhängig, ob sie einzeln oder integriert betrachtet werden. Lesen Sie hier, wie Ihnen ein Domain-orientierter Ansatz zusammen mit Spring Boot 2 dabei hilft, Qualität sicherzustellen.
 --
-
-Der Ihnen vorliegende Artikel hat eine andere Form angenommen als geplant. Ursprünglich wollte ich Ihnen einen testgetriebenen Entwicklungsansatz auf Basis von Spring Boot 2 und JUnit 5 vorstellen. Sie werden im folgenden immer noch über testgetriebene Entwicklung lesen und auch Spring Boot 2 kommt weiterhin vor -- ebenso wie JUnit -- allerdings weit weniger technisch, als geplant.
 
 == Formale Korrektheit oder Erfüllung von Anforderungen?
 
@@ -22,14 +23,7 @@ Bevor Sie weiterlesen: Für Softwaretests hinsichtlich Anforderungen gilt oftmal
 
 == Vertrauensbildende Maßnahmen: Tests und Dokumentation
 
-Tests und Dokumentation sind wichtige Aspekte einzelner Anwendungen und sicherlich der meisten Anwendungssysteme. Beide Themen sind gleichermaßen vielschichtig und finden auf unterschiedlichen Ebenen statt:
-
-* Methodenebene
-* Klassenebene
-* Modulebene
-* Systemebene
-
-Genauso unterschiedlich wie die Ebenen sind die Einzelziele. Tests werden oftmals genutzt, um die Korrektheit von Komponenten nachzuweisen. Das sind dann in der Regel Unittests. Der nächste Schritt ist sicherzustellen, dass Komponenten untereinander funktionieren. Es wird von Integrationstests gesprochen. Regressionstests können sowohl als Unit- als auch Integretionstest ausgeprägt sein. Regressionstests sollen Fehler nach Änderungen von Komponenten aufdecken, das heißt, dass Regresionstests wiederholbar sein müssen, um das Ergebnis eines alten mit dem Ergebnis eines neuen Testfalls vergleichen zu können.
+Tests und Dokumentation sind wichtige Aspekte einzelner Anwendungen und sicherlich der meisten Anwendungssysteme. Beide Themen sind gleichermaßen vielschichtig und finden auf unterschiedlichen Ebenen statt, zum Beispiel auf Methoden-, Klassen-, Modul- und Systemebene. Tests werden genutzt, um die Korrektheit von Komponenten nachzuweisen. Das sind dann in der Regel Unittests. Der nächste Schritt ist sicherzustellen, dass Komponenten untereinander funktionieren. Es wird von Integrationstests gesprochen. Regressionstests können sowohl als Unit- als auch Integretionstest ausgeprägt sein. Regressionstests sollen Fehler nach Änderungen von Komponenten aufdecken, das heißt, dass Regresionstests wiederholbar sein müssen, um das Ergebnis eines alten mit dem Ergebnis eines neuen Testfalls vergleichen zu können.
 
 Hinsichtlich Dokumentation ist das Feld ähnlich vielfältig. Es wird von Code-, API-, Architektur- und Anwenderdokumentation gesprochen.
 
@@ -83,9 +77,10 @@ Spring-Boot-Anwendungen sind ganz normale Java-Anwendungen, die in der Regel mit
 
 Spring Boot arbeitet mit sogenannten Startern. Diese Starter stellen Ihnen alle für ein gegebenes Thema notwendigen Abhängigkeiten zur Verfügung. So einen Starter gibt es auch für das Thema Testen.
 
-Die Deklaration der Abhängigkeit in einem Gradle-Build-File (`build.gradle`) ist sehr einfach:
+Die Deklaration der Abhängigkeit in einem Gradle-Build-File (`build.gradle`) ist sehr einfach, wie <<TestDependencies>> zeigt.
 
 [source,groovy]
+[[TestDependencies]]
 .build-gradle
 ----
 include::../../build.gradle[tags=test-dependencies]
@@ -106,9 +101,10 @@ Gestestet werden soll ein Service, der Events und dazugehörige Registrierungen 
 
 Das Thema könnte Teil einer größeren Anwendung sein und als sogenannter Bounded-Context, einem Begriff aus dem Domain-Driven Design, identifiziert worden sein. Sie finden den vollständigen Quelltext dieses Artikels auf https://github.com/michael-simons/tdd-mit-spring-boot-2[GitHub].
 
-Die Fachlichkeit eignet sich außerdem sehr gut, zu zeigen, dass Tests auf Modulebene nicht nur sehr einfach zu realisieren, sondern auch oftmals die wichtigsten Aspekte Ihrer Domain bereits erfassen. Betrachten Sie folgende Java-Klasse
+Die Fachlichkeit eignet sich außerdem sehr gut, zu zeigen, dass Tests auf Modulebene nicht nur sehr einfach zu realisieren, sondern auch oftmals die wichtigsten Aspekte Ihrer Domain bereits erfassen. Betrachten Sie die Klassen `Event` in <<Event>>.
 
 [source,java]
+[[Event]]
 .Event.java
 ----
 include::../main/java/ac/simons/tdd/domain/Event.java[tags=eventStructure]
@@ -122,24 +118,20 @@ Ansonsten ist die Klasse frei von Spring typischen Annotationen. Schauen Sie in 
 
 === Auf Modul-(Unit)-Ebene
 
-Die Klasse `Event` wird in einem Domain-driven Design Ansatz als Aggregate-Root bezeichnet, als Kern Ihrer Domain. Sie ist Kernbestandteil dessen, was Sie mit Ihrer Software erreichen möchten. Mit den eingangs erwähnten Starter erhalten Sie alle Bausteine, um diese Klasse einem Unit-Test zu unterziehen. Testen Sie ganz klassisch Pre- und Postconditions, wie die Listings <<EventTest-1>> und <<EventTest-2>> zeigen.
+Die Klasse `Event` wird in einem Domain-driven Design Ansatz als Aggregate-Root bezeichnet, als Kern Ihrer Domain. Sie ist Kernbestandteil dessen, was Sie mit Ihrer Software erreichen möchten. Mit den eingangs erwähnten Starter erhalten Sie alle Bausteine, um diese Klasse einem Unit-Test zu unterziehen. Testen Sie ganz klassisch Pre- und Postconditions, wie <<EventTest-1>> zeigt.
 
 [source,java]
 [[EventTest-1]]
-.Preconditions
+.Unit Tests von Pre- und Postconditions
 ----
 include::../test/java/ac/simons/tdd/domain/EventTest.java[tags=unitTestExamplePre,indent=0]
+
+include::../test/java/ac/simons/tdd/domain/EventTest.java[tags=unitTestExamplePost,indent=0]
 ----
 <1> Signalisiert, dass diese Methode von JUnit als Testmethode ausgeführt werden soll
 <2> Hier sehen Sie eine AssertJ-Assertion. AssertJ bietet unter anderem eine schöne Möglichkeit an, zu testen, ob eine bestimmte Exception geworfen wurde oder nicht.
 <3> Weiterhin ist es möglich, Assertions aufeinander aufzubauen: Wenn die Exception dem erwarteten Typen entsprach, wird zusätzlich die entsprechende Mitteilung überprüft.
 
-[source,java]
-[[EventTest-2]]
-.Postconditions
-----
-include::../test/java/ac/simons/tdd/domain/EventTest.java[tags=unitTestExamplePost,indent=0]
-----
 
 Der Test der Logik ist ähnlich aufgebaut. Der Test ist klar strukturiert und gut lesbar, insbesondere weil die zu testende Klasse die Domain gut wiederspiegelt. Mit wenig Aufwand haben Sie den Kern Ihres Geschäftes fast vollständig getestet. Sie haben fast keinen Aufwand in das Aufsetzen einer Testumgebung oder die Bereitstellung von Kollaborateuren der Testklasse stecken mmüssen. Der Test ist also sehr günstig zu haben. Nutzen Sie diese Tatsache aus.
 
@@ -188,9 +180,7 @@ Spring ist unter anderem eine Implementierung eines "Context- and Dependency-Inj
 
 === Gezielte Tests technischer Schichten
 
-Spring Boot stellt Ihnen unter dem Begriff "Test-Slices" eine Möglichkeit zur Verfügung, gezielt technische Schichten einer Anwendung im Kontext des laufenden Spring Containers zu testen. Technische Schichten sind zum Beispiel Datenbankzugriff oder der Weblayer. Für Ihren Tests hat das den großen Vorteil, dass er schlanker sein kann. Möchten Sie gezielt eine REST-API testen, können Sie oftmals auf eine echte Datenbank oder andere unterstützende Diense im Hintergrund verzichten.
-
-Betrachten Sie die Implementierung einer API im Listing <<EventsApi>>
+Spring Boot stellt Ihnen unter dem Begriff "Test-Slices" eine Möglichkeit zur Verfügung, gezielt technische Schichten einer Anwendung im Kontext des laufenden Spring Containers zu testen. Technische Schichten sind zum Beispiel Datenbankzugriff oder der Weblayer. Für Ihren Tests hat das den großen Vorteil, dass er schlanker sein kann. Möchten Sie gezielt eine REST-API testen, können Sie oftmals auf eine echte Datenbank oder andere unterstützende Diense im Hintergrund verzichten. Gegeben sei die API in <<EventsApi>>.
 
 [source,java]
 [[EventsApi]]
@@ -199,34 +189,99 @@ Betrachten Sie die Implementierung einer API im Listing <<EventsApi>>
 include::../main/java/ac/simons/tdd/app/EventsApi.java[tags=eventApiEvent,indent=0]
 ----
 
-An dieser Stelle ist es schwierig, ohne Spring-spezifische Annotationen auszukommen. Im Beispiel besagen sie, dass unter der URL `/api/events/2017-12-24/Weihnachten` ein Event mit seinen Eigenschaften abrufbar sein soll. Die API benötigt dazu den Event-Service. An dieser Stelle möchte ich sicherstellen, dass die Abbildung der Funktion auf URLs und die Serializierung der Event-Daten korrekt funktioniert. Es ist also weniger ein Unit-Tests der Komponenten `EventsApi` und `EventService` als vielmehr ein Test der Integration mit Spring. Spring Boot stellt Ihnen für diese Schicht `@WebMvcTest` zur Verfügung. Listing <<EventsApiTest>> zeigt die Verwendung:
+An dieser Stelle ist es schwierig, ohne Spring-spezifische Annotationen auszukommen. Im Beispiel besagen sie, dass unter der URL `/api/events/2017-12-24/Weihnachten` ein Event mit seinen Eigenschaften abrufbar sein soll. Die API benötigt dazu den Event-Service. An dieser Stelle möchte ich sicherstellen, dass die Abbildung der Funktion auf URLs und die Serializierung der Event-Daten korrekt funktioniert. Es ist also weniger ein Unit-Tests der Komponenten `EventsApi` und `EventService` als vielmehr ein Test der Integration mit Spring. Spring Boot stellt Ihnen für diese Schicht `@WebMvcTest` zur Verfügung. <<EventsApiTest>> zeigt die Verwendung:
 
 [source,java]
-[[EventsApi]]
+[[EventsApiTest]]
 .Test der API
 ----
 include::../test/java/ac/simons/tdd/app/EventsApiTest.java[tags=eventApiEvent,indent=0]
 ----
+<1> Hier wird ein spezieller Runner benötigt, der den Spring-Kontext startet
+<2> Damit der Test schneller startet, soll er nur die in <<EventsApi>> gezeigte Klasse beinhalten
+<3> Hiermit wird Spring REST Docs aktiviert, eine Möglichkeit, während des Tests automatisch eine API Dokumentation zu erzeugen
+<4> Aufruf der API
+<5> Ausdruck des erwarteten Ergebnis
+<6> Ausdruck einer weiterten Erwartung: Es wird ein JSON-Dokument mit den Feldern `heldOn`, `name` und so weiter erwartet
 
+Der Test in <<EventsApiTest>> ist durchaus komplex: Es wird ein Spring-Kontext und das Web-Framework gestartet; dennoch ist der Test lesbar und die Erwartungen sind klar erkennbar. Durch die Integration mit https://projects.spring.io/spring-restdocs/[Spring REST Docs] generiert er darüber hinaus eine Dokumentation der API, die nicht nur dynamisch ist, sondern aktiver Teil des Tests: Fallen die hier beschriebenen Felder auf einmal weg, bricht der Tests. Die Dokumentation kann in verschiedenen Formaten generiert werden. Das Beispielprojekt nutzt das AsciiDoc-Format, der Auszug in <<GetEventsResponseFields>> ist Teil des Builds.
+
+[table]
+[[GetEventsResponseFields]]
+.Struktur der Resource `/event`
+include::../../build/generated-snippets/get-event/response-fields.adoc[]
 
 === Integrationstests
 
-
-== Weitere Herausforderungen
-
-* Continous delivery, schnelle tests
-* unabhängiges testen von services
-* pro weniger tests
+Der erste "wirkliche" Integrationstests im Beispiel wird mit der Deklaration einer Datenbankabfrage in <<EventRepositoryQuery>> benötigt. Diese Abfrage wurde zwar in JPQL, der _Java Persistence Query Language_ aufgeschrieben und sollte damit einigermaßen portabel sein, aber Sie müssen trotzdem sicherstellen, dass sich keine Tippfehler eingeschlichen haben oder die geplante Zieldatenbank Ihre Abfrage umsetzen kann.
 
 
-== Just testing
+[source,java]
+[[EventRepositoryQuery]]
+.Events API
+----
+include::../main/java/ac/simons/tdd/domain/EventRepository.java[tags=eventRepositoryITNeeded,indent=0]
+----
 
-include::../../build/generated-snippets/get-event/curl-request.adoc[]
-include::../../build/generated-snippets/get-event/http-response.adoc[]
-include::../../build/generated-snippets/get-event/response-fields.adoc[]
+Es ist sinnvoll, diese echten Integrationstests von Unittests zu trennen, zum Beispiel erkennbar am Namen, besser noch durch separate Sourcen. Mit Gradle und dem eingebauten JUnit-Plugin ist das für eine Spring-Boot-Anwendung schnell und nachvollziebar gemacht, wie <<GradleIntegrationTest>> zeigt.
+
+[source,groovy]
+[[GradleIntegrationTest]]
+.Separate Quellen für Integrationstests mit Gradle
+----
+include::../../build.gradle[tags=integration-test-setup]
+----
+<1> Definition einer weiteren Menge von Quellen mit Namen `integrationTest`
+<2> Definition eines Tasks, der vom Test-Task erbent, aber auf anderen Quellen arbeitet
+<3> Aktivierung eines Spring-Profiles, um passende Konfigurationseigenschaften zu aktivieren
+
+Integrationstests gegen Datenbanken können heikel sein. Schwergewichtige Datenbanken wie eine Oracle-Datenbank nur für einen Tests zu starten, kann dauern. Gegen In-Memory-Datenbanken zu testen bildet nicht die Realität ab. Eine Alternative ist die Generierung unterschiedlicher Schemas für Tests zwecke. Das Beispielprojekt des Artikels geht den konsequenten Weg und startet die Zieldatenbank, eine PostgreS-Instanz, während der Integrationstests per Docker. Die Datenbank wird mit den Mitteln von Spring-Boot initialisiert und der vollständige Test ergibt sich in <<EventRepositoryIT>>.
+
+[source,java]
+[[EventRepositoryIT]]
+.Integrationstests gegenüber einer Datenbank
+----
+include::../integrationTest/java/ac/simons/tdd/domain/EventRepositoryIT.java[tags=eventRepositoryIT,indent=0]
+----
+
+Durch den Einsatz einer klassenweiten JUnit-Regel werden Docker-Compose-Definitionen genutzt, um die benötigten, externen Systeme zu starten. Dieses System kann alle notwendigen Daten enthalten oder vom Spring-Kontext noch initialisiert werden.
+
+In <<EventRepositoryIT>> wird der Test-Slice `@DataJpaTest` benutzt, der die Datenbankschicht startet. Möchten Sie auf Funktionalitäten Ihrer neuen Anwendung von externen System zugreifen, so nutzen Sie `@SpringBootTest`. Damit fahren Sie die Spring-Boot-Anwendung vollständig während eines Tests hoch.
+
+== Fazit
+
+=== Die Testpyramide
+
+Der Autor https://watirmelon.wordpress.com/about/[Alister Scott] stellte 2012 den Begriff der https://watirmelon.blog/2012/01/31/introducing-the-software-testing-ice-cream-cone/[Testpyramide] und das dazugehörige Antipattern, das Testing-Eishörnchen vor.
+
+.Die Testpyramide und ihr Antipattern
+[[TestingPyramide]]
+image::testing-pyramide.png[Testingpyramide]
+
+Unit-Tests sind -- die richtige Herangehensweise vorausgesetzt -- einfach zu erstellen und sollten zahlreich vorhanden sein. Integrationstest in vielfältigen Ausprägungen (in <<TestingPyramide>> als API Tests, "echte" Integrationstests zwischen Systemen oder als Tests zwischen Komponenten), sind in der Regel aufwendiger und eine der Königsdisziplinen sind automatisierte UI-Tests, darüber hinaus sind nur noch Click-Tests durch echte Benutzer angesiedelt. Die sind in der Regel einfach durchzuführen, dadurch nicht weniger teuer. Leider sieht es in der Realität oftmals eher so aus, dass die "Wolke" an der Spitze übermässig groß ist und die Pyramide umgekehrt wird: Ein teures Eishörnchen. Versuchen Sie also, das Fundament Ihrere Anwendung, die fachlichen Anforderungen, so klar wie möglich herauszuarbeiten und klassisch mit Unit-Tests zu verifzieren.
+
+Ob Sie dabei tatsächlich immer hunderprozentig testgetrieben vorgehen, sei dahin gestellt. Mir persönlich ist die Sicherheit, die mir der Test einer Anfordung gibt, gut genug. Auf seiner Basis fallen Refactorings und Erweiterungen leicht. Ob der Test physikalisch vor dem zu testenden Code existiert, ist zweitrangig.
+
+=== Weitere Tests und Herausforderungen
+
+Gerade in Hinblick auf das Thema _continous delivery_, also der kontinuierliche Auslieferung von Bausteinen eines Systems, kommen weitere Testarten ins Spiel. Eine continous delivery pipeline bringt eine Software durch verschiedene Phasen kontinuierlich in Produktion. Diese Phasen beinhalten Akzeptanz- und Kapazitätstests und auch explorative Tests.
+
+Aus der Sicht von User-Stories sind Akzeptanztests das Fundament einer weiteren Testpyramide, insbesondere wenn Backend und Frontend nicht als Teil eines gemeinsamen http://scs-architecture.org[Self-contained system] entwickelt werden: Während das Backend als fertig getestete Library angeliefert wird, wird das Frontend vernachlässigt. Das sollte so nicht sein. Beide Pyramiden können sich wunderbar zu einer gemeinsamen Vertikalen ergänzen.
+
+Die hier vorgestellten Werkzeuge sprechen also nur einen Teil der Aufgaben an. Setzen Sie auf eine Microservicearchitektur, um Bausteine unabhängig voneinander entwickeln zu können, muss ihr System muss so geschnitten sein, dass die einzelnen Bausteine auch unabhängig voneinander getestet werden können und tatsächlich für sich genommen kontinuierlich und schnell getestet und deployed werden können.
+
+=== Eine integrierte Lösung
+
+Die absolute Menge an Tests und die relativen Mengen unterschiedlicher Testarten hängen immer von der größe des Kontexts einer Anwendung ab. Nutzen Sie die Idee der Bounded-Contextsdes Domain-driven Designs, um zum einen die schiere Menge unterschiedlicher Dinge zu begrenzen und darüberhinaus eine klare Definition der Dinge zu haben, die zu einem Thema gehören. Nicht nur Ihre Anwendung wird damit verständlicher, sondern auch die Tests derselben.
+
+Dieser Artikel wird direkt aus dem Repository des Beispielprojekts (https://github.com/michael-simons/tdd-mit-spring-boot-2) generiert. Er ist Teil des Buildprozess. Der Queltext wird nur dann verarbeitet, wenn alle Tests erfolgreich waren und die generierten Dokumentationsschnippsel verfügbar sind. Damit ist ein Test nicht mehr nur vertrauensbildende Maßnahme, sondern trägt zu einer lebenden Dokumentation bei. Gerade bei einer öffentlich konsumierten API ein nicht zu unterschätzender Vorteil.
+
+In einem klar definierten Kontext führt dieser Ansatz auch hinsichtlich Test und Dokumentation zu einem self-contained System.
 
 == Über den Autor
 
 {author} arbeit als Senior Consultant bei https://www.innoq.com/de/[innoQ Deutschland]. Er ist Mitglied des NetBeans Dream Team und Gründer der Euregio JUG. Michael schreibt in seinem http://info.michael-simons.eu[Blog] über Java, Spring und Softwarearchitektur. {firstname} ist Autor des im Januar 2018 erscheinenden Spring Boot Buches.
 
 Auf Twitter unterwegs als @rotnroll666, unter anderem mit Java, Music und den kleineren und größeren Problemen als Ehemann und Vater von 2 Kindern.
+
+Mein Dank geht an https://rdmueller.github.io[Ralf D. Müller] für sein Feedback zur Testpyramide und seine Arbeit an der https://github.com/docToolchain/docToolchain[docToolChain], deren Ideen ich für den Build dieses Artikels genutzt habe.

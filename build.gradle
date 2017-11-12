@@ -70,7 +70,8 @@ test {
     outputs.dir generatedApiDoc
 }
 
-sourceSets {
+// tag::integration-test-setup[]
+sourceSets { // <1>
     integrationTest {
         java {
             srcDir 'src/integrationTest/java'
@@ -83,17 +84,21 @@ sourceSets {
     }
 }
 
-task integrationTest(type: Test) {
+task integrationTest(type: Test) { // <2>
     group = LifecycleBasePlugin.VERIFICATION_GROUP
+    // end::integration-test-setup[]
     description = 'Runs the integration tests.'
+    // tag::integration-test-setup[]
 
-    systemProperty "spring.profiles.active", "it"
+    systemProperty "spring.profiles.active", "it" // <3>
 
     testClassesDirs = sourceSets.integrationTest.output.classesDirs
     classpath = sourceSets.integrationTest.runtimeClasspath
-
+    // end::integration-test-setup[]
     outputs.upToDateWhen { false }
+    // tag::integration-test-setup[]
 }
+// end::integration-test-setup[]
 
 check.dependsOn integrationTest
 integrationTest.mustRunAfter test
@@ -103,9 +108,6 @@ tasks.withType(AsciidoctorTask) { docTask ->
     dependsOn check
 
     attributes \
-          'source-highlighter': 'coderay',
-          'toc': 'left',
-          'icons': 'font',
           'sourceDir': "$projectDir/src/"
 
     sourceDir = file("src/article")

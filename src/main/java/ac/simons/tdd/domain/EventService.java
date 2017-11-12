@@ -55,9 +55,10 @@ public class EventService {
      */
     // tag::eventServiceSaveEvents[]
     public Event createNewEvent(final Event newEvent) {
-        this.eventRepository.findOne(newEvent.asExample()).ifPresent(e -> {
-            throw new DuplicateEventException(e);
-        });
+        this.eventRepository.findOne(newEvent.asExample())
+            .ifPresent(e -> {
+                throw new DuplicateEventException(e);
+            });
         return this.eventRepository.save(newEvent);
     }
     // end::eventServiceSaveEvents[]

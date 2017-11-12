@@ -30,13 +30,14 @@ import java.util.List;
 interface EventRepository extends Repository<Event, Integer>, QueryByExampleExecutor<Event> {
     Event save(Event newEvent);
     // end::eventRepositoryStructure[]
-    @Query(value
-        = "Select e from Event e "
+    // tag::eventRepositoryITNeeded[]
+    @Query("Select e from Event e "
         + " where e.status = 'open' "
         + "   and e.heldOn > current_date"
         + " order by e.heldOn asc"
     )
     List<Event> findAllOpenEvents();
+    // end::eventRepositoryITNeeded[]
     // tag::eventRepositoryStructure[]
 }
 // end::eventRepositoryStructure[]
