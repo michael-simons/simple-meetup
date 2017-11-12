@@ -244,7 +244,7 @@ include::../integrationTest/java/ac/simons/simplemeetup/domain/EventRepositoryIT
 
 Durch den Einsatz einer klassenweiten JUnit-Regel, der https://github.com/palantir/docker-compose-rule[Docker-Compose-Rule] kann Docker zusammen mit werden Docker-Compose genutzt werden, um die benötigten, externen Systeme zu starten. Dieses System kann alle notwendigen Daten enthalten oder vom Spring-Kontext noch initialisiert werden.
 
-In <<event-repository-custom-query-test>> wird der Test-Slice `@DataJpaTest` benutzt, der die Datenbankschicht startet. Möchten Sie auf Funktionalitäten Ihrer neuen Anwendung von externen System zugreifen, so nutzen Sie `@SpringBootTest`. Damit fahren Sie die Spring-Boot-Anwendung vollständig während eines Tests hoch.
+In <<event-repository-custom-query-test>> wird der Test-Slice `@DataJpaTest` benutzt, der die Datenbankschicht startet. Möchten Sie auf Funktionalitäten Ihrer neuen Anwendung von externen System zugreifen, so nutzen Sie `@SpringBootTest`. Damit fahren Sie die Spring-Boot-Anwendung vollständig während eines Tests hoch. Eine weitere, empfehlenswerte Variante für einen vollständigen Systemtests ist, Ihre Anwendung und alle benötigten Services in einem Container zu starten und diese von außen durch einen dezidierten Dienst zu testen und so unter anderem Abhängigkeiten zwischen Integrationstests zu vermeiden.
 
 === Überprüfung der Testabdeckung
 

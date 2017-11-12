@@ -14,3 +14,19 @@ based on a Spring Boot application.
 == Domain
 
 The application should provide a REST-API for managing events and registering for those events. Events must be unique by name on a given day. They can be open and close and have a number of seats available. The number of free seats must be computed by through the current number of registrations. A person can register exactly one time with a given email address.
+
+== Build
+
+You'll need Java 8 and Docker installed to build the project. Just run
+
+```
+./gradlew
+```
+
+or
+
+```
+./gradlew.bat
+```
+
+depending wether you're on a Unix-like- or Windows-Machine.
