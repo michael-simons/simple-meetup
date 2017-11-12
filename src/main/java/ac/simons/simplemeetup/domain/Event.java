@@ -18,7 +18,11 @@ package ac.simons.simplemeetup.domain;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 
@@ -40,7 +44,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
 
@@ -55,7 +58,10 @@ import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
     }
 )
 @JsonAutoDetect(fieldVisibility = NONE, getterVisibility = NONE, isGetterVisibility = NONE)
+@NoArgsConstructor(access = AccessLevel.PACKAGE)
 @Getter
+@EqualsAndHashCode(of = {"heldOn", "name"})
+@ToString(of = {"heldOn", "name", "status"})
 @SuppressWarnings({"checkstyle:DesignForExtension"})
 // tag::event-entity[]
 public class Event implements Serializable {
@@ -67,7 +73,7 @@ public class Event implements Serializable {
     }
 
     static final ThreadLocal<Clock> CLOCK =
-        ThreadLocal.withInitial(() -> Clock.systemDefaultZone()); // <1>
+        ThreadLocal.withInitial(() -> Clock.systemDefaultZone());
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -102,9 +108,6 @@ public class Event implements Serializable {
     private List<Registration> registrations = new ArrayList<>();
 
     // end::event-entity[]
-    Event() {
-    }
-
     @JsonCreator
     public Event(@JsonProperty("heldOn") final LocalDate heldOn, @JsonProperty("name") final String name) {
         this(heldOn, name, 20);
@@ -202,32 +205,6 @@ public class Event implements Serializable {
             .withMatcher("heldOn", match -> match.exact())
             .withMatcher("name", match -> match.exact())
         );
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final Event event = (Event) o;
-        return Objects.equals(heldOn, event.heldOn) && Objects.equals(name, event.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(heldOn, name);
-    }
-
-    @Override
-    public String toString() {
-        return "Event{"
-            + "heldOn=" + heldOn
-            + ", name='" + name + '\''
-            + ", status=" + status
-            + '}';
     }
 // tag::event-entity[]
 }

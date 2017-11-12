@@ -15,9 +15,14 @@
  */
 package ac.simons.simplemeetup.domain;
 
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import java.util.Objects;
+import java.util.Locale;
 
 /**
  * Represents a registration value.
@@ -25,6 +30,9 @@ import java.util.Objects;
  * @author Michael J. Simons, 2017-10-31
  */
 @Embeddable
+@NoArgsConstructor(access = AccessLevel.PACKAGE)
+@Getter
+@EqualsAndHashCode(of = {"email", "name"})
 public final class Registration {
     @Column(name = "email", length = 1024, nullable = false)
     private String email;
@@ -32,36 +40,8 @@ public final class Registration {
     @Column(name = "name", length = 512, nullable = false)
     private String name;
 
-    Registration() {
-    }
-
     public Registration(final Person person) {
-        this.email = person.getEmail();
+        this.email = person.getEmail().toLowerCase(Locale.ENGLISH);
         this.name = person.getName();
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final Registration registration = (Registration) o;
-        return Objects.equals(email, registration.email);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(email);
     }
 }
