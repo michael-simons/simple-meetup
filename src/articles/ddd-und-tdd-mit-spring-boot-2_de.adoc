@@ -12,7 +12,7 @@ Michael Simons <michael.simons@innoq.com>
 
 [abstract]
 --
-Am Anfang eines Projektes wird heutzutage in der Regel Wert auf Tests gelegt. Projekte werden sogar testgetrieben aufgesetzt (Test-driven-development, TDD). Schleicht sich Streß ein oder lässt die Begeisterung nach, kann es passieren, dass das Thema Tests -- obwohl wichtig -- vernachlässigt werden. Das gilt umso mehr, je schwieriger Komponenten eines Systems zu testen sind, unabhängig, ob sie einzeln oder integriert betrachtet werden. Lesen Sie hier, wie Ihnen ein Domain-orientierter Ansatz zusammen mit Spring Boot 2 dabei hilft, Qualität sicherzustellen.
+Am Anfang eines Projektes wird heutzutage in der Regel Wert auf Tests gelegt. Projekte werden sogar testgetrieben aufgesetzt (Test-driven-development, TDD). Schleicht sich Stress ein oder lässt die Begeisterung nach, kann es passieren, dass das Thema Tests -- obwohl wichtig -- vernachlässigt werden. Das gilt umso mehr, je schwieriger Komponenten eines Systems zu testen sind, unabhängig, ob sie einzeln oder integriert betrachtet werden. Lesen Sie hier, wie Ihnen ein Domain-orientierter Ansatz zusammen mit Spring Boot 2 dabei hilft, Qualität sicherzustellen.
 --
 
 == Formale Korrektheit oder Erfüllung von Anforderungen?
@@ -31,7 +31,7 @@ Trotz aller Unterschiede gibt es eine Gemeinsamkeit: Die genannten Maßnahmen sc
 
 == Warum sparen wir uns dennoch das Testen?
 
-Konsequente Softwaretests -- so sie denn gesetzlich nicht vorgeschrieben sind -- stehen oftmals hinten an oder sind nicht integraler Bestandteil von Softwareentwicklung. Im Projektalltag habe ich oft Varianten folgender Argumente gehört: "Dafür ist keine Zeit da.", "Testen schafft sowieso keinen Mehrwert.",  "Diese Module sind nicht testbar." oder auch  "Das benutzte Framework macht Tests zu aufwändig."
+Konsequente Softwaretests -- so sie denn gesetzlich nicht vorgeschrieben sind -- stehen oftmals hinten an oder sind nicht integraler Bestandteil von Softwareentwicklung. Im Projektalltag habe ich oft Varianten folgender Argumente gehört: "Dafür ist keine Zeit da.", "Testen schafft sowieso keinen Mehrwert.",  "Diese Module sind nicht testbar." oder auch  "Das benutzte Framework macht Tests zu aufwendig."
 
 Demgegenüber sei entgegnet:
 
@@ -45,7 +45,7 @@ Schleicht sich in einem Projekt Streß ein, sei es durch zeitlichen Druck, unkla
 
 Es ergeben sich aus den einleitenden Abschnitten mindestens die folgenden Anforderungen an Tests:
 
-* Der Start eines Projektes darf mit Testunterstützung nicht aufwändiger sein als ohne
+* Der Start eines Projektes darf mit Testunterstützung nicht aufwendiger sein als ohne
 * Die Tests müssen sich nahtlos in den Entwicklungsprozess integrieren
 * Sie müssen so schnell wie möglich ausführbar sein
 * Das Ergebnis sollte meßbar sein
@@ -97,7 +97,7 @@ Durch nur eine Deklaration erhalten Sie:
 
 Ich möchte Ihnen anhand einer einfachen Fachlichkeit zeigen, wie Spring Boot 2 Ihnen dabei hilft, sehr einfach Integrationstests zu schreiben: Sei es als vollständiger Durchstich oder als Integrationstest auf einer technischen Ebene.
 
-Getestet werden soll ein Service, der Events und dazugehörige Registrierungen verwaltet. An einem Tag können mehrere Events stattfinden, die Namen der Events müssen dabei eindeutig sein. Events haben eine begrenzte Teilnehmeranzahl. Interessierte Besucher melden sich mit Namen und einer E-Mail-Adresse an und sollen sich nicht mehrfach anmelden können. Von einem Event soll zum vorherigen und nächstem Event navigiert werden können. Der Dienst stellt dazu eine einfache Oberfläche zur Verfügung.
+Getestet werden soll ein Service, der Events und dazugehörige Registrierungen verwaltet. An einem Tag können mehrere Events stattfinden, die Namen der Events müssen dabei eindeutig sein. Events haben eine begrenzte Teilnehmeranzahl. Interessierte Besucher melden sich mit Namen und einer E-Mail-Adresse an und sollen sich nicht mehrfach anmelden können.
 
 Das Thema könnte Teil einer größeren Anwendung sein und als sogenannter Bounded Context -- einem Begriff aus dem Domain-Driven Design --identifiziert worden sein. Sie finden den vollständigen Quelltext dieses Artikels auf https://github.com/michael-simons/tdd-mit-spring-boot-2[GitHub].
 
@@ -132,7 +132,7 @@ include::../test/java/ac/simons/simplemeetup/domain/EventTest.java[tags=event-en
 <2> Hier sehen Sie eine AssertJ-Assertion. AssertJ bietet unter anderem eine schöne Möglichkeit an, zu testen, ob eine bestimmte Exception geworfen wurde oder nicht.
 <3> Weiterhin ist es möglich, Assertions aufeinander aufzubauen: Wenn die Exception dem erwarteten Typen entsprach, wird zusätzlich die entsprechende Mitteilung überprüft.
 
-Der Test der Logik ist ähnlich aufgebaut. Der Test ist klar strukturiert und gut lesbar, insbesondere weil die zu testende Klasse die Domain gut wiederspiegelt. Mit wenig Aufwand haben Sie den Kern Ihres Geschäftes fast vollständig getestet. Sie haben fast keinen Aufwand in das Aufsetzen einer Testumgebung oder die Bereitstellung von Kollaborateuren der Testklasse stecken mmüssen. Der Test ist also sehr günstig zu haben. Nutzen Sie diese Tatsache aus.
+Der Test der Logik ist ähnlich aufgebaut. Der Test ist klar strukturiert und gut lesbar, insbesondere weil die zu testende Klasse die Domain gut wiederspiegelt. Mit wenig Aufwand haben Sie den Kern Ihres Geschäftes fast vollständig getestet. Sie haben fast keinen Aufwand in das Aufsetzen einer Testumgebung oder die Bereitstellung von Kollaborateuren der Testklasse stecken müssen. Der Test ist also sehr günstig zu haben. Nutzen Sie diese Tatsache aus.
 
 .Warum nicht JUnit 5?
 ****
@@ -179,7 +179,7 @@ Spring ist unter anderem eine Implementierung eines "Context- and Dependency-Inj
 
 === Gezielte Tests technischer Schichten
 
-Spring Boot stellt Ihnen unter dem Begriff "Test-Slices" eine Möglichkeit zur Verfügung, gezielt technische Schichten einer Anwendung im Kontext des laufenden Spring Containers zu testen. Technische Schichten sind zum Beispiel Datenbankzugriff oder der Weblayer. Für Ihren Tests hat das den großen Vorteil, dass er schlanker sein kann. Möchten Sie gezielt eine REST-API testen, können Sie oftmals auf eine echte Datenbank oder andere unterstützende Diense im Hintergrund verzichten. Gegeben sei die API in <<domain-usage-single-event>>.
+Spring Boot stellt Ihnen unter dem Begriff "Test-Slices" eine Möglichkeit zur Verfügung, gezielt technische Schichten einer Anwendung im Kontext des laufenden Spring Containers zu testen. Technische Schichten sind zum Beispiel Datenbankzugriff oder der Weblayer. Für Ihren Test hat das den großen Vorteil, dass er schlanker sein kann. Möchten Sie gezielt eine REST-API testen, können Sie oftmals auf eine echte Datenbank oder andere unterstützende Diense im Hintergrund verzichten. Gegeben sei die API in <<domain-usage-single-event>>.
 
 [source,java]
 [[domain-usage-single-event]]
@@ -242,7 +242,7 @@ Integrationstests gegen Datenbanken können heikel sein. Schwergewichtige Datenb
 include::../integrationTest/java/ac/simons/simplemeetup/domain/EventRepositoryIT.java[tags=event-repository-custom-query-test,indent=0]
 ----
 
-Durch den Einsatz einer klassenweiten JUnit-Regel, der https://github.com/palantir/docker-compose-rule[Docker-Compose-Rule] kann Docker zusammen mit Docker Compose genutzt werden, um die benötigten, externen Systeme zu starten. Dieses System kann alle notwendigen Daten enthalten oder vom Spring-Kontext noch initialisiert werden.
+Durch den Einsatz einer klassenweiten JUnit-Regel, der https://github.com/palantir/docker-compose-rule[Docker-Compose-Rule], kann Docker zusammen mit Docker Compose genutzt werden, um die benötigten, externen Systeme zu starten. Dieses System kann alle notwendigen Daten enthalten oder vom Spring-Kontext noch initialisiert werden.
 
 In <<event-repository-custom-query-test>> wird der Test-Slice `@DataJpaTest` benutzt, der die Datenbankschicht startet. Möchten Sie auf Funktionalitäten Ihrer neuen Anwendung von externen Systemen zugreifen, so nutzen Sie `@SpringBootTest`. Damit fahren Sie die Spring-Boot-Anwendung vollständig während eines Tests hoch. Eine weitere, empfehlenswerte Variante für einen vollständigen Systemtest ist, Ihre Anwendung und alle benötigten Services in einem Container zu starten und diese von außen durch einen dezidierten Dienst zu testen und so unter anderem Abhängigkeiten zwischen Integrationstests zu vermeiden.
 
@@ -287,7 +287,7 @@ Die hier vorgestellten Werkzeuge sprechen also nur einen Teil der Aufgaben an. S
 
 Die absolute Menge an Tests und die relativen Mengen unterschiedlicher Testarten hängen auch immer vom Schnitt einer Anwendung ab. Nutzen Sie die Idee der Bounded Contexts des Domain-driven Designs, um zum einen die schiere Menge unterschiedlicher Dinge zu begrenzen und darüber hinaus eine klare Definition der Dinge zu haben, die zu einem Thema gehören. Nicht nur Ihre Anwendung wird damit verständlicher, sondern auch die Tests derselben.
 
-Dieser Artikel wird direkt aus dem Repository des Beispielprojekts (https://github.com/michael-simons/tdd-mit-spring-boot-2) generiert. Er ist Teil des Buildprozess. Der Queltext wird nur dann verarbeitet, wenn alle Tests erfolgreich waren und die generierten Dokumentationsschnipsel verfügbar sind. Damit ist ein Test nicht mehr nur vertrauensbildende Maßnahme, sondern trägt zu einer lebenden Dokumentation bei. Gerade bei einer öffentlich konsumierten API ein nicht zu unterschätzender Vorteil. In einem klar definierten Kontext führt dieser Ansatz auch hinsichtlich Test und Dokumentation zu einem self-contained System.
+Dieser Artikel wird direkt aus dem Repository des Beispielprojekts (https://github.com/michael-simons/tdd-mit-spring-boot-2) generiert. Er ist Teil des Buildprozess. Der Quelltext wird nur dann verarbeitet, wenn alle Tests erfolgreich waren und die generierten Dokumentationsschnipsel verfügbar sind. Damit ist ein Test nicht mehr nur vertrauensbildende Maßnahme, sondern trägt zu einer lebenden Dokumentation bei. Gerade bei einer öffentlich konsumierten API kann das ein nicht zu unterschätzender Vorteil sein. In einem klar definierten Kontext führt dieser Ansatz auch hinsichtlich Test und Dokumentation zu einem self-contained System.
 
 Auf einige der Vorteile, die JUnit 5 für Tests aller Art bringt, wurde im Beispiel bewusst verzichtet, um die Integration von JUnit 4 in die Build Management Tools Gradle und Maven zu nutzen. Wiederverwendbare, dokumentierte Lösungen überwiegen an dieser Stelle andere Vorteile. Mit Hilfsmitteln wie https://joel-costigliola.github.io/assertj/[AssertJ] gelingt es ebenfalls, sehr klare und sprechende Tests zu schreiben.
 
@@ -295,6 +295,6 @@ Auf einige der Vorteile, die JUnit 5 für Tests aller Art bringt, wurde im Beisp
 
 {author} arbeit als Senior Consultant bei https://www.innoq.com/de/[innoQ Deutschland]. Er ist Mitglied des NetBeans Dream Team und Gründer der Euregio JUG. Michael schreibt in seinem http://info.michael-simons.eu[Blog] über Java, Spring und Softwarearchitektur. {firstname} ist Autor des im Januar 2018 erscheinenden Spring Boot Buches.
 
-Auf Twitter unterwegs als @rotnroll666, unter anderem mit Java, MusiK und den kleineren und größeren Problemen als Ehemann und Vater von 2 Kindern.
+Auf Twitter unterwegs als @rotnroll666, unter anderem mit Java, Musik und den kleineren und größeren Problemen als Ehemann und Vater von 2 Kindern.
 
-Mein Dank geht an https://rdmueller.github.io[Ralf D. Müller] für sein Feedback zur Testpyramide und seine Arbeit an der https://github.com/docToolchain/docToolchain[docToolChain], deren Ideen ich für den Build dieses Artikels genutzt habe.
+Herzlichen Dank an meine Frau und meine Kollegen von https://www.innoq.com[innoQ] fürs Korrekturlesen sowie an https://rdmueller.github.io[Ralf D. Müller] für sein Feedback zur Testpyramide und seine Arbeit an der https://github.com/docToolchain/docToolchain[docToolChain], deren Ideen ich für den Build dieses Artikels genutzt habe.
