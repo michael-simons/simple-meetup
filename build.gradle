@@ -137,9 +137,6 @@ tasks.withType(AsciidoctorTask) { docTask ->
             include '*.png'
         }
     }
-
-    // good to see what the build is doing...
-    logDocuments = true
 }
 
 task generateHTML (

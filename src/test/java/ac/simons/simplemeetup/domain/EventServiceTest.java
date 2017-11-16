@@ -32,6 +32,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -63,6 +65,9 @@ public class EventServiceTest {
 
         assertThatThrownBy(() -> eventService.createNewEvent(halloween()))
             .isInstanceOf(DuplicateEventException.class);
+
+        verify(eventRepository, times(1))
+                .findOne(halloween().asExample()); // <4>
     }
     // end::event-repository-usage-test[]
 

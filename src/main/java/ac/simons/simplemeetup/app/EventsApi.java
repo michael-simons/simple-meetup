@@ -45,8 +45,8 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
  * @author Michael J. Simons, 2017-10-31
  */
 // tag::domain-usage-single-event[]
-@RestController
-@RequestMapping("/api/events")
+@RestController // <1>
+@RequestMapping("/api/events") // <2>
 // end::domain-usage-single-event[]
 @SuppressWarnings({"checkstyle:DesignForExtension"})
 // tag::domain-usage-single-event[]
@@ -77,9 +77,9 @@ public class EventsApi {
     }
 
     // tag::domain-usage-single-event[]
-    @GetMapping("/{heldOn}/{name}")
+    @GetMapping("/{heldOn}/{name}") // <3>
     public EventResource event(
-        @PathVariable @DateTimeFormat(iso = ISO.DATE)
+        @PathVariable @DateTimeFormat(iso = ISO.DATE) // <4>
         final LocalDate heldOn,
         @PathVariable final String name
     ) {
