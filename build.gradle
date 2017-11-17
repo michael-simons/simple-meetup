@@ -1,5 +1,4 @@
 import org.asciidoctor.gradle.AsciidoctorTask
-import java.nio.file.Paths
 
 buildscript {
     ext {
@@ -130,8 +129,8 @@ tasks.withType(AsciidoctorTask) { docTask ->
     attributes \
           'sourceDir': "$projectDir/src/"
 
-    sourceDir = file("src/articles")
-    outputDir = file(Paths.get(project.buildDir.toString(), "articles"))
+    sourceDir = new File("src/articles")
+    outputDir = new File(project.buildDir, "articles")
     resources {
         from(sourceDir) {
             include '*.png'
@@ -169,9 +168,9 @@ task convertToDocx (
         type: Exec
 ) {
     doFirst {
-        file(Paths.get(generateDocBook.outputDir.toString(), "docx")).mkdirs()
+        new File(generateDocBook.outputDir, "docx").mkdirs()
     }
-    workingDir file(Paths.get(generateDocBook.outputDir.toString(), "docbook"))
+    workingDir = new File(generateDocBook.outputDir, "docbook")
     executable = "pandoc"
     args = ['-r','docbook',
             '-t','docx',
