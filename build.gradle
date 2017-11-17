@@ -168,9 +168,11 @@ task convertToDocx (
         group: 'docToolchain',
         type: Exec
 ) {
-    workingDir 'build/articles/docbook'
+    doFirst {
+        file(Paths.get(generateDocBook.outputDir.toString(), "docx")).mkdirs()
+    }
+    workingDir file(Paths.get(generateDocBook.outputDir.toString(), "docbook"))
     executable = "pandoc"
-    new File('build/articles/docx/').mkdirs()
     args = ['-r','docbook',
             '-t','docx',
             '-o','../docx/ddd-und-tdd-mit-spring-boot-2_de.docx',
