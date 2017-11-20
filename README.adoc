@@ -31,6 +31,10 @@ or
 
 depending wether you're on a Unix-like- or Windows-Machine.
 
+== Articles and posts
+
+http://info.michael-simons.eu/2017/11/20/integration-testing-with-docker-compose-gradle-and-spring-boot/[Integration testing with Docker-Compose, Gradle and Spring Boot]:: Explains how to use Docker-Compose and a JUnit rule to provide environments for integration tests to a Spring Boot application
+
 == Thanks
 
 In no specific order to
