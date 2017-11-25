@@ -293,7 +293,7 @@ Auf einige der Vorteile, die JUnit 5 für Tests aller Art bringt, wurde im Beisp
 
 == Über den Autor
 
-{author} arbeit als Senior Consultant bei https://www.innoq.com/de/[innoQ Deutschland]. Er ist Mitglied des NetBeans Dream Team und Gründer der Euregio JUG. Michael schreibt in seinem http://info.michael-simons.eu[Blog] über Java, Spring und Softwarearchitektur. {firstname} ist Autor des im Januar 2018 erscheinenden Spring Boot Buches.
+{author} arbeitet als Senior Consultant bei https://www.innoq.com/de/[innoQ Deutschland]. Er ist Mitglied des NetBeans Dream Team und Gründer der Euregio JUG. Michael schreibt in seinem http://info.michael-simons.eu[Blog] über Java, Spring und Softwarearchitektur. {firstname} ist Autor des im Januar 2018 erscheinenden Spring Boot Buches.
 
 Auf Twitter unterwegs als @rotnroll666, unter anderem mit Java, Music und den kleineren und größeren Problemen als Ehemann und Vater von 2 Kindern.
 
