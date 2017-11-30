@@ -2,7 +2,7 @@ import org.asciidoctor.gradle.AsciidoctorTask
 
 buildscript {
     ext {
-        springBootVersion = "2.0.0.M6"
+        springBootVersion = "2.0.0.M7"
     }
     repositories {
         mavenCentral()
