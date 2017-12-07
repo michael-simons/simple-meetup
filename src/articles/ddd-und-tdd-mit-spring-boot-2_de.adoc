@@ -12,32 +12,30 @@ Michael Simons <michael.simons@innoq.com>
 
 [abstract]
 --
-Am Anfang eines Projektes wird heutzutage in der Regel Wert auf Tests gelegt. Projekte werden sogar als Test-getrieben aufgesetzt (Test-driven-development, TDD). Schleicht sich Streß ein oder lässt die Begeisterung nach, kann es passieren, dass das Thema Tests, obwohl wichtig, vernachlässigt werden. Das gilt umso mehr, je schwieriger Komponenten eines Systems zu testen sind, unabhängig, ob sie einzeln oder integriert betrachtet werden. Lesen Sie hier, wie Ihnen ein Domain-orientierter Ansatz zusammen mit Spring Boot 2 dabei hilft, Qualität sicherzustellen.
+Am Anfang eines Projektes wird heutzutage in der Regel Wert auf Tests gelegt. Projekte werden sogar testgetrieben aufgesetzt (Test-driven-development, TDD). TDD-Projekte der reinen Lehre schreiben vor, dass vor jeder Zeile Anwendungscode der entsprechende Testcode geschrieben werden muss. Schleicht sich Stress ein oder lässt die Begeisterung nach, kann es passieren, dass das Thema Tests -- obwohl wichtig -- vernachlässigt werden. Das gilt umso mehr, je schwieriger Komponenten eines Systems zu testen sind, unabhängig, ob sie einzeln oder integriert betrachtet werden. Lesen Sie hier, wie Ihnen ein Domain-orientierter Ansatz zusammen mit Spring Boot 2 dabei hilft, Qualität sicherzustellen.
 --
 
-== Formale Korrektheit oder Erfüllung von Anforderungen?
+Bevor Sie weiterlesen: Für Softwaretests hinsichtlich Anforderungen gilt oftmals das Gleiche wie für Besuche beim Arzt. Eine Diagnose stellt fest, dass es keine Beweise für eine Krankheit gibt. Beweise für die Abwesenheit einer Krankheit gibt es nicht. Sie werden es schwer haben, in einem alltäglichen Projekt, die Abwesenheit von Fehlern hinsichtlich Anforderungen zu beweisen.
 
-Treten Sie kurz zurück und fragen sich, welches Ziel Sie mit ihren Tests erreichen möchten. Soll die formale Korrektheit Ihrer Software bewiesen werden oder möchten Sie sicherstellen, dass die Software alle ihr gestellten Anforderungen erfüllt, den Qualitätsansprüchen genügt und im Zusammenhang mit anderen Komponenten in Betrieb genommen werden kann? Dieser Artikel beschäftigt sich mit letzterem. Er fokusiert auf Tests, die bewerten, ob eine Software die an sie gestellten Anforderungen für den geplanten Einsatz erfüllt. Das Thema "Testen" als Gesamtheit zur Überprüfung und Verbesserung von Softwarequalität (Testplanung, -vorbereitung, -steuerung, -durchführung und Dokumentation) ist nicht Bestandteil dieses Textes.
-
-Bevor Sie weiterlesen: Für Softwaretests hinsichtlich Anforderungen gilt oftmals das gleiche wie für Besuche beim Arzt. Eine Diagnose stellt fest, dass es keine Beweise für eine Krankheit gibt. Beweise für die Abwesenheit einer Krankheit gibt es nicht. Sie werden es schwer haben, in einem alltäglichen Projekt, die Abwesenheit von Fehlern hinsichtlich Anforderungen zu beweise.
+Den vollständigen Quelltext dieses Artikels finden Sie auf https://github.com/michael-simons/tdd-mit-spring-boot-2[GitHub].
 
 == Vertrauensbildende Maßnahmen: Tests und Dokumentation
 
-Tests und Dokumentation sind wichtige Aspekte einzelner Anwendungen und sicherlich der meisten Anwendungssysteme. Beide Themen sind gleichermaßen vielschichtig und finden auf unterschiedlichen Ebenen statt, zum Beispiel auf Methoden-, Klassen-, Modul- und Systemebene. Tests werden genutzt, um die Korrektheit von Komponenten nachzuweisen. Das sind dann in der Regel Unittests. Der nächste Schritt ist sicherzustellen, dass Komponenten untereinander funktionieren. Es wird von Integrationstests gesprochen. Regressionstests können sowohl als Unit- als auch Integretionstest ausgeprägt sein. Regressionstests sollen Fehler nach Änderungen von Komponenten aufdecken, das heißt, dass Regresionstests wiederholbar sein müssen, um das Ergebnis eines alten mit dem Ergebnis eines neuen Testfalls vergleichen zu können.
+Tests und Dokumentation sind wichtige Aspekte einzelner Anwendungen und der meisten Anwendungssysteme. Beide Themen sind vielschichtig und finden auf unterschiedlichen Ebenen statt, zum Beispiel auf Methoden-, Klassen-, Modul- und Systemebene. Tests werden genutzt, um zu überprüfen, dass einzelne Komponenten ihre Spezifikation erfüllen. Das sind in der Regel Unittests. Der nächste Schritt ist sicherzustellen, dass Komponenten miteinander funktionieren. Es wird von Integrationstests gesprochen. Regressionstests können sowohl als Unit- als auch Integrationstest ausgeprägt sein. Regressionstests sollen Fehler nach Änderungen von Komponenten aufdecken. Regressionstests müssen also wiederholbar sein, um das Ergebnis eines alten mit dem Ergebnis eines neuen Testfalls vergleichen zu können.
 
 Hinsichtlich Dokumentation ist das Feld ähnlich vielfältig. Es wird von Code-, API-, Architektur- und Anwenderdokumentation gesprochen.
 
-Trotz aller Unterschiede gibt es eine Gemeinsamkeit: Die genannten Maßnahmen schaffen Vertrauen. Vertrauen in die Funktionalität als solches, in die Integrierbarkeit eines Systems und auch darauf, Änderungen vornehmen zu können.
+Trotz aller Unterschiede gibt es eine Gemeinsamkeit: Die genannten Maßnahmen schaffen Vertrauen. Vertrauen in die Funktionalität als solche, in die Integrierbarkeit eines Systems und auch darauf, Änderungen vornehmen zu können.
 
 == Warum sparen wir uns dennoch das Testen?
 
-Konsequente Softwaretests -- so sie denn gesetzlich nicht vorgeschrieben sind -- stehen oftmals hinten an oder sind nicht integraler Bestandteil von Softwareentwicklung. Im Projektalltag habe ich oft Varianten folgender Argumente gehört: "Dafür ist keine Zeit da." und "Testen schafft sowieso keinen Mehrwert.",  "Diese Module sind nicht testbar." oder auch  "Das benutzte Framework macht Tests zu aufwändig."
+Konsequente Softwaretests -- so sie denn gesetzlich nicht vorgeschrieben sind -- stehen oftmals hinten an oder sind nicht integraler Bestandteil von Softwareentwicklung. Im Projektalltag werden oft Varianten folgender Argumente vorgebracht: "Dafür ist keine Zeit da.", "Testen schafft sowieso keinen Mehrwert.",  "Diese Module sind nicht testbar." oder auch  "Das benutzte Framework macht Tests zu aufwendig."
 
-Dem gegenüber seit entgegnet:
+Demgegenüber sei entgegnet:
 
-* Die Zeit wird in Summe so oder so aufgewendet. Vielleicht nicht durch dasselbe Team, das einen Service erstellt hat, aber dann durch das Wartungsteam oder den Support. Die nachträgliche Fehlersuche und insbesonder das dann hoffentlich durchgeführte Testen sind teurer.
+* Die Zeit wird in Summe so oder so aufgewendet. Vielleicht nicht durch dasselbe Team, das einen Service erstellt hat, aber dann durch das Wartungsteam oder den Support. Die nachträgliche Fehlersuche und insbesondere das dann hoffentlich durchgeführte Testen sind teurer.
 * Testen schafft Vertrauen. Vertrauen, das Refactorings und neue Features unterstützt und damit direkt Mehrwert entspricht.
-* Code, von dem bekannt ist, dass er getestet wird, wird von Anfang an anders und in meinen Augen besser strukturiert, so dass er testbar bleibt
+* Code, von dem bekannt ist, dass er getestet wird, wird von Anfang an anders und in meinen Augen besser strukturiert, so dass er testbar bleibt.
 
 Schleicht sich in einem Projekt Streß ein, sei es durch zeitlichen Druck, unklare Anforderungen oder anderes mehr, ist es zu spät, Testen noch in den Fokus zu rücken. Hinterher Tests zu schreiben bringt oftmals keinen direkten Mehrwert mehr und eine Nachdokumentation macht selten Spaß.
 
@@ -45,39 +43,34 @@ Schleicht sich in einem Projekt Streß ein, sei es durch zeitlichen Druck, unkla
 
 Es ergeben sich aus den einleitenden Abschnitten mindestens die folgenden Anforderungen an Tests:
 
-* Der Start eines Projektes darf mit Testunterstützung nicht aufwändiger sein als ohne
-* Die Tests müssen sich nahtlos in den Entwicklungsprozess integrieren
-* Sie müssen so schnell wie möglich ausführbar sein
-* Das Ergebnis sollte meßbar sein
+* Der Start eines Projektes darf mit Testunterstützung nicht aufwendiger sein als ohne.
+* Die Tests müssen sich nahtlos in den Entwicklungsprozess integrieren.
+* Sie müssen so schnell wie möglich ausführbar sein.
+* Das Ergebnis sollte meßbar sein.
 
-Die Teams hinter Spring und Spring Boot legen großen Wert darauf, dass ihre Frameworks einen test-getriebenen Softwareenwicklungsansatz unterstützen. Meiner Erfahrung nach trifft das zu.
+Die Teams hinter Spring und Spring Boot legen großen Wert darauf, dass ihre Frameworks einen testgetriebenen Softwareenwicklungsansatz unterstützen.
 
 In der Java-Welt hat sich http://junit.org[JUnit] als Standardwerkzeug zur Ausführung von Tests durchgesetzt. JUnit wird von Spring -- auch in der aktuellsten Version 5 -- vollumfänglich unterstützt.
 
 .Spring und Spring Boot
 ****
-Im Januar 2018 wird mein Buch "Spring Boot -- Moderne Softwareentwicklung im Spring-Ökosystem" im dpunkt.verlag erscheinen. Das Buch ist bereits heute unter http://springbootbuch.de[springbootbuch.de] vorbestellbar. Es adressiert sowohl Spring-Neulinge als auch erfahrene Spring-Entwickler, die jetzt mit Spring Boot arbeiten möchten. Hier ein kurzer Auszug, der Ihnen einen Überblick geben soll, was Spring eigentlich ist.
+Das Spring-Framework wurde 2002 erstmals als Idee vorgestellt und ein Jahr später unter dem Namen Spring-Framework als quelloffenes Projekt veröffentlicht. Das Ziel -- damals wie heute -- ist, die Entwicklung mit Java zu vereinfachen und gute Programmierpraktiken zu fördern.
 
-Das Spring-Framework wurde 2002 erstmals als Idee vorgestellt und ein Jahr später unter dem Namen Spring-Framework als quelloffenes Projekt veröffentlicht. Das Ziel -- damals wie heute -- ist die Entwicklung mit Java zu vereinfachen und gute Programmierpraktiken zu fördern.
-
-Kernfunktionen von Spring sind dabei:
+Kernfunktionen von Spring sind:
 
 * Dependency Injection
 * MVC-basierte Webanwendungen und RESTful Webservices
 * Grundlagen für JDBC, JPA und vieles mehr
 * aspektorientierte Programmierung und deklarative Behandlung von Transaktionen
 
-Spring Boot ist in diesem Kontext kein neues Framework, sondern eine Sicht auf die Spring-Platform, die es ermöglicht, eigenständige und produktionsreife Anwendungen auf Basis des beschriebenen Spring-Frameworks zu bauen, die unter anderem folgende Eigenschaften haben:
-
-* eigenständige Anwendungen, die keine externen Laufzeitabhängigkeiten mehr haben
-* automatische Konfiguration
+Spring Boot ist in diesem Kontext kein neues Framework, sondern eine umfassende Lösung, die Abhängigkeitsmanagement, Build und vieles andere erheblich vereinfacht. Neue Spring-Projekte sollten daher mit Spring Boot umgesetzt werden.
 ****
 
-Spring-Boot-Anwendungen sind ganz normale Java-Anwendungen, die in der Regel mit einem Build-Management-Tool gebaut werden. Das Build-Management-Tool ist unter anderem für die Auflistung aller Abhängigkeiten zuständig. Im Beispielprojekt zum Artikel verwende ich das Werkzeug https://gradle.org[Gradle].
+Spring-Boot-Anwendungen sind ganz normale Java-Anwendungen, die in der Regel mit einem Build Management Tool gebaut werden. Das Build Management Tool ist unter anderem für die Auflistung und Bereitstellung aller Abhängigkeiten zuständig. Im Beispielprojekt zum Artikel wird das Werkzeug https://gradle.org[Gradle] verwendet.
 
-Spring Boot arbeitet mit sogenannten Startern. Diese Starter stellen Ihnen alle für ein gegebenes Thema notwendigen Abhängigkeiten zur Verfügung. So einen Starter gibt es auch für das Thema Testen.
+Spring Boot arbeitet mit sogenannten Startern. Diese Starter stellen Ihnen alle für ein gegebenes Thema notwendigen Abhängigkeiten zur Verfügung. So einen Starter gibt es auch für das Thema "Testen".
 
-Die Deklaration der Abhängigkeit in einem Gradle-Build-File (`build.gradle`) ist sehr einfach, wie <<test-dependencies>> zeigt.
+Die Deklaration der Abhängigkeit in einem Gradle Build File (`build.gradle`) ist sehr einfach, wie <<test-dependencies>> zeigt.
 
 [source,groovy]
 [[test-dependencies]]
@@ -88,20 +81,20 @@ include::../../build.gradle[tags=test-dependencies]
 
 Durch nur eine Deklaration erhalten Sie:
 
-* JUnit (in der Version 4)
+* JUnit
 * Springs Test-Support
-* http://site.mockito.org[Mockito], eine Mocking-Library, dazu später mehr
-* http://joel-costigliola.github.io/assertj[AssertJ], eine Library, die es Ihnen ermöglicht, sehr expressiv Behauptungen zu erwarteten Ergebnissen zu formulieren
+* http://site.mockito.org[Mockito]
+* http://joel-costigliola.github.io/assertj[AssertJ], eine Library, die es Ihnen ermöglicht, sehr klare und ausdrucksstarke Behauptungen (Assertions) zu erwarteten Ergebnissen zu formulieren
 
 == Das Beispiel
 
 Ich möchte Ihnen anhand einer einfachen Fachlichkeit zeigen, wie Spring Boot 2 Ihnen dabei hilft, sehr einfach Integrationstests zu schreiben: Sei es als vollständiger Durchstich oder als Integrationstest auf einer technischen Ebene.
 
-Gestestet werden soll ein Service, der Events und dazugehörige Registrierungen verwaltet. Ein einem Tag können mehrere Events stattfinden, die Namen der Events müssen dabei eindeutig sein. Events haben eine begrenzte Teilnehmeranzahl. Interesierte Besucher melden sich mit Namen und einer E-Mail-Adresse an und sollen sich nicht mehrfach anmelden können. Von einem Event soll zum vorherigen und nächstem Event navigiert werden können. Der Dienst stellt dazu eine einfache Oberfläche zur Verfügung.
+Getestet werden soll ein Service, der Events und dazugehörige Registrierungen verwaltet. An einem Tag können mehrere Events stattfinden, die Namen der Events müssen eindeutig sein. Events haben eine begrenzte Teilnehmeranzahl. Interessierte Besucher melden sich mit Namen und E-Mail-Adresse an und sollen sich nicht mehrfach anmelden können.
 
-Das Thema könnte Teil einer größeren Anwendung sein und als sogenannter Bounded-Context, einem Begriff aus dem Domain-Driven Design, identifiziert worden sein. Sie finden den vollständigen Quelltext dieses Artikels auf https://github.com/michael-simons/tdd-mit-spring-boot-2[GitHub].
+Der Event-Service könnte Teil einer größeren Anwendung sein und als sogenannter Bounded Context identifiziert worden sein. Der Begriff Bounded Context stammt aus dem Domain-Driven Design (DDD). Ein Bounded Context zielt darauf ab, größere Modelle in kleinere Teile zu zerlegen, die für sich genommen handhabbar sind und definierte Beziehungen untereinander haben. Innerhalb eines Bounded Context wird mit einer gemeinsamen, allgegenwärtigen ("Ubiquitous Language") über ein Thema gesprochen. Diese Fokussierung ist nicht nur für die eigentliche Entwicklung, sondern auch für das Testen wichtig. Es wird klar erkennbar was Teil des Tests sein muss und was nicht. Sie vermeiden damit, in einem allumfassenden Kontext ein ebenso allumfassendes Modell der Welt testen zu müssen.
 
-Die Fachlichkeit eignet sich außerdem sehr gut, zu zeigen, dass Tests auf Modulebene nicht nur sehr einfach zu realisieren, sondern auch oftmals die wichtigsten Aspekte Ihrer Domain bereits erfassen. Betrachten Sie die Klasse `Event` in <<event-entity>>.
+Die Fachlichkeit eignet sich sehr gut zu zeigen, dass Tests auf Modulebene nicht nur sehr einfach zu realisieren, sondern auch oftmals die wichtigsten Aspekte Ihrer Domain bereits erfassen. Betrachten Sie die Klasse `Event` in <<event-entity>>.
 
 [source,java]
 [[event-entity]]
@@ -109,43 +102,45 @@ Die Fachlichkeit eignet sich außerdem sehr gut, zu zeigen, dass Tests auf Modul
 ----
 include::../main/java/ac/simons/simplemeetup/domain/Event.java[tags=event-entity]
 ----
-<1> Der Konstruktor überprüft alle geforderten Vorbedingungen. Client-Code kann kein ungültiges Event herstellen
+<1> Der Konstruktor überprüft alle geforderten Vorbedingungen. Client-Code kann kein ungültiges Event herstellen.
 <2> Die Registrierung selber: Es ist nicht notwendig, Logik dieser Art über einen Service zu implementieren und das Event auf ein blutleeres Modell (anemic domain model) zu reduzieren.
 
-Ansonsten ist die Klasse frei von Spring typischen Annotationen. Schauen Sie in den vollständigen Quelltext finden Sie allerdings JPA-Annotationen. JPA steht für _Java Persistence API_ und wird genutzt, um die Inhalte relationaler Datenbanken auf Objekte abzubilden. Richtig genutzt können Sie damit auf der einen Seite gut gestaltete Schemata mit einem Domain-orientierten Ansatz zufriedenstellend zusammen bringen.
+Die Klasse `Event` wird in einem Domain-driven Design Ansatz als Aggregate Root bezeichnet, als Kern Ihrer Domain. Ein Aggregat kapselt mehrere Objekte Ihrer Domain, auf die nur gemeinsam zugegriffen werden darf. Eines dieser Objekte ist das Root-Objekt. Im Beispiel ist `Event` das Root-Objekt, die Registrierungen sind Objekte, die nur im Kontext des Events Gültigkeit besitzen. Auch hier hilft das gezielte Abstecken des Rahmens bei der Festlegung dessen, was getestet werden soll.
+
+`Event` ist frei von Spring-typischen Annotationen. Schauen Sie in den vollständigen Quelltext finden Sie allerdings JPA-Annotationen. JPA steht für _Java Persistence API_ und wird genutzt, um die Inhalte relationaler Datenbanken auf Objekte abzubilden. Richtig genutzt verbinden Sie damit sinnvolle Datenbankschemata mit Objekten, die nach den im vorherigen Absatz beschriebenen Prinzipien gestaltet wurden.
 
 == Die Tests
 
 === Auf Modul-(Unit)-Ebene
 
-Die Klasse `Event` wird in einem Domain-driven Design Ansatz als Aggregate-Root bezeichnet, als Kern Ihrer Domain. Sie ist Kernbestandteil dessen, was Sie mit Ihrer Software erreichen möchten. Mit den eingangs erwähnten Starter erhalten Sie alle Bausteine, um diese Klasse einem Unit-Test zu unterziehen. Testen Sie ganz klassisch Pre- und Postconditions, wie <<event-entity-tests>> zeigt.
+Durch die Abhängigkeit `spring-boot-starter-test` erhalten Sie alle Bausteine, um `Event` einem Unit-Test zu unterziehen. <<event-entity-tests>> zeigt Tests der erwarteten Pre- und Postconditions.
 
 [source,java]
 [[event-entity-tests]]
 .Unit Tests von Pre- und Postconditions
 ----
 include::../test/java/ac/simons/simplemeetup/domain/EventTest.java[tags=event-entity-tests,indent=0]
-
-include::../test/java/ac/simons/simplemeetup/domain/EventTest.java[tags=event-entity-tests,indent=0]
 ----
 <1> Signalisiert, dass diese Methode von JUnit als Testmethode ausgeführt werden soll
 <2> Hier sehen Sie eine AssertJ-Assertion. AssertJ bietet unter anderem eine schöne Möglichkeit an, zu testen, ob eine bestimmte Exception geworfen wurde oder nicht.
 <3> Weiterhin ist es möglich, Assertions aufeinander aufzubauen: Wenn die Exception dem erwarteten Typen entsprach, wird zusätzlich die entsprechende Mitteilung überprüft.
 
-Der Test der Logik ist ähnlich aufgebaut. Der Test ist klar strukturiert und gut lesbar, insbesondere weil die zu testende Klasse die Domain gut wiederspiegelt. Mit wenig Aufwand haben Sie den Kern Ihres Geschäftes fast vollständig getestet. Sie haben fast keinen Aufwand in das Aufsetzen einer Testumgebung oder die Bereitstellung von Kollaborateuren der Testklasse stecken mmüssen. Der Test ist also sehr günstig zu haben. Nutzen Sie diese Tatsache aus.
+Der Test der Logik ist ähnlich aufgebaut. Der Test ist klar strukturiert und gut lesbar, insbesondere weil die zu testende Klasse die Domain gut widerspiegelt. Der Kern des Event-Services kann so mit wenig Aufwand fast vollständig getestet werden. In einem vollständig testgetriebenen Ansatz könnten Sie soweit gehen, dass Sie zuerst den Unit-Test wie in <<event-entity-tests>> gezeigt schreiben und dadurch Ihre Erwartungen an die Domain formulieren. Da der Test so natürlich nicht kompiliert, müssten Sie anschließend die zu testende Klasse `Event` anlegen, die notwendigen Schnittstellen definieren und implementieren, bis der Test kompiliert und schlussendlich von rot (schlägt fehl) auf grün umspringt.
 
 .Warum nicht JUnit 5?
 ****
-Die Klassen in den Listings sind statische Klassen. Das bedeutet, sie sind Bestandteil äußerer Klassen. In unserem Beispiel hat das technische Gründe. Ich möchte die Tests der Klasse `Event` sinnvoll strukturieren. Dabei benötige ich Lösungen, die mir Version 4 von JUnit zur Verfügung stellt. Es wird dabei eine Testsuite auf Basis statischer, innerer Klassen zusammengestellt. Das ist ein wenig sperrig, aber funktioniert.
+JUnit 5 erschien im Herbst 2017. Es hat viele neue Funktionen, unter anderem die Möglichkeit, Testklassen als `@Nested` zu markieren. Das vermeidet zum Beispiel das komplexe Setup statischer Klassen in <<event-entity-tests>>. Darüber hinaus JUnit 5 vereinfacht den Umgang mit parametrisierten Tests und das Testen von Exceptions. JUnit 5 kann dynamische Tests (das sind Tests, die erst zur Laufzeit generiert werden) ausführen und mit `@DisplayName` sinnvolle Namen vergeben. Default-Methoden in Interfaces können als `@Test` annotiert werden und so als Mix-In in andere Tests gebracht werden.
 
-JUnit 5 erschien im Herbst 2017. Es hat viele neue Funktionen, unter anderem die Möglichkeit, Testklassen als `@Nested` zu markieren. Darüber hinaus vereinfacht es den Umgang mit parametrisierten Tests und das Testen von Exceptions. JUnit 5 kann dynamische Tests (das sind Tests, die erst zur Laufzeit generiert werden) ausführen und mit `@DisplayName` sinnvolle Namen vergeben. Default-Methoden in Interfaces können als `@Test` annotiert werden und so als Mix-In in andere Tests gebracht werden. Die aktuelle Version des Spring-Frameworks unterstützt JUnit 5 ebenfalls und kann zum Beispiel Tests auf Basis des Spring-Containers deaktivieren.
+Die aktuelle Version des Spring-Frameworks und Spring Boot unterstützen ebenfalls JUnit 5. Durch Ausschluss der JUnit-4-Abhängigkeit des eingangs erwähnten Starters und Deklaration der entsprechenden JUnit-5-Bibliotheken hätten Sie alles, was Sie zum Schreiben von Tests benötigen. Warum also nicht direkt in diesem Artikel JUnit 5 nutzen? 
 
-Warum also nicht direkt in diesem Artikel JUnit 5 nutzen? Ich sprach eingangs davon, dass es wichtig ist, dass Tests einfach bereitgestellt werden können. Bürden Sie Ihren Entwicklern zuviel Aufwand zum Testen auf, wird nicht getestet. Während die Unterstützung von JUnit 5 in den großen IDEs wie Eclipse und IntelliJ IDEA bereits sehr gut ist, funktioniert die Build-Tool-Unterstützung noch nicht wie erwartet. Das Beispielprojekt zum Artikel arbeitete ursprünglich mit JUnit 5 und ich hätte Stand November 2017 einen eigenen Aufsatz darüber schreiben können, wie man Gradle beziehungsweise Maven dazu bringt, ähnlich gut mit JUnit 5 zusammenzuarbeiten wie mit Version 4. Ich habe mich bewusst dagegen entschieden, um tatsächlich den Fokus auf einfaches Testen zu legen.
+Zur Infrastruktur eines Testes gehört mehr als nur die Abhängigkeit, auch die restliche Kette des Buildprozess muss einfach bereitgestellt werden können. Bürden Sie Ihren Entwicklern zu viel Aufwand zum Testen auf, wird nicht getestet. Während die Unterstützung von JUnit 5 in den großen IDEs wie Eclipse und IntelliJ IDEA bereits sehr gut ist, funktioniert die Build-Tool-Unterstützung noch nicht wie erwartet. Das Beispielprojekt zum Artikel arbeitete ursprünglich mit JUnit 5 und ich hätte Stand November 2017 einen eigenen Aufsatz darüber schreiben können, wie man Gradle beziehungsweise Maven dazu bringt, ähnlich gut mit JUnit 5 zusammenzuarbeiten wie mit Version 4. Ich habe mich bewusst dagegen entschieden, um tatsächlich den Fokus auf einfaches Testen zu legen.
+
+Es ist davon auszugehen, dass die Integration von JUnit 5 in den Build-Werkzeugen im Laufe von 2018 ähnlich gut sein wird, wie sie jetzt für JUnit 4 ist.
 ****
 
 === Fließende Grenzen
 
-Die Events kommen aber nicht aus dem luftleeren Raum. Sie werden in einer Datenbank gespeichert und es muss eine Schnittstelle geben, sie abzurufen. Ich empfehle für Datenbankzugriff vielfältiger Art eines der vielen http://projects.spring.io/spring-data/[Spring-Data-Module]. Spring Data implementiert für Domain-Klassen das Repository-Pattern. Ein Repository dient als Schnittstelle zwischen der Domainschicht und dem technischen Zugriff auf Daten. Nach außen stellt es sich oftmals als eine Art Liste von Domainobjekten da. Spring Data arbeitet dabei deklarativ. <<event-repository>> zeigt den notwendigen Code für ein Repository von Events.
+Die Events kommen aber nicht aus dem luftleeren Raum. Sie werden in einer Datenbank gespeichert und es muss eine Schnittstelle geben, sie abzurufen. Eine gute Möglichkeit für Datenbankzugriffe vielfältiger Art ist eines der vielen http://projects.spring.io/spring-data/[Spring-Data-Module]. Spring Data implementiert für Domain-Klassen das Repository Pattern. Ein Repository dient als Schnittstelle zwischen der Domainschicht und dem technischen Zugriff auf Daten. Nach außen stellt es sich oftmals als eine Art Liste von Domainobjekten dar. Spring Data arbeitet dabei deklarativ. <<event-repository>> zeigt den notwendigen Code für ein Repository von Events.
 
 [source,java]
 [[event-repository]]
@@ -154,7 +149,9 @@ Die Events kommen aber nicht aus dem luftleeren Raum. Sie werden in einer Datenb
 include::../main/java/ac/simons/simplemeetup/domain/EventRepository.java[tags=event-repository,indent=0]
 ----
 
-In einer Spring-Boot-Anwendung, die den entsprechenden Spring-Data-Starter als Abhängigkeit deklariert, ist das alles, was Sie tun müssen, um ein Repository dieser Art zur Laufzeit zu erhalten. Dieses Repository müssen Sie nicht testen. In dieser Form gehe ich davon aus, dass das Spring-Data-Team den Code getestet hat, der zur Laufzeit die `save`-Methode implementiert. Was ist aber mit dem Domain-Service in <<event-repository-usage>>, der sicherstellt, dass keine doppelten Events gespeichert werden? Dieser Service nutzt das Repository und eine der zur Laufzeit bereitgestellten Query-Methoden:
+In einer Spring-Boot-Anwendung, die den entsprechenden Spring Data Starter als Abhängigkeit deklariert, ist das alles, was Sie tun müssen, um ein Repository dieser Art zur Laufzeit zu erhalten. Dieses Repository müssen Sie nicht testen. In dieser Form gehe ich davon aus, dass das Spring Data Team den Code getestet hat, der zur Laufzeit die `save`-Methode implementiert. Was ist aber mit dem Domain Service in <<event-repository-usage>>, der sicherstellt, dass keine doppelten Events gespeichert werden? Aus einem datenbankzentrischen Perspektive kann das Thema natürlich mit einem Unique-Constraint gelöst werden. Damit werden aber Verantwortlichkeiten der Domain auf unterschiedliche Schichten verteilt und damit schlechter sichtbar. Davon abgesehen müsste eine Verletzung des Contraints auch entsprechend behandelt werden. Allerdings hält Sie niemand davon ab, entsprechendes Constraint dennoch zu definieren, so wie in diesem Projekt.
+
+Die Klasse `EventService` nutzt das Repository und eine der zur Laufzeit bereitgestellten Query-Methoden:
 
 [source,java]
 [[event-repository-usage]]
@@ -163,7 +160,7 @@ In einer Spring-Boot-Anwendung, die den entsprechenden Spring-Data-Starter als A
 include::../main/java/ac/simons/simplemeetup/domain/EventService.java[tags=event-repository-usage,indent=0]
 ----
 
-An dieser Stelle sind zwei Dinge zu testen: Funktioniert die Methode `asExample` auf der Domain-Klasse wie erwartet und reagiert der Service wie erwartet auf das Vorhandensein von Events. Um die Logik des Service zu testen, nutze ich einen Mock. Ein Mock ist ein Attrappe, ein Platzhalter der in Unit-Tests genutzt werden kann und so tut, als ob er notwendige Funktionalität implementiert. Spring Boot stellt Ihnen im entsprechenden Starter alle Werkzeuge zur Verfügung:
+An dieser Stelle sind zwei Dinge zu testen: Funktioniert die Methode `asExample` auf der Domain-Klasse wie erwartet und reagiert der Service wie erwartet auf das Vorhandensein von Events. Um die Logik des Service zu testen, nutze ich einen Mock. Ein Mock ist eine Attrappe, ein Platzhalter der in Unit-Tests genutzt werden kann und so tut, als ob er notwendige Funktionalität implementiert. Spring Boot stellt Ihnen im entsprechenden Starter alle Werkzeuge zur Verfügung:
 
 [source,java]
 [[event-repository-usage-test]]
@@ -171,15 +168,18 @@ An dieser Stelle sind zwei Dinge zu testen: Funktioniert die Methode `asExample`
 ----
 include::../test/java/ac/simons/simplemeetup/domain/EventServiceTest.java[tags=event-repository-usage-test,indent=0]
 ----
-<1> Instruiiert JUnit, die Tests mit Mockito auszuführen.
-<2> Das ist notwendig, damit automatisch "Attrappen" zur Verfügung stehen
-<3> Stellt das Szenario her, die Suche nach "Halloween" ergibt ein nicht leeres Ergebnis
+<1> Instruiert JUnit, die Tests mit Mockito auszuführen
+<2> Das ist notwendig, damit automatisch "Attrappen" zur Verfügung stehen.
+<3> Stellt das Szenario her: Die Attrappe des Repositorys wird so konfiguriert, dass die Suche nach dem "Halloween"-Event immer einen Treffer liefert.
+<4> Die Attrappe ist nicht nur Platzhalter für einen anderen Kollaborateur, sondern wird auch zur Überprüfung des Service-Code genutzt: Wurde die Methode `findOne` tatsächlich aufgerufen?
 
-Spring ist unter anderem eine Implementierung eines "Context- and Dependency-Injection"-Containers. Die Kollaborateure des Services -- im Beispiel nur das Repository -- werden von außen hereingereicht. Althergebracht ging das über Attribute. Aber wie stellen Sie das in einem Test nach? Spring -- und andere Container -- können das mittlerweile problemlos über den Konstruktor. Nutzen Sie das. Es wird ihre Tests einfacher und stabiler machen.
+Spring ist unter anderem eine Implementierung eines "Context- and Dependency-Injection"-Containers. Die Kollaborateure des Services -- im Beispiel nur das Repository -- werden von außen hereingereicht. Würde das Repository über einen Aufruf von `new` im Service selber erzeugt, könnte ein Test wie oben nur über einen erheblichen Aufwand realisiert werden. Dependency-Injection über Attribute ist mit Hinblick auf Testen auch nicht zielführend und teilweise schädlich: Wie wird sichergestellt, dass alle für einen Test benötigten Kollaborateure auch vorhanden sind? Wie werden Kollaborateure ohne Setter-Methoden gesetzt?
+
+Der Spring DI-Container nimmt Ihnen die Arbeit ab, Infrastruktur für Dependency-Injection selber zuschreiben. Die Erzeugung von Kollaborateuren ist vollständig von ihrer Benutzung entkoppelt. Da Spring keine Reflection-Hacks einsetzt sondern "nur" den Konstruktor des Service nutzt, erhalten Sie eine Klasse, die ohne Hacks testbar bleibt. Tatsächlich liegt auch in <<event-repository-usage-test>> noch ein echter Unit-Test vor, da anstelle des Repositorys nur eine Attrappe genutzt wird und zu keinem Zeitpunkt der Spring-Container benötigt wird.
 
 === Gezielte Tests technischer Schichten
 
-Spring Boot stellt Ihnen unter dem Begriff "Test-Slices" eine Möglichkeit zur Verfügung, gezielt technische Schichten einer Anwendung im Kontext des laufenden Spring Containers zu testen. Technische Schichten sind zum Beispiel Datenbankzugriff oder der Weblayer. Für Ihren Tests hat das den großen Vorteil, dass er schlanker sein kann. Möchten Sie gezielt eine REST-API testen, können Sie oftmals auf eine echte Datenbank oder andere unterstützende Diense im Hintergrund verzichten. Gegeben sei die API in <<domain-usage-single-event>>.
+Spring Boot stellt Ihnen unter dem Begriff "Test-Slices" eine Möglichkeit zur Verfügung, gezielt technische Schichten einer Anwendung im Kontext des laufenden Spring Containers zu testen. Technische Schichten sind zum Beispiel Datenbankzugriff oder der Weblayer. Für Ihren Test hat das den großen Vorteil, dass er schlanker sein kann. Möchten Sie gezielt eine REST-API testen, können Sie oftmals auf eine echte Datenbank oder andere unterstützende Diense im Hintergrund verzichten. Gegeben sei die API in <<domain-usage-single-event>>. Sie basiert auf Spring Web MVC, das dominante Programmiermodell basiert auf Annotationen. Im Beispiel besagen sie, dass unter der URL `/api/events/2017-12-24/Weihnachten` ein Event mit seinen Eigenschaften abrufbar sein soll.
 
 [source,java]
 [[domain-usage-single-event]]
@@ -187,8 +187,12 @@ Spring Boot stellt Ihnen unter dem Begriff "Test-Slices" eine Möglichkeit zur V
 ----
 include::../main/java/ac/simons/simplemeetup/app/EventsApi.java[tags=domain-usage-single-event,indent=0]
 ----
+<1> Markiert die Klasse als Rest-Endpunkt.
+<2> Gibt den Pfad `/api/events` als Basispfad für alle weiteren URLs dieser Klasse vor.
+<3> Bildet diese Methode auf einen Pfad unterhalb von `/api/events` ab, der durch zwei Pfadvariablen, `heldOn` und `name` parametrisiert ist.
+<4> `@PathVariable` ordnet die Methodenparameter der Variablen der URL zu.
 
-An dieser Stelle ist es schwierig, ohne Spring-spezifische Annotationen auszukommen. Im Beispiel besagen sie, dass unter der URL `/api/events/2017-12-24/Weihnachten` ein Event mit seinen Eigenschaften abrufbar sein soll. Die API benötigt dazu den Event-Service. An dieser Stelle möchte ich sicherstellen, dass die Abbildung der Funktion auf URLs und die Serializierung der Event-Daten korrekt funktioniert. Es ist also weniger ein Unit-Tests der Komponenten `EventsApi` und `EventService` als vielmehr ein Test der Integration mit Spring. Spring Boot stellt Ihnen für diese Schicht `@WebMvcTest` zur Verfügung. <<domain-usage-single-event-test>> zeigt die Verwendung:
+Die API benötigt dazu den Event Service. An dieser Stelle möchte ich sicherstellen, dass die Abbildung der Funktion auf URLs und die Serializierung der Event-Daten korrekt funktioniert. Das Ziel ist, die Integration der Komponenten `EventsApi` und `EventService` mit dem Spring Web Framework zu testen. Spring Boot stellt Ihnen für diese Schicht `@WebMvcTest` zur Verfügung. <<domain-usage-single-event-test>> zeigt die Verwendung:
 
 [source,java]
 [[domain-usage-single-event-test]]
@@ -196,23 +200,26 @@ An dieser Stelle ist es schwierig, ohne Spring-spezifische Annotationen auszukom
 ----
 include::../test/java/ac/simons/simplemeetup/app/EventsApiTest.java[tags=domain-usage-single-event-test,indent=0]
 ----
-<1> Hier wird ein spezieller Runner benötigt, der den Spring-Kontext startet
-<2> Damit der Test schneller startet, soll er nur die in <<EventsApi>> gezeigte Klasse beinhalten
-<3> Hiermit wird Spring REST Docs aktiviert, eine Möglichkeit, während des Tests automatisch eine API Dokumentation zu erzeugen
-<4> Aufruf der API
-<5> Ausdruck des erwarteten Ergebnis
-<6> Ausdruck einer weiterten Erwartung: Es wird ein JSON-Dokument mit den Feldern `heldOn`, `name` und so weiter erwartet
+<1> Hier wird ein spezieller Runner benötigt, der den Spring-Kontext startet.
+<2> Damit der Test schneller startet, soll er nur die in <<domain-usage-single-event>> gezeigte Klasse beinhalten.
+<3> Hiermit wird Spring REST Docs aktiviert, eine Möglichkeit, während des Tests automatisch eine API Dokumentation zu erzeugen.
+<4> Anweisung, den `EventService` als Mock bereitzustellen. Dieser Mock wird in der nachfolgenden Methode konfiguriert, bei bestimmten Eingaben immer ein bestimmtes Ergebnis zu liefern
+<5> Aufruf der API
+<6> Ausdruck des erwarteten Ergebnis
+<7> Hier wird eine Aktion formuliert, die nach Erfüllung aller Erwartungen ausgeführt wird. Struktur der Rückgabe wird dokumentiert. Die Dokumentation ist gleichzeitig Ausdruck einer weiteren Erwartung: Das JSON-Dokument muss die Felder `heldOn`, `name` und so weiter erwartet
 
-Der Test in <<domain-usage-single-event-test>> ist durchaus komplex: Es wird ein Spring-Kontext und das Web-Framework gestartet; dennoch ist der Test lesbar und die Erwartungen sind klar erkennbar. Durch die Integration mit https://projects.spring.io/spring-restdocs/[Spring REST Docs] generiert er darüber hinaus eine Dokumentation der API, die nicht nur dynamisch ist, sondern aktiver Teil des Tests: Fallen die hier beschriebenen Felder auf einmal weg, bricht der Tests. Die Dokumentation kann in verschiedenen Formaten generiert werden. Das Beispielprojekt nutzt das AsciiDoc-Format, der Auszug in <<GetEventsResponseFields>> ist Teil des Builds.
+Der Test in <<domain-usage-single-event-test>> ist durchaus komplex: Es wird ein Spring-Kontext und das Web Framework gestartet; dennoch ist er lesbar und die Erwartungen sind klar erkennbar. Durch die Integration mit https://projects.spring.io/spring-restdocs/[Spring REST Docs] generiert er darüber hinaus eine Dokumentation der API, die nicht nur dynamisch ist, sondern aktiver Teil des Tests: Fallen die hier beschriebenen Felder auf einmal weg, bricht der Test. Die Dokumentation kann in verschiedenen Formaten generiert werden. Das Beispielprojekt nutzt das AsciiDoc-Format, der Auszug in <<GetEventsResponseFields>> ist Teil des Builds.
 
 [table]
 [[GetEventsResponseFields]]
 .Struktur der Resource `/event`
 include::../../build/generated-snippets/get-event/response-fields.adoc[]
 
+Dieser Artikel wird direkt aus dem Repository des Beispielprojekts generiert. Er ist Teil des Buildprozess. Der Quelltext wird nur dann verarbeitet, wenn alle Tests erfolgreich waren und die generierten Dokumentationsschnipsel verfügbar sind. Damit ist ein Test nicht mehr nur vertrauensbildende Maßnahme, sondern trägt zu einer lebenden Dokumentation bei und hebt damit die Idee _code as documentation_ auf eine neue Ebene.
+
 === Integrationstests
 
-Der erste "wirkliche" Integrationstests im Beispiel wird mit der Deklaration einer Datenbankabfrage in <<event-repository-custom-query>> benötigt. Diese Abfrage wurde zwar in JPQL, der _Java Persistence Query Language_ aufgeschrieben und sollte damit einigermaßen portabel sein, aber Sie müssen trotzdem sicherstellen, dass sich keine Tippfehler eingeschlichen haben oder die geplante Zieldatenbank Ihre Abfrage umsetzen kann.
+Bis hierhin wurden Unittests unterschiedlicher Schwierigkeit durchgeführt. Es musste umso mehr Infrastruktur bereitgestellt werden, je näher an der Anwendungsschicht getestet wurde. Trotzdem wurde der eigentliche Kontext des Event-Service nicht verlassen. Der erste Integrationstests mit Komponenten außerhalb des Spring-Kontexts wird mit der Deklaration einer Datenbankabfrage in <<event-repository-custom-query>> benötigt. Diese Abfrage wurde zwar in JPQL, der _Java Persistence Query Language_ aufgeschrieben und sollte damit einigermaßen portabel sein, aber Sie müssen trotzdem sicherstellen, dass sich keine Tippfehler eingeschlichen haben oder die geplante Zieldatenbank Ihre Abfrage umsetzen kann.
 
 [source,java]
 [[event-repository-custom-query]]
@@ -221,7 +228,7 @@ Der erste "wirkliche" Integrationstests im Beispiel wird mit der Deklaration ein
 include::../main/java/ac/simons/simplemeetup/domain/EventRepository.java[tags=event-repository-custom-query,indent=0]
 ----
 
-Es ist sinnvoll, diese echten Integrationstests von Unittests zu trennen, zum Beispiel erkennbar am Namen, besser noch durch separate Sourcen. Mit Gradle und dem eingebauten JUnit-Plugin ist das für eine Spring-Boot-Anwendung schnell und nachvollziebar gemacht, wie <<integration-test-setup>> zeigt.
+Es ist sinnvoll, Integrationstests von Unittests zu trennen; zum Beispiel erkennbar am Namen, besser noch durch separate Sourcen. Mit Gradle und dem eingebauten JUnit-Plugin ist das für eine Spring-Boot-Anwendung schnell und nachvollziebar gemacht, wie <<integration-test-setup>> zeigt.
 
 [source,groovy]
 [[integration-test-setup]]
@@ -230,10 +237,10 @@ Es ist sinnvoll, diese echten Integrationstests von Unittests zu trennen, zum Be
 include::../../build.gradle[tags=integration-test-setup]
 ----
 <1> Definition einer weiteren Menge von Quellen mit Namen `integrationTest`
-<2> Definition eines Tasks, der vom Test-Task erbent, aber auf anderen Quellen arbeitet
+<2> Definition eines Tasks, der vom Test-Task erbt, aber auf anderen Quellen arbeitet
 <3> Aktivierung eines Spring-Profiles, um passende Konfigurationseigenschaften zu aktivieren
 
-Integrationstests gegen Datenbanken können heikel sein. Schwergewichtige Datenbanken wie eine Oracle-Datenbank nur für einen Tests zu starten, kann dauern. Gegen In-Memory-Datenbanken zu testen bildet nicht die Realität ab. Eine Alternative ist die Generierung unterschiedlicher Schemas für Tests zwecke. Das Beispielprojekt des Artikels geht den konsequenten Weg und startet die Zieldatenbank, eine PostgreSQL-Instanz, während der Integrationstests per https://www.docker.com[Docker]. Die Datenbank wird mit den Mitteln von Spring-Boot initialisiert und der vollständige Test ergibt sich in <<event-repository-custom-query-test>>.
+Integrationstests gegen Datenbanken können heikel sein. Schwergewichtige Datenbanken wie eine Oracle-Datenbank nur für einen Tests zu starten, kann dauern. Gegen In-Memory-Datenbanken zu testen, bildet nicht die Realität ab. Eine Alternative ist die Generierung unterschiedlicher Schemas für Testzwecke. Das Beispielprojekt des Artikels geht den konsequenten Weg und startet die Zieldatenbank, eine PostgreSQL-Instanz, während der Integrationstests per https://www.docker.com[Docker]. Die Datenbank wird mit den Mitteln von Spring Boot initialisiert und der vollständige Test ergibt sich in <<event-repository-custom-query-test>>.
 
 [source,java]
 [[event-repository-custom-query-test]]
@@ -242,17 +249,18 @@ Integrationstests gegen Datenbanken können heikel sein. Schwergewichtige Datenb
 include::../integrationTest/java/ac/simons/simplemeetup/domain/EventRepositoryIT.java[tags=event-repository-custom-query-test,indent=0]
 ----
 
-Durch den Einsatz einer klassenweiten JUnit-Regel, der https://github.com/palantir/docker-compose-rule[Docker-Compose-Rule] kann Docker zusammen mit werden Docker-Compose genutzt werden, um die benötigten, externen Systeme zu starten. Dieses System kann alle notwendigen Daten enthalten oder vom Spring-Kontext noch initialisiert werden.
+Durch den Einsatz einer klassenweiten JUnit-Regel, der https://github.com/palantir/docker-compose-rule[Docker-Compose-Rule], kann Docker zusammen mit Docker Compose genutzt werden, um die benötigten, externen Systeme zu starten. Dieses System kann alle notwendigen Daten enthalten oder vom Spring-Kontext noch initialisiert werden.
 
-In <<event-repository-custom-query-test>> wird der Test-Slice `@DataJpaTest` benutzt, der die Datenbankschicht startet. Möchten Sie auf Funktionalitäten Ihrer neuen Anwendung von externen System zugreifen, so nutzen Sie `@SpringBootTest`. Damit fahren Sie die Spring-Boot-Anwendung vollständig während eines Tests hoch. Eine weitere, empfehlenswerte Variante für einen vollständigen Systemtests ist, Ihre Anwendung und alle benötigten Services in einem Container zu starten und diese von außen durch einen dezidierten Dienst zu testen und so unter anderem Abhängigkeiten zwischen Integrationstests zu vermeiden.
+.Was ist Docker Compose?
+****
+Docker wird unter anderem dazu genutzt, Anwendungen aller Art in sogenannten Containern bereitzustellen, die innerhalb einer Betriebssystemvirtualisierung ablaufen. Der Einstieg ist sehr einfach, einzelne Anwendungen, beispielsweise Datenbanken, sind schnell bereitgestellt. Wird allerdings mehr als ein System verwaltet, steigt der Aufwand schnell an. Docker Compose ist eine Möglichkeit, eine Menge von Systemen innerhalb einer Konfiguration zu verwalten, gemeinsam zu starten, skalieren und zu stoppen. Michael Vitz von innoQ hat das Konzept unter dem Titel https://www.innoq.com/de/articles/2017/04/docker-compose/["Komplette Systeme mit Docker managen"] ausführlich beschrieben.
+****
+
+In <<event-repository-custom-query-test>> wird der Test-Slice `@DataJpaTest` benutzt, der die Datenbankschicht startet. Möchten Sie auf Funktionalitäten Ihrer neuen Anwendung von externen Systemen zugreifen, so nutzen Sie `@SpringBootTest`. Damit fahren Sie die Spring-Boot-Anwendung vollständig während eines Tests hoch. Eine weitere, empfehlenswerte Variante für einen vollständigen Systemtest ist, Ihre Anwendung und alle benötigten Services in einem Container zu starten und diese von außen durch einen dezidierten Dienst zu testen und so unter anderem Abhängigkeiten zwischen Integrationstests zu vermeiden.
 
 === Überprüfung der Testabdeckung
 
-Als Testabdeckung wird das Verhältnis der getroffenen Aussagen eines Tests gegenüber den möglichen Aussagen bezeichnet. Dabei spielen unterschiedliche Kriterien wie Funktions-, Statement und Zweigabdeckung oder auch Abdeckung von Bedingungen eine Rolle. Auch für einfachste Funktionen ergibt sich schnell eine extrem hohe Anzahl verschiedener Pfade. Fordern Sie daher nicht von Ihrer Entwicklung, eine Testabdeckung von 100% für die komplette Software zu erreichen, die Kosten würden den Nutzen schnell überschreiten. Darüberhinaus ist die Versuchung groß, Code und Tests zu produzieren, die die Abdeckung in die Höhe treiben ohne inhaltlich zu testen.
-
-Betrachten Sie lieber gültige Eingabebereiche für Module und Grenzfälle. Nehmen Sie Daten, die zu Fehlern geführt haben, in Ihre Tests auf. Um die Qualität ihrer Tests selber zu verbessern kann "Mutationstesting" sinnvoll sein. Dabei wird während der Ausführung von Tests der zu testende Code mutiert, so dass es zu Fehlern kommt. Werden diese Fehler von Ihren Tests nicht erkannt, müssen die Testfälle anders gewählt werden.
-
-Die Veränderung der Testabdeckung, insbesondere nach unten, kann dennoch eine Metrik zur Steuerung eines Projektes sein. Ein bekanntes Tool in der Java-Welt ist http://www.eclemma.org/jacoco/[JaCoCo]. <<jacoco-setup>> zeigt, dass JaCoCo mit nur wenigen Zeilen in Ihr Gradle-Build-File eingebaut werden kann. Es wird überprüft, ob mindest 60% aller Statements abedeckt sind.
+Als Testabdeckung wird das Verhältnis der getroffenen Aussagen eines Tests gegenüber den möglichen Aussagen bezeichnet. Dabei spielen unterschiedliche Kriterien wie Funktions-, Statement- und Zweigabdeckung oder auch Abdeckung von Bedingungen eine Rolle. Ein bekanntes Tool in der Java-Welt zur Messung der Testabdeckung ist ist http://www.eclemma.org/jacoco/[JaCoCo]. <<jacoco-setup>> zeigt, dass JaCoCo mit nur wenigen Zeilen in Ihr Gradle Build File eingebaut werden kann.
 
 [source,groovy]
 [[jacoco-setup]]
@@ -260,6 +268,12 @@ Die Veränderung der Testabdeckung, insbesondere nach unten, kann dennoch eine M
 ----
 include::../../build.gradle[tags=jacoco-setup]
 ----
+
+Definieren Sie ein Mindestmaß an Testabdeckung, das Sie nicht unterschreiten möchten, aber zwingen Sie Ihre Entwickler nicht, unrealistisch hohe Vorgaben einzuhalten. Die Kosten überschreiten den Nutzen schnell und die Versuchung ist groß, Code und Tests zu produzieren, die die Abdeckung in die Höhe treiben ohne inhaltlich zu testen. Die Etablierung eines Testfundaments und davon ausgehender Durchstich durch die Ebenen einer Architektur ist wichtiger als eine möglichst hohe Menge.
+
+Die Änderung der Testabdeckung in Relation zu neuem Code ist oftmals eine bessere Metrik zur Beurteilung von Qualität als der absolute Wert der Abdeckung.
+
+Betrachten Sie lieber gültige Eingabebereiche für Module und Grenzfälle, anstatt immer alle Pfade durch eine Methode zwanghaft durchlaufen zu wollen. Nehmen Sie Daten, die zu Fehlern geführt haben, in Ihre Tests auf. Um die Qualität ihrer Tests selber zu verbessern kann Mutationstesting sinnvoll sein. Dabei wird während der Ausführung von Tests der zu testende Code mutiert, so dass es zu Fehlern kommt. Werden diese Fehler von Ihren Tests nicht erkannt, müssen die Testfälle anders gewählt werden.
 
 == Fazit
 
@@ -271,30 +285,22 @@ Der Autor https://watirmelon.wordpress.com/about/[Alister Scott] stellte 2012 de
 [[TestingPyramide]]
 image::testing-pyramide.png[Testingpyramide]
 
-Unit-Tests sind -- die richtige Herangehensweise vorausgesetzt -- einfach zu erstellen und sollten zahlreich vorhanden sein. Integrationstest in vielfältigen Ausprägungen (in <<TestingPyramide>> als API Tests, "echte" Integrationstests zwischen Systemen oder als Tests zwischen Komponenten), sind in der Regel aufwendiger und eine der Königsdisziplinen sind automatisierte UI-Tests, darüber hinaus sind nur noch Click-Tests durch echte Benutzer angesiedelt. Die sind in der Regel einfach durchzuführen, dadurch nicht weniger teuer. Leider sieht es in der Realität oftmals eher so aus, dass die "Wolke" an der Spitze übermässig groß ist und die Pyramide umgekehrt wird: Ein teures Eishörnchen. Versuchen Sie also, das Fundament Ihrere Anwendung, die fachlichen Anforderungen, so klar wie möglich herauszuarbeiten und klassisch mit Unit-Tests zu verifzieren.
+Unit-Tests sind -- die richtige Herangehensweise vorausgesetzt -- einfach zu erstellen und sollten zahlreich vorhanden sein. Integrationstest -- in vielfältigen Ausprägungen (in <<TestingPyramide>> als API Tests, Integrationstests zwischen Systemen oder als Tests zwischen Komponenten) -- sind in der Regel aufwendiger, und eine der Königsdisziplinen sind automatisierte UI-Tests, darüber sind nur noch Click-Tests durch echte Benutzer angesiedelt. Die sind in der Regel einfach durchzuführen, dadurch nicht weniger teuer. Leider sieht es in der Realität oftmals eher so aus, dass die "Wolke" an der Spitze übermässig groß ist und die Pyramide umgekehrt wird. Es werden immer noch viele manuelle und damit langsame und teure Tests durchgeführt. 
 
-Ob Sie dabei tatsächlich immer hunderprozentig testgetrieben vorgehen, sei dahin gestellt. Mir persönlich ist die Sicherheit, die mir der Test einer Anfordung gibt, gut genug. Auf seiner Basis fallen Refactorings und Erweiterungen leicht. Ob der Test physikalisch vor dem zu testenden Code existiert, ist zweitrangig.
+Versuchen Sie, das Fundament Ihrer Anwendung, die fachlichen Anforderungen, so klar wie möglich herauszuarbeiten und klassisch mit Unit-Tests zu verifizieren. Ob Sie dabei tatsächlich immer hundertprozentig testgetrieben vorgehen, sei dahin gestellt. Tests müssen Vertrauen schaffen, auf Basis dessen fallen Refactorings und Erweiterungen leicht. Ob Tests physikalisch vor dem zu testenden Code existiert, ist zweitrangig.
 
 === Weitere Tests und Herausforderungen
 
-Gerade in Hinblick auf das Thema _continous delivery_, also der kontinuierliche Auslieferung von Bausteinen eines Systems, kommen weitere Testarten ins Spiel. Eine continous delivery pipeline bringt eine Software durch verschiedene Phasen kontinuierlich in Produktion. Diese Phasen beinhalten Akzeptanz- und Kapazitätstests und auch explorative Tests.
+Gerade in Hinblick auf das Thema _continous delivery_, also der kontinuierlichen Auslieferung von Bausteinen eines Systems, kommen weitere Testarten ins Spiel. Eine continous delivery pipeline bringt eine Software durch verschiedene Phasen kontinuierlich in Produktion. Diese Phasen beinhalten Performance-, Akzeptanz-, Kapazitäts- und auch explorative Tests.
 
-Aus der Sicht von User-Stories sind Akzeptanztests das Fundament einer weiteren Testpyramide, insbesondere wenn Backend und Frontend nicht als Teil eines gemeinsamen http://scs-architecture.org[Self-contained system] entwickelt werden. Die Schwerpunkte sind also vertauscht. Während das Backend als fertig getestete Library angeliefert wird, darf der Test des Frontends nicht vernachlässigt werden. Beide Pyramiden können sich wunderbar zu einer gemeinsamen Vertikalen ergänzen.
+Mein Kollege Eberhard Wolff spricht in dieser Hinsicht von https://www.innoq.com/de/articles/2017/11/continuous-delivery-stand-der-dinge/[Unendlichem Vertrauen]. Aufbauend auf den Tests der Ebenen, die im vorliegenden Text beschrieben werden, schaffen Akzeptanztests Vertrauen beim Kunden, ob die Software ihre Anforderungen erfüllt. Akzeptanztests können als Fundament einer weiteren Testpyramide betrachtet werden, die sich der Software sozusagen von der anderen Seite nähert. Wichtig ist allerdings, auch diese Tests soweit wie möglich zu automatisieren, um das Ziel zu erreichen, eine Software möglichst schnell und im Falle von Änderungen auch möglichst oft in Produktion zu bringen. Unstrittig ist, dass es noch schwieriger ist, Kunden bei der Entwicklung automatisierter Tests mit ins Boot zu holen, aber die sich daraus ergebenden Vorteile sind den Aufwand wert.
 
-Die hier vorgestellten Werkzeuge sprechen also nur einen Teil der Aufgaben an. Setzen Sie auf eine Microservicearchitektur, um Bausteine unabhängig voneinander entwickeln zu können, muss ihr System muss so geschnitten sein, dass die einzelnen Bausteine auch unabhängig voneinander getestet werden können und tatsächlich für sich genommen kontinuierlich und schnell getestet und deployed werden können.
-
-=== Eine integrierte Lösung
-
-Die absolute Menge an Tests und die relativen Mengen unterschiedlicher Testarten hängen auch immer vom Schnitt einer Anwendung ab. Nutzen Sie die Idee der Bounded-Contexts des Domain-driven Designs, um zum einen die schiere Menge unterschiedlicher Dinge zu begrenzen und darüberhinaus eine klare Definition der Dinge zu haben, die zu einem Thema gehören. Nicht nur Ihre Anwendung wird damit verständlicher, sondern auch die Tests derselben.
-
-Dieser Artikel wird direkt aus dem Repository des Beispielprojekts (https://github.com/michael-simons/tdd-mit-spring-boot-2) generiert. Er ist Teil des Buildprozess. Der Queltext wird nur dann verarbeitet, wenn alle Tests erfolgreich waren und die generierten Dokumentationsschnippsel verfügbar sind. Damit ist ein Test nicht mehr nur vertrauensbildende Maßnahme, sondern trägt zu einer lebenden Dokumentation bei. Gerade bei einer öffentlich konsumierten API ein nicht zu unterschätzender Vorteil. In einem klar definierten Kontext führt dieser Ansatz auch hinsichtlich Test und Dokumentation zu einem self-contained System.
-
-Auf einige der Vorteile, die JUnit 5 für Tests aller Art bringt, wurde im Beispiel bewusst verzichtet, um die Integration von JUnit 4 in die Build-Management-Tools Gradle und Maven zu nutzen. Wiederverwendbare, dokumentierte Lösungen überwiegen an dieser Stelle andere Vorteile. Mit Hilfsmitteln wie https://joel-costigliola.github.io/assertj/[AssertJ] gelingt es ebenfalls, sehr klare und sprechende Tests zu schreiben.
+Schlussendlich stehen und fallen Konzepte mit den Menschen dahinter. Der Wert von Unit- und Integrationstests muss ebenso erkannt und gelebt werden wie der von automatisierten Akzeptanztests, damit etwas wie _continous delivery_ erfolgreich in einer Organisation umgesetzt wird.
 
 == Über den Autor
 
 {author} arbeitet als Senior Consultant bei https://www.innoq.com/de/[innoQ Deutschland]. Er ist Mitglied des NetBeans Dream Team und Gründer der Euregio JUG. Michael schreibt in seinem http://info.michael-simons.eu[Blog] über Java, Spring und Softwarearchitektur. {firstname} ist Autor des im Januar 2018 erscheinenden Spring Boot Buches.
 
-Auf Twitter unterwegs als @rotnroll666, unter anderem mit Java, Music und den kleineren und größeren Problemen als Ehemann und Vater von 2 Kindern.
+Auf Twitter unterwegs als @rotnroll666, unter anderem mit Java, Musik und den kleineren und größeren Problemen als Ehemann und Vater von 2 Kindern.
 
-Mein Dank geht an https://rdmueller.github.io[Ralf D. Müller] für sein Feedback zur Testpyramide und seine Arbeit an der https://github.com/docToolchain/docToolchain[docToolChain], deren Ideen ich für den Build dieses Artikels genutzt habe.
+Im Januar 2018 wird sein Buch "Spring Boot -- Moderne Softwareentwicklung im Spring-Ökosystem" im dpunkt.verlag erscheinen. Das Buch ist bereits heute unter http://springbootbuch.de[springbootbuch.de] vorbestellbar. Es behandelt Spring Boot 2 und das neue, reaktive Programmierparadigma von Spring 5 ebenso wie Spring-Grundlagen und spricht damit erfahrene Spring-Entwickler wie auch Spring-Neulinge an.

@@ -16,6 +16,7 @@
 package ac.simons.simplemeetup.domain;
 
 import ac.simons.simplemeetup.support.PortMappingInitializer;
+import ac.simons.simplemeetup.support.PostgresHealthChecks;
 import ac.simons.simplemeetup.support.PropagateDockerRule;
 import com.palantir.docker.compose.DockerComposeRule;
 import com.palantir.docker.compose.connection.waiting.HealthChecks;
@@ -49,7 +50,10 @@ public class EventRepositoryIT {
 
     private static DockerComposeRule docker = DockerComposeRule.builder()
         .file("src/integrationTest/resources/docker-compose.yml")
+        // end::event-repository-custom-query-test[]
         .waitingForService("it-database", HealthChecks.toHaveAllPortsOpen())
+        // tag::event-repository-custom-query-test[]
+        .waitingForService("it-database", PostgresHealthChecks::canConnectTo)
         .build();
 
     @ClassRule

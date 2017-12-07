@@ -1,9 +1,8 @@
 import org.asciidoctor.gradle.AsciidoctorTask
-import java.nio.file.Paths
 
 buildscript {
     ext {
-        springBootVersion = "2.0.0.M6"
+        springBootVersion = "2.0.0.M7"
     }
     repositories {
         mavenCentral()
@@ -130,16 +129,13 @@ tasks.withType(AsciidoctorTask) { docTask ->
     attributes \
           'sourceDir': "$projectDir/src/"
 
-    sourceDir = file("src/articles")
-    outputDir = file(Paths.get(project.buildDir.toString(), "articles"))
+    sourceDir = new File("src/articles")
+    outputDir = new File(project.buildDir, "articles")
     resources {
         from(sourceDir) {
             include '*.png'
         }
     }
-
-    // good to see what the build is doing...
-    logDocuments = true
 }
 
 task generateHTML (
@@ -171,9 +167,11 @@ task convertToDocx (
         group: 'docToolchain',
         type: Exec
 ) {
-    workingDir 'build/articles/docbook'
+    doFirst {
+        new File(generateDocBook.outputDir, "docx").mkdirs()
+    }
+    workingDir = new File(generateDocBook.outputDir, "docbook")
     executable = "pandoc"
-    new File('build/articles/docx/').mkdirs()
     args = ['-r','docbook',
             '-t','docx',
             '-o','../docx/ddd-und-tdd-mit-spring-boot-2_de.docx',

@@ -55,24 +55,27 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureRestDocs // <3>
 public class EventsApiTest {
 
-    // end::domain-usage-single-event-test[]
-    @MockBean
+    @MockBean // <4>
     private EventService eventService;
 
+    // end::domain-usage-single-event-test[]
     @Autowired
     private MockMvc mockMvc;
 
     private final LinksSnippet selfLink = links(linkWithRel("self").ignored().optional());
-
+    // tag::domain-usage-single-event-test[]
     @Before
     public void initializeMocks() {
         final Event event1 = new Event(LocalDate.now(), "Event-1");
-        when(eventService.getOpenEvents()).thenReturn(
-            Arrays.asList(event1, new Event(LocalDate.now().plusDays(1), "Event-2"))
-        );
-        when(eventService.getEvent(event1.getHeldOn(), event1.getName())).thenReturn(Optional.of(event1));
+        // end::domain-usage-single-event-test[]
+        when(eventService.getOpenEvents())
+            .thenReturn(Arrays.asList(event1, new Event(LocalDate.now().plusDays(1), "Event-2")));
+        // tag::domain-usage-single-event-test[]
+        when(eventService.getEvent(event1.getHeldOn(), event1.getName()))
+            .thenReturn(Optional.of(event1));
     }
 
+    // end::domain-usage-single-event-test[]
     @Test
     public void eventsShouldWork() throws Exception {
         this.mockMvc
@@ -96,9 +99,9 @@ public class EventsApiTest {
             .perform(
                 get("/api/events/{heldOn}/{name}",
                     LocalDate.now(), "Event-1"
-                ).accept(HAL_JSON)) // <4>
-            .andExpect(status().isOk()) // <5>
-            .andDo(document("get-event", // <6>
+                ).accept(HAL_JSON)) // <5>
+            .andExpect(status().isOk()) // <6>
+            .andDo(document("get-event", // <7>
                 // end::domain-usage-single-event-test[]
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
