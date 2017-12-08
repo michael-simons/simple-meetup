@@ -135,7 +135,7 @@ build.dependsOn jacocoTestCoverageVerification, jacocoTestReport
 
 // common settings for asciidoctor
 tasks.withType(AsciidoctorTask) { docTask ->
-    //dependsOn check
+    dependsOn check
 
     attributes \
           'sourceDir': "$projectDir/src/"
