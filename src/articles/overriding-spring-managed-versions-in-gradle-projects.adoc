@@ -1,0 +1,50 @@
+= Overriding Spring managed versions in Gradle projects
+Michael Simons <michael.simons@innoq.com>
+:doctype: article
+:lang: en
+:listing-caption: Listing
+:source-highlighter: coderay
+:icons: font
+:sectlink: true
+:sectanchors: true
+:numbered: true
+:xrefstyle: short
+
+If you're using Gradle for a while, this probably isn't new for you, but I'm entering Neuland with this Gradle based project. Although I'm not as critical as Spring committer and fellow author http://greglturnquist.com/2017/11/converted-gradle-project-maven[Greg Turnquist] is, but I had my doubts and moments of pain, too.
+
+One of my favorite features of Spring Boot is the building dependency management which takes away a lot of the pain finding compatible versions of dependencies for you. It's available through Parent-POMs in Maven and a dedicated Gradle Plugin.
+
+To use Spring Boot 2 dependency management with at least Gradle 4, all you have to do is to define the desired Boot version in the global build script block, declare the <strong>build</strong> dependency and apply the plugin:
+
+[source,groovy]
+[[configure-spring-boot-gradle-plugin]]
+.build.gradle
+----
+include::../../build.gradle[tags=configure-spring-boot-gradle-plugin]
+----
+
+As you see, I'm adding Springs snapshot repositories as I'm on Boot 2 here. After that one can use dependencies without explicit versions as shown in <<using-managed-dependencies>> with `spring-boot-starter-hateoas`
+
+[source,groovy]
+[[using-managed-dependencies]]
+.build.gradle, using managed dependencies
+----
+include::../../build.gradle[tags=using-managed-dependencies]
+----
+
+If you need to overwrite a specific version, you have two options, both apply for both Maven and Gradle. The obvious and wrong solution is specifying the versions right at the dependency. This way, dependency management gets circumvented, your build becomes fragile. 
+
+The right way is to use the dedicated properties for that. 
+
+You find all the properties in the `spring-boot-dependencies`-project, namely in the https://github.com/spring-projects/spring-boot/blob/bd7bd6edc871d515c41d9c33f7593849f4d3dc40/spring-boot-project/spring-boot-dependencies/pom.xml#L25[POM]. They are partially hidden away in the reference documentation, but I the list more useful. 
+
+In a Maven project, you would use Maven properties, too. With Gradle you either use them in the <code>ext</code> map or - as I recommend - in a dedicated gradle.properties file. This is my current setup to test Spring-HATEOAS-Affordance-Api:
+
+[source,properties]
+[[using-managed-dependencies]]
+.gradle.properties
+----
+include::../../gradle.properties[]
+----
+
+Stay tuned for further post on what this is and how you can use this.
