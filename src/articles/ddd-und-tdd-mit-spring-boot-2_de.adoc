@@ -74,7 +74,7 @@ Die Deklaration der Abhängigkeit in einem Gradle Build File (`build.gradle`) is
 
 [source,groovy]
 [[test-dependencies]]
-.build-gradle
+.build.gradle
 ----
 include::../../build.gradle[tags=test-dependencies]
 ----
