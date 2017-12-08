@@ -14,7 +14,7 @@ If you're using Gradle for a while, this probably isn't new for you, but I'm ent
 
 One of my favorite features of Spring Boot is the building dependency management which takes away a lot of the pain finding compatible versions of dependencies for you. It's available through Parent-POMs in Maven and a dedicated Gradle Plugin.
 
-To use Spring Boot 2 dependency management with at least Gradle 4, all you have to do is to define the desired Boot version in the global build script block, declare the <strong>build</strong> dependency and apply the plugin:
+To use Spring Boot 2 dependency management with at least Gradle 4, all you have to do is to define the desired Boot version in the global build script block, declare the *build* dependency and apply the plugin:
 
 [source,groovy]
 [[configure-spring-boot-gradle-plugin]]
@@ -38,10 +38,10 @@ The right way is to use the dedicated properties for that.
 
 You find all the properties in the `spring-boot-dependencies`-project, namely in the https://github.com/spring-projects/spring-boot/blob/bd7bd6edc871d515c41d9c33f7593849f4d3dc40/spring-boot-project/spring-boot-dependencies/pom.xml#L25[POM]. They are partially hidden away in the reference documentation, but I find the above list more useful. 
 
-In a Maven project, you would use Maven properties, too. With Gradle you either use them in the `ext` map or - as I recommend - in a dedicated gradle.properties file. This is my current setup to test Spring-HATEOAS-Affordance-Api:
+In a Maven project, you would use Maven properties, too. With Gradle you either use them in the `ext` map or - as I recommend - in a dedicated gradle.properties file. <<using-gradle-properties>> shows my current setup to test the new Spring-HATEOAS-Affordance-Api:
 
 [source,properties]
-[[using-managed-dependencies]]
+[[using-gradle-properties]]
 .gradle.properties
 ----
 include::../../gradle.properties[]
