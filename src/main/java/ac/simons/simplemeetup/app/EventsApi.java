@@ -22,6 +22,7 @@ import ac.simons.simplemeetup.domain.Person;
 import ac.simons.simplemeetup.domain.Registration;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
+import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resources;
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
 import org.springframework.http.HttpEntity;
@@ -73,7 +74,8 @@ public class EventsApi {
     public HttpEntity<EventResource> events(@RequestBody final Event newEvent) {
         final EventResource eventResource = this.eventResourceAssembler
             .toResource(this.eventService.createNewEvent(newEvent));
-        return ResponseEntity.created(URI.create(eventResource.getId().getHref())).body(eventResource);
+        return ResponseEntity.created(
+            URI.create(eventResource.getId().map(Link::getHref).orElseThrow(InvalidResourceException::new))).body(eventResource);
     }
 
     // tag::domain-usage-single-event[]
