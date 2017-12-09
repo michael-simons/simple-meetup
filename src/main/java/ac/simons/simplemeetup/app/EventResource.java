@@ -39,7 +39,6 @@ public class EventResource extends ResourceSupport {
                 final ControllerLinkBuilder linkBuilder =
                     linkTo(methodOn(EventsApi.class).event(entity.getHeldOn(), entity.getName()));
                 resource.add(linkBuilder.withSelfRel());
-                resource.add(linkBuilder.withRel("event"));
                 resource.add(linkTo(methodOn(EventsApi.class).registrations(entity.getHeldOn(), entity.getName()))
                     .withRel("registrations"));
                 return resource;

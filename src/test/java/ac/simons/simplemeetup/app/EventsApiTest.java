@@ -106,8 +106,7 @@ public class EventsApiTest {
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 selfLink.and(
-                    linkWithRel("registrations").description("Registrations for this event."),
-                    linkWithRel("event").description("This event.")),
+                    linkWithRel("registrations").description("Registrations for this event.")),
                 // tag::domain-usage-single-event-test[]
                 responseFields(
                     fieldWithPath("heldOn").description("The date of this event."),
