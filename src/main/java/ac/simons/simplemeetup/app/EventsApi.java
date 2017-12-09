@@ -39,6 +39,7 @@ import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.afford;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
@@ -71,7 +72,7 @@ public class EventsApi {
     }
 
     @PostMapping
-    public HttpEntity<EventResource> events(@RequestBody final Event newEvent) {
+    public HttpEntity<EventResource> createNewEvent(@RequestBody final Event newEvent) {
         final EventResource eventResource = this.eventResourceAssembler
             .toResource(this.eventService.createNewEvent(newEvent));
         return ResponseEntity.created(
@@ -102,12 +103,14 @@ public class EventsApi {
             .orElseThrow(NoSuchEventException::new);
         return new Resources<>(
             event.getRegistrations(),
-            linkTo(methodOn(this.getClass()).registrations(event.getHeldOn(), event.getName())).withRel("self")
+            linkTo(methodOn(this.getClass()).registrations(event.getHeldOn(), event.getName()))
+                .withSelfRel()
+                .andAffordance(afford(methodOn(EventsApi.class).registerFor(event.getHeldOn(), event.getName(), null)))
         );
     }
 
     @PostMapping("/{heldOn}/{name}/registrations")
-    public HttpEntity<Registration> registrations(
+    public HttpEntity<Registration> registerFor(
         @PathVariable @DateTimeFormat(iso = ISO.DATE) final LocalDate heldOn,
         @PathVariable final String name,
         @RequestBody final Person person
