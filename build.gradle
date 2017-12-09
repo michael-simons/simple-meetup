@@ -151,31 +151,27 @@ tasks.withType(AsciidoctorTask) { docTask ->
 
 task generateHTML (
         type: AsciidoctorTask,
-        group: 'docToolchain',
-        description: 'use html5 as asciidoc backend') {
-
+        description: 'use html5 as asciidoc backend'
+) {
     backends = ['html5']
 }
 
 task generatePDF (
         type: AsciidoctorTask,
-        group: 'docToolchain',
-        description: 'use pdf as asciidoc backend') {
-
+        description: 'use pdf as asciidoc backend'
+) {
     backends = ['pdf']
 }
 
 task generateDocBook (
         type: AsciidoctorTask,
-        group: 'docToolchain',
-        description: 'use docbook as asciidoc backend') {
-
+        description: 'use docbook as asciidoc backend'
+) {
     backends = ['docbook']
 }
 
 task convertToDocx (
         dependsOn: 'generateDocBook',
-        group: 'docToolchain',
         type: Exec
 ) {
     doFirst {
