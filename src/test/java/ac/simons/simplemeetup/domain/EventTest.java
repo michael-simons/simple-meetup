@@ -40,6 +40,7 @@ import static ac.simons.simplemeetup.domain.Events.closedEvent;
 import static ac.simons.simplemeetup.domain.Events.fullEvent;
 import static ac.simons.simplemeetup.domain.Events.pastEvent;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
@@ -76,9 +77,9 @@ public class EventTest extends Suite {
         @Test // <1>
         public void constructorShouldNotAllowInvalidNames() {
             Stream.of(null, "", "\t", " ").forEach(name ->
-                assertThatThrownBy(() -> new Event(LocalDate.of(2018, 1, 2), name))  // <2>
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("Event requires a non-empty name.")  // <3>
+                assertThatExceptionOfType(IllegalArgumentException.class)  // <2>
+                    .isThrownBy(() -> new Event(LocalDate.of(2018, 1, 2), name))
+                    .withMessage("Event requires a non-empty name.")  // <3>
             );
         }
     }

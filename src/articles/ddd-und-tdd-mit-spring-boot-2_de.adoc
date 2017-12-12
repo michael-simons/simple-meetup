@@ -35,9 +35,10 @@ Demgegenüber sei entgegnet:
 
 * Die Zeit wird in Summe so oder so aufgewendet. Vielleicht nicht durch dasselbe Team, das einen Service erstellt hat, aber dann durch das Wartungsteam oder den Support. Die nachträgliche Fehlersuche und insbesondere das dann hoffentlich durchgeführte Testen sind teurer.
 * Testen schafft Vertrauen. Vertrauen, das Refactorings und neue Features unterstützt und damit direkt Mehrwert entspricht.
+* Testen stellt sicher, dass nicht geänderte Programmbestandteile nach Refactorings weiter funktionieren.
 * Code, von dem bekannt ist, dass er getestet wird, wird von Anfang an anders und in meinen Augen besser strukturiert, so dass er testbar bleibt.
 
-Schleicht sich in einem Projekt Streß ein, sei es durch zeitlichen Druck, unklare Anforderungen oder anderes mehr, ist es zu spät, Testen noch in den Fokus zu rücken. Hinterher Tests zu schreiben bringt oftmals keinen direkten Mehrwert mehr und eine Nachdokumentation macht selten Spaß.
+Schleicht sich in einem Projekt Stress ein, sei es durch zeitlichen Druck, unklare Anforderungen oder anderes mehr, ist es zu spät, Testen noch in den Fokus zu rücken. Hinterher Tests zu schreiben bringt oftmals keinen direkten Mehrwert mehr und eine Nachdokumentation macht selten Spaß.
 
 == Anforderungen an Werkzeuge und Tests
 
@@ -84,7 +85,7 @@ Durch nur eine Deklaration erhalten Sie:
 * JUnit
 * Springs Test-Support
 * http://site.mockito.org[Mockito]
-* http://joel-costigliola.github.io/assertj[AssertJ], eine Library, die es Ihnen ermöglicht, sehr klare und ausdrucksstarke Behauptungen (Assertions) zu erwarteten Ergebnissen zu formulieren
+* http://joel-costigliola.github.io/assertj[AssertJ], eine Library, die es Ihnen ermöglicht, sehr klare und ausdrucksstarke Zusicherungen (Assertions) zu erwarteten Ergebnissen zu formulieren
 
 == Das Beispiel
 
