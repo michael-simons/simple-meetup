@@ -17,11 +17,17 @@ package ac.simons.simplemeetup.app;
 
 import ac.simons.simplemeetup.domain.Event;
 import ac.simons.simplemeetup.domain.Person;
+import ac.simons.simplemeetup.domain.Registration;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.util.NameTransformer;
 
+import java.io.IOException;
 import java.time.LocalDate;
 
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
@@ -39,6 +45,7 @@ public final class EventsModule extends SimpleModule {
     public EventsModule() {
         setMixInAnnotation(Event.class, EventMixIn.class);
         setMixInAnnotation(Person.class, PersonMixIn.class);
+        addSerializer(Registration.class, new RegistrationSerializer());
     }
 
     @JsonAutoDetect(fieldVisibility = NONE, getterVisibility = NONE, isGetterVisibility = NONE)
@@ -61,6 +68,48 @@ public final class EventsModule extends SimpleModule {
 
         @JsonCreator
         PersonMixIn(@JsonProperty("email") final String email, @JsonProperty("name") final String name) {
+        }
+    }
+
+    static class UnwrappingRegistrationSerializer extends JsonSerializer<Registration> {
+
+        private final NameTransformer nameTransformer;
+
+        UnwrappingRegistrationSerializer(final NameTransformer nameTransformer) {
+            this.nameTransformer = nameTransformer;
+        }
+
+        String hideEmail(final String email) {
+            return email.replaceAll("(^[^@]{3}|(?!^)\\G)[^@]", "$1*");
+        }
+
+        @Override
+        public boolean isUnwrappingSerializer() {
+            return true;
+        }
+
+        @Override
+        public void serialize(final Registration value, final JsonGenerator gen, final SerializerProvider serializers) throws IOException {
+            gen.writeStringField(nameTransformer.transform("name"), value.getName());
+            gen.writeStringField(nameTransformer.transform("email"), hideEmail(value.getEmail()));
+        }
+    }
+
+    static class RegistrationSerializer extends JsonSerializer<Registration> {
+
+        private final JsonSerializer<Registration> delegate
+            = new UnwrappingRegistrationSerializer(NameTransformer.NOP);
+
+        @Override
+        public void serialize(final Registration value, final JsonGenerator gen, final SerializerProvider serializers) throws IOException {
+            gen.writeStartObject();
+            this.delegate.serialize(value, gen, serializers);
+            gen.writeEndObject();
+        }
+
+        @Override
+        public JsonSerializer<Registration> unwrappingSerializer(final NameTransformer nameTransformer) {
+            return new UnwrappingRegistrationSerializer(nameTransformer);
         }
     }
 }
