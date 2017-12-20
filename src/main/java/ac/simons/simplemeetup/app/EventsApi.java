@@ -94,15 +94,17 @@ public class EventsApi {
     // end::domain-usage-single-event[]
 
     @GetMapping("/{heldOn}/{name}/registrations")
-    public Resources<Registration> registrations(
+    public Resources<RegistrationResource> registrations(
         @PathVariable @DateTimeFormat(iso = ISO.DATE) final LocalDate heldOn,
         @PathVariable final String name
     ) {
         final Event event = this.eventService
             .getEvent(heldOn, name)
             .orElseThrow(NoSuchEventException::new);
+        final ResourceAssemblerSupport<Registration, RegistrationResource> resourceAssembler
+            = RegistrationResource.assembler(event);
         return new Resources<>(
-            event.getRegistrations(),
+            resourceAssembler.toResources(event.getRegistrations()),
             linkTo(methodOn(this.getClass()).registrations(event.getHeldOn(), event.getName()))
                 .withSelfRel()
                 .andAffordance(afford(methodOn(EventsApi.class).registerFor(event.getHeldOn(), event.getName(), null)))
