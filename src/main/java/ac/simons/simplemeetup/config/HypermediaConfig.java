@@ -22,6 +22,7 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.hateoas.config.EnableHypermediaSupport.HypermediaType;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
@@ -33,6 +34,7 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
  *
  * @author Michael J. Simons, 2017-12-08
  */
+@Profile("experimental")
 @Configuration
 @EnableHypermediaSupport(type = HypermediaType.HAL_FORMS)
 public class HypermediaConfig {
@@ -65,7 +67,6 @@ public class HypermediaConfig {
                 final Jackson2ObjectMapperBuilder builder = this.beanFactory.getBean(Jackson2ObjectMapperBuilder.class);
                 builder.configure(objectMapper);
             } catch (NoSuchBeanDefinitionException ex) {
-                System.out.println("fuck");
             }
         }
     }
