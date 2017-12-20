@@ -15,9 +15,6 @@
  */
 package ac.simons.simplemeetup.domain;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -45,8 +42,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
-
 /**
  * @author Michael J. Simons, 2017-10-31
  */
@@ -57,7 +52,6 @@ import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
         @UniqueConstraint(name = "events_uk", columnNames = {"held_on", "name"})
     }
 )
-@JsonAutoDetect(fieldVisibility = NONE, getterVisibility = NONE, isGetterVisibility = NONE)
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 @Getter
 @EqualsAndHashCode(of = {"heldOn", "name"})
@@ -80,13 +74,11 @@ public class Event implements Serializable {
     private Integer id;
 
     @Column(name = "held_on", nullable = false)
-    @JsonProperty
     // tag::event-entity[]
     private LocalDate heldOn;
 
     // end::event-entity[]
     @Column(length = 512, nullable = false)
-    @JsonProperty
     // tag::event-entity[]
     private String name;
 
@@ -108,8 +100,7 @@ public class Event implements Serializable {
     private List<Registration> registrations = new ArrayList<>();
 
     // end::event-entity[]
-    @JsonCreator
-    public Event(@JsonProperty("heldOn") final LocalDate heldOn, @JsonProperty("name") final String name) {
+    public Event(final LocalDate heldOn, final String name) {
         this(heldOn, name, 20);
     }
 
@@ -167,7 +158,6 @@ public class Event implements Serializable {
         this.status = Status.closed;
     }
 
-    @JsonProperty
     public Integer getNumberOfFreeSeats() {
         return this.numberOfSeats - this.registrations.size();
     }

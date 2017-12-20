@@ -15,9 +15,6 @@
  */
 package ac.simons.simplemeetup.domain;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  * Represents a person who wants to registrate for an event.
  *
@@ -28,8 +25,7 @@ public final class Person {
 
     private final String name;
 
-    @JsonCreator
-    public Person(@JsonProperty("email") final String email, @JsonProperty("name") final String name) {
+    public Person(final String email, final String name) {
         if (email == null || email.trim().isEmpty()) {
             throw new IllegalArgumentException("Person requires a non-empty email-address.");
         }

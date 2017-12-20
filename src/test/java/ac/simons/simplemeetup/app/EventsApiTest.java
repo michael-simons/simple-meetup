@@ -15,6 +15,7 @@
  */
 package ac.simons.simplemeetup.app;
 
+import ac.simons.simplemeetup.config.JacksonConfig;
 import ac.simons.simplemeetup.domain.Event;
 import ac.simons.simplemeetup.domain.EventService;
 import org.junit.Before;
@@ -24,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.restdocs.hypermedia.LinksSnippet;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -53,6 +55,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class) // <1>
 @WebMvcTest(controllers = EventsApi.class) // <2>
 @AutoConfigureRestDocs // <3>
+// end::domain-usage-single-event-test[]
+@Import(JacksonConfig.class)
+// tag::domain-usage-single-event-test[]
 public class EventsApiTest {
 
     @MockBean // <4>
