@@ -122,7 +122,7 @@ My customer uses a similar approach. If we would not use `@JsonUnwrapped`, we'll
 
 And sadly, this is exactly what you'll end up with using a naive custome serializer and the `@JsonUnwrapped` annotation together. The solutions proposed in the StackOverFlow questions linked in the beginning are centered around using a custom `UnwrappingBeanSerializer` that is registered as a `beanSerializerModifier`. Those answers may work for you if your existing serializer is indeed a bean serializer, but not when working with a simple `JsonSerializer`.
 
-First: Write your serializer as shown in <<json-serializer-contract>>. Take care not to start your serialization with opening object statements. Then overwrite `isUnwrappingSerializer` and return true:
+First: Write your serializer as shown in <<json-serializer-contract>>. Take care not to start your serialization with opening object statements. Then override `isUnwrappingSerializer` and return true:
 
 [source,java]
 [[json-serializer-contract-unwrapping]]
