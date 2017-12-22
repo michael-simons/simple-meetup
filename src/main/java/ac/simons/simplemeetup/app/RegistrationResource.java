@@ -25,9 +25,10 @@ import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
 /**
  * @author Michael J. Simons, 2017-12-20
  */
+// tag::registration-resource[]
 @Relation(value = "registration", collectionRelation = "registrations")
 public class RegistrationResource extends ResourceSupport {
-
+    // end::registration-resource[]
     static ResourceAssemblerSupport<Registration, RegistrationResource> assembler(final Event event) {
         return new ResourceAssemblerSupport<Registration, RegistrationResource>(EventsApi.class, RegistrationResource.class) {
             @Override
@@ -38,10 +39,12 @@ public class RegistrationResource extends ResourceSupport {
         };
     }
 
-    @JsonUnwrapped
+    // tag::registration-resource[]
+    @JsonUnwrapped // <1>
     private final Registration registration;
 
     RegistrationResource(final Registration registration) {
         this.registration = registration;
     }
 }
+// end::registration-resource[]

@@ -1,0 +1,147 @@
+= Unwrapping custom Jackson Serializers
+Michael Simons <michael.simons@innoq.com>
+:doctype: article
+:lang: en
+:listing-caption: Listing
+:source-highlighter: coderay
+:icons: font
+:sectlink: true
+:sectanchors: true
+:numbered: true
+:xrefstyle: short
+
+[abstract]
+--
+This is a short info on how to use unwrapping, custom https://github.com/FasterXML/jackson[Jackson Serializers]. All the example code is inside the main repository: https://github.com/michael-simons/simple-meetup[simple-meetup]. That repository contains a Spring project, but the examples below work without Spring, too. The problem solved here tackles the questions asked https://stackoverflow.com/questions/30846404/jackson-jsonunwrapped-behaviour-with-custom-jsonserializer[here] and especially https://stackoverflow.com/questions/22613143/different-json-output-when-using-custom-json-serializer-in-spring-data-rest[here]. This article helps you, to make your existing serializer working together with `@JsonUnwrappred`.
+
+*TL;DR* Don't bother with `BeanSerializerModifier` and `UnwrappingBeanSerializer` if you already have a custom and much simpler `JsonSerializer`.
+--
+
+We use a lot of https://github.com/FasterXML/jackson-docs/wiki/JacksonHowToCustomSerializers[custom Jackson Serializers] in the current project. A custom serializer can be used in all cases where annotations on fields and classes are not enough to customize the JSON output. They are pretty easy to use and their main contract looks like this:
+
+[source,java]
+[[json-serializer-contract]]
+.JsonSerializer.java
+----
+include::../main/java/ac/simons/simplemeetup/app/EventsModule.java[tags=json-serializer-contract,indent=0]
+----
+
+The `JsonGenerator` can be used to do customize all kinds of stuff: Using existing, external representation, generating fieldnames or manipulating values. In this https://github.com/michael-simons/simple-meetup[sample project] that deals with event registrations, I made up the use case of hiding an email address so that a bean like in <<registration-bean>> renders as shown in <<registration-json>>.
+
+[source,java]
+[[registration-bean]]
+.Registration.java
+----
+include::../main/java/ac/simons/simplemeetup/domain/Registration.java[tags=registration-bean]
+----
+
+[source,json]
+[[registration-json]]
+.Desired rendering of the bean in <<registration-bean>>
+----
+{
+    "email": "mic***********@innoq.com",
+    "name": "Michael"
+}
+----
+
+That's easy todo, in the body of <<json-serializer-contract>> I use something like this `gen.writeStringField("email", hideEmail(value.getEmail()));`. And, to make it a JSON-object, I have to tell the generator to start and end one with `gen.writeStartObject()` and `gen.writeEndObject()`.
+
+I don't want to specifiy the custom serializers with annotations on my domain. Also https://twitter.com/olivergierke[Oliver] was so nice https://github.com/spring-projects/spring-hateoas/issues/680#issuecomment-350725587[pointing out] that it might be a good idea to remove all that cruft from the domain and https://github.com/michael-simons/simple-meetup/commit/fdc432232b6d29593a6719b895ca9294ba119a57[right] he was.
+
+By providing an instance of `Module` to the Jackson `ObjectMapper` custom serializers and MixIns (for replacing Jackson-Annotations in domain classes) can be registered:
+
+[source,java]
+[[jjson-module-example]]
+.EventsModule.java
+----
+include::../main/java/ac/simons/simplemeetup/app/EventsModule.java[tags=json-module-example]
+----
+
+If you're on Spring Boot, just instantiate a bean of such a module. If not, than add it manually to your `ObjectMapper` instance as shown in <<manual-module-registration>>.
+
+[source,java]
+[[manual-module-registration]]
+.Manual registration of a Jackson Module
+----
+ObjectMapper objectMapper = new ObjectMapper();
+objectMapper.registerModule(new EventsModule());
+----
+
+Now comes the interesting part: The above example works totally well in cases when a `Registration` bean is serialized on it's own or as attribute of another object. *But*: Not when it's annotated with `@JsonUnwrapped`. That annotation is used to pull all attributes of a given field up into the containing object. Wait, didn't I just write that I cleaned all those annotations from my objects? Yes, I did. But I also use http://projects.spring.io/spring-hateoas/[Spring HATEOAS] respectively Spring Data REST in this project and I am building my resources like this:
+
+[source,java]
+[[registration-resource]]
+.RegistrationResource.java
+----
+include::../main/java/ac/simons/simplemeetup/app/RegistrationResource.java[tags=registration-resource]
+----
+<1> This pulls the output of the registration beans JSON-representation up into the resource and directly into the embedded structure (see <<registration-resource-json>>)
+
+Together with a fitting https://docs.spring.io/spring-hateoas/docs/current/reference/html/#fundamentals.resource-assembler[Resource Assembler], which adds relations and stuff, I want to see a result as shown in <<registration-resource-json>>
+
+[source,json]
+[[registration-resource-json]]
+.Desired rendering a registrations resource
+----
+{
+    "_embedded": {
+        "registrations": [
+            {
+                "email": "mic***********@innoq.com",
+                "name": "Michael"
+            }
+        ]
+    },
+    "_links": {
+        "self": {
+            "href": "http://localhost:8080/api/events/2017-12-24/Xmas/registrations"
+        }
+    }
+}
+----
+
+My customer uses a similar approach. If we would not use `@JsonUnwrapped`, we'll end up with something like:
+
+[source,json]
+.Wrapped embedded content, not desired
+----
+{
+    "_embedded": {
+        "registrations": [
+            {
+                "registration": {
+                    "email": "mic***********@innoq.com",
+                    "name": "Michael"
+                }
+            }
+        ]
+    }
+}
+----
+
+And sadly, this is exactly what you'll end up with using a naive custome serializer and the `@JsonUnwrapped` annotation together. The solutions proposed in the StackOverFlow questions linked in the beginning are centered around using a custom `UnwrappingBeanSerializer` that is registered as a `beanSerializerModifier`. Those answers may work for you if your existing serializer is indeed a bean serializer, but not when working with a simple `JsonSerializer`.
+
+First: Write your serializer as shown in <<json-serializer-contract>>. Take care not to start your serialization with opening object statements. Then overwrite `isUnwrappingSerializer` and return true:
+
+[source,java]
+[[json-serializer-contract-unwrapping]]
+.Make your serializer unwrapping
+----
+include::../main/java/ac/simons/simplemeetup/app/EventsModule.java[tags=json-serializer-contract-unwrapping,indent=0]
+----
+
+Then, combine that unwrapping serializer with a wrapping one, that delegates its task:
+
+[source,java]
+[[delegating-serializer]]
+.Start and end an object and delegate the real serialization
+----
+include::../main/java/ac/simons/simplemeetup/app/EventsModule.java[tags=delegating-serializer,indent=0]
+----
+<1> This thing writes whole objects, so we have to start and end one, in between we can use the original custom serializer
+<2> This This method is called when a serializer hits an `JsonUnwrapped` attribute and does exactly serve our purpose, it returns our serializer with an optional name transformer which might avoid name clashes
+
+Summing this up: Custom serializers can be marked as unwrapping. Non-unwrapping serializers provide a method to make them unwrapping. Both is somewhat bad documented, but works as expected. Other solutions based on instances of `BeanSerializers` as proposed on StackOverFlow won't work if you're already have custom `JsonSerializers`.
+
+TIP: While my tips here works without any involvement of Spring or Spring Data REST, there's another way called https://docs.spring.io/spring-data/rest/docs/current/reference/html/#projections-excerpts.projections[Projections] that you might use with Spring Data REST. A very nice and clean way to reproject your data and maybe a bette fit for you.

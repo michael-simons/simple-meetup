@@ -33,15 +33,23 @@ import java.util.Locale;
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 @Getter
 @EqualsAndHashCode(of = {"email", "name"})
+// tag::registration-bean[]
 public final class Registration {
+    // end::registration-bean[]
     @Column(name = "email", length = 1024, nullable = false)
+    // tag::registration-bean[]
     private String email;
 
+    // end::registration-bean[]
     @Column(name = "name", length = 512, nullable = false)
+    // tag::registration-bean[]
     private String name;
+    // end::registration-bean[]
 
     public Registration(final Person person) {
         this.email = person.getEmail().toLowerCase(Locale.ENGLISH);
         this.name = person.getName();
     }
+    // tag::registration-bean[]
 }
+// end::registration-bean[]

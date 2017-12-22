@@ -37,16 +37,22 @@ import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
  *
  * @author Michael J. Simons, 2017-12-20
  */
+// tag::json-module-example[]
 public final class EventsModule extends SimpleModule {
+    // end::json-module-example[]
 
     /**
      * Registers all nested mixins, serializers and deserializers.
      */
+    // tag::json-module-example[]
     public EventsModule() {
+        // end::json-module-example[]
         setMixInAnnotation(Event.class, EventMixIn.class);
         setMixInAnnotation(Person.class, PersonMixIn.class);
+        // tag::json-module-example[]
         addSerializer(Registration.class, new RegistrationSerializer());
     }
+    // end::json-module-example[]
 
     @JsonAutoDetect(fieldVisibility = NONE, getterVisibility = NONE, isGetterVisibility = NONE)
     abstract static class EventMixIn {
@@ -71,7 +77,9 @@ public final class EventsModule extends SimpleModule {
         }
     }
 
+    // tag::json-serializer-contract[]
     static class UnwrappingRegistrationSerializer extends JsonSerializer<Registration> {
+        // end::json-serializer-contract[]
 
         private final NameTransformer nameTransformer;
 
@@ -83,33 +91,51 @@ public final class EventsModule extends SimpleModule {
             return email.replaceAll("(^[^@]{3}|(?!^)\\G)[^@]", "$1*");
         }
 
+        // tag::json-serializer-contract-unwrapping[]
         @Override
         public boolean isUnwrappingSerializer() {
             return true;
         }
+        // end::json-serializer-contract-unwrapping[]
 
+        // tag::json-serializer-contract[]
         @Override
-        public void serialize(final Registration value, final JsonGenerator gen, final SerializerProvider serializers) throws IOException {
+        public void serialize(
+            final Registration value,
+            final JsonGenerator gen,
+            final SerializerProvider serializers
+        ) throws IOException {
             gen.writeStringField(nameTransformer.transform("name"), value.getName());
             gen.writeStringField(nameTransformer.transform("email"), hideEmail(value.getEmail()));
         }
     }
+    // end::json-serializer-contract[]
 
+    // tag::delegating-serializer[]
     static class RegistrationSerializer extends JsonSerializer<Registration> {
 
         private final JsonSerializer<Registration> delegate
             = new UnwrappingRegistrationSerializer(NameTransformer.NOP);
 
         @Override
-        public void serialize(final Registration value, final JsonGenerator gen, final SerializerProvider serializers) throws IOException {
-            gen.writeStartObject();
+        public void serialize(
+            final Registration value,
+            final JsonGenerator gen,
+            final SerializerProvider serializers
+        ) throws IOException {
+            gen.writeStartObject(); // <1>
             this.delegate.serialize(value, gen, serializers);
             gen.writeEndObject();
         }
 
         @Override
-        public JsonSerializer<Registration> unwrappingSerializer(final NameTransformer nameTransformer) {
+        public JsonSerializer<Registration> unwrappingSerializer(// <2>
+            final NameTransformer nameTransformer
+        ) {
             return new UnwrappingRegistrationSerializer(nameTransformer);
         }
     }
+    // end::delegating-serializer[]
+    // tag::json-module-example[]
 }
+// end::json-module-example[]

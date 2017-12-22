@@ -35,6 +35,7 @@ depending wether you're on a Unix-like- or Windows-Machine.
 
 http://info.michael-simons.eu/2017/11/20/integration-testing-with-docker-compose-gradle-and-spring-boot/[Integration testing with Docker-Compose, Gradle and Spring Boot]:: Explains how to use Docker-Compose and a JUnit rule to provide environments for integration tests to a Spring Boot application
 https://michael-simons.github.io/simple-meetup/overriding-spring-managed-versions-in-gradle-projects[Overriding Spring managed versions in Gradle projects]:: A quick post explaining how to overwrite Spring Boot managed dependencies with Gradle
+https://michael-simons.github.io/simple-meetup/unwrapping-custom-jackson-serializer[Unwrapping custom Jackson Serializers]:: Combine custom `JsonSerializers` with `@JsonUnwrapped`
 
 == Thanks
 
@@ -43,3 +44,4 @@ In no specific order to
 * my wife https://twitter.com/tinasimons[Christina] for fixing most of my spelling errors in the articles
 * https://rdmueller.github.io[Ralf D. Müller], for his work on the https://github.com/docToolchain/docToolchain[docToolChain] and his feedback on the testing article
 * my awesome colleagues at https://innoq.com[innoQ] for their feedback on the project and the article
+* https://twitter.com/olivergierke[Oliver Gierke] for feedback on the TDD arcticle as well as on the sources
