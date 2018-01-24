@@ -15,6 +15,7 @@
  */
 package ac.simons.simplemeetup.domain;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -82,6 +83,11 @@ public class EventServiceTest {
         final Event newEvent = eventService.createNewEvent(test);
 
         assertThat(newEvent).isEqualTo(test);
+    }
+
+    @AfterClass
+    public static void resetEventClock() {
+        Event.CLOCK.set(Clock.systemDefaultZone());
     }
 
     // tag::event-repository-usage-test[]
