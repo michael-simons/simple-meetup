@@ -80,6 +80,11 @@ dependencies {
 // end::test-dependencies[]
 // end::using-managed-dependencies[]
 
+// Prevent Gradle from running individual, inner test-classes without enclosing suite
+test {
+    exclude "**/*TestSuite\$*"
+}
+
 // tag::integration-test-setup[]
 sourceSets { // <1>
     integrationTest {

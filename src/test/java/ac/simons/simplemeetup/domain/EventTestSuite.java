@@ -15,9 +15,9 @@
  */
 package ac.simons.simplemeetup.domain;
 
-import ac.simons.simplemeetup.domain.EventTest.Logic;
-import ac.simons.simplemeetup.domain.EventTest.Postconditions;
-import ac.simons.simplemeetup.domain.EventTest.Preconditions;
+import ac.simons.simplemeetup.domain.EventTestSuite.Logic;
+import ac.simons.simplemeetup.domain.EventTestSuite.Postconditions;
+import ac.simons.simplemeetup.domain.EventTestSuite.Preconditions;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -47,11 +47,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * @author Michael J. Simons, 2017-10-31
  */
 // tag::suiteExample[]
-@RunWith(EventTest.class)
+@RunWith(EventTestSuite.class)
 @SuiteClasses({Preconditions.class, Postconditions.class, Logic.class})
-public class EventTest extends Suite {
+public class EventTestSuite extends Suite {
     // end::suiteExample[]
-    public EventTest(final Class<?> klass, final RunnerBuilder builder) throws InitializationError {
+    public EventTestSuite(final Class<?> klass, final RunnerBuilder builder) throws InitializationError {
         super(klass, builder);
     }
 

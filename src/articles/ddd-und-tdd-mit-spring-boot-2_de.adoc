@@ -120,7 +120,7 @@ Durch die Abhängigkeit `spring-boot-starter-test` erhalten Sie alle Bausteine, 
 [[event-entity-tests]]
 .Unit Tests von Pre- und Postconditions
 ----
-include::../test/java/ac/simons/simplemeetup/domain/EventTest.java[tags=event-entity-tests,indent=0]
+include::../test/java/ac/simons/simplemeetup/domain/EventTestSuite.java[tags=event-entity-tests,indent=0]
 ----
 <1> Signalisiert, dass diese Methode von JUnit als Testmethode ausgeführt werden soll
 <2> Hier sehen Sie eine AssertJ-Assertion. AssertJ bietet unter anderem eine schöne Möglichkeit an, zu testen, ob eine bestimmte Exception geworfen wurde oder nicht.
