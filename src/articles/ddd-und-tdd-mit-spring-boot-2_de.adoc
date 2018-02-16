@@ -209,14 +209,12 @@ include::../test/java/ac/simons/simplemeetup/app/EventsApiTest.java[tags=domain-
 <6> Ausdruck des erwarteten Ergebnis
 <7> Hier wird eine Aktion formuliert, die nach Erfüllung aller Erwartungen ausgeführt wird. Struktur der Rückgabe wird dokumentiert. Die Dokumentation ist gleichzeitig Ausdruck einer weiteren Erwartung: Das JSON-Dokument muss die Felder `heldOn`, `name` und so weiter erwartet
 
-Der Test in <<domain-usage-single-event-test>> ist durchaus komplex: Es wird ein Spring-Kontext und das Web Framework gestartet; dennoch ist er lesbar und die Erwartungen sind klar erkennbar. Durch die Integration mit https://projects.spring.io/spring-restdocs/[Spring REST Docs] generiert er darüber hinaus eine Dokumentation der API, die nicht nur dynamisch ist, sondern aktiver Teil des Tests: Fallen die hier beschriebenen Felder auf einmal weg, bricht der Test. Die Dokumentation kann in verschiedenen Formaten generiert werden. Das Beispielprojekt nutzt das AsciiDoc-Format, der Auszug in <<GetEventsResponseFields>> ist Teil des Builds.
+Der Test in <<domain-usage-single-event-test>> ist durchaus komplex: Es wird ein Spring-Kontext und das Web Framework gestartet; dennoch ist er lesbar und die Erwartungen sind klar erkennbar. Durch die Integration mit https://projects.spring.io/spring-restdocs/[Spring REST Docs] generiert er darüber hinaus eine dynamische Dokumentation der API, die aktiver Teil des Tests ist: Fallen die hier beschriebenen Felder auf einmal weg, bricht der Test. Die Dokumentation kann in verschiedenen Formaten generiert werden. Das Beispielprojekt nutzt das AsciiDoc-Format, der Auszug in <<GetEventsResponseFields>> ist Teil des Builds.
 
 [table]
 [[GetEventsResponseFields]]
 .Struktur der Resource `/event`
 include::../../build/generated-snippets/get-event/response-fields.adoc[]
-
-Dieser Artikel wird direkt aus dem Repository des Beispielprojekts generiert. Er ist Teil des Buildprozess. Der Quelltext wird nur dann verarbeitet, wenn alle Tests erfolgreich waren und die generierten Dokumentationsschnipsel verfügbar sind. Damit ist ein Test nicht mehr nur vertrauensbildende Maßnahme, sondern trägt zu einer lebenden Dokumentation bei und hebt damit die Idee _code as documentation_ auf eine neue Ebene.
 
 === Integrationstests
 
@@ -294,7 +292,7 @@ Versuchen Sie, das Fundament Ihrer Anwendung, die fachlichen Anforderungen, so k
 
 Gerade in Hinblick auf das Thema _continous delivery_, also der kontinuierlichen Auslieferung von Bausteinen eines Systems, kommen weitere Testarten ins Spiel. Eine continous delivery pipeline bringt eine Software durch verschiedene Phasen kontinuierlich in Produktion. Diese Phasen beinhalten Performance-, Akzeptanz-, Kapazitäts- und auch explorative Tests.
 
-Mein Kollege Eberhard Wolff spricht in dieser Hinsicht von https://www.innoq.com/de/articles/2017/11/continuous-delivery-stand-der-dinge/[Unendlichem Vertrauen]. Aufbauend auf den Tests der Ebenen, die im vorliegenden Text beschrieben werden, schaffen Akzeptanztests Vertrauen beim Kunden, ob die Software ihre Anforderungen erfüllt. Akzeptanztests können als Fundament einer weiteren Testpyramide betrachtet werden, die sich der Software sozusagen von der anderen Seite nähert. Wichtig ist allerdings, auch diese Tests soweit wie möglich zu automatisieren, um das Ziel zu erreichen, eine Software möglichst schnell und im Falle von Änderungen auch möglichst oft in Produktion zu bringen. Unstrittig ist, dass es noch schwieriger ist, Kunden bei der Entwicklung automatisierter Tests mit ins Boot zu holen, aber die sich daraus ergebenden Vorteile sind den Aufwand wert.
+Mein Kollege Eberhard Wolff spricht in dieser Hinsicht von https://www.innoq.com/de/articles/2017/11/continuous-delivery-stand-der-dinge/[Unendlichem Vertrauen]. Akzeptanztests schaffen vertrauen beim Kunden, ob die Software ihre Anforderungen erfüllt und können als Fundament einer weiteren Testpyramide betrachtet werden, die sich der Software sozusagen von der anderen Seite nähert. Wichtig ist allerdings, auch diese Tests soweit wie möglich zu automatisieren, um das Ziel zu erreichen, eine Software möglichst schnell und im Falle von Änderungen auch möglichst oft in Produktion zu bringen. Unstrittig ist, dass es noch schwieriger ist, Kunden bei der Entwicklung automatisierter Tests mit ins Boot zu holen, aber die sich daraus ergebenden Vorteile sind den Aufwand wert.
 
 Schlussendlich stehen und fallen Konzepte mit den Menschen dahinter. Der Wert von Unit- und Integrationstests muss ebenso erkannt und gelebt werden wie der von automatisierten Akzeptanztests, damit etwas wie _continous delivery_ erfolgreich in einer Organisation umgesetzt wird.
 
@@ -304,4 +302,4 @@ Schlussendlich stehen und fallen Konzepte mit den Menschen dahinter. Der Wert vo
 
 Auf Twitter unterwegs als @rotnroll666, unter anderem mit Java, Musik und den kleineren und größeren Problemen als Ehemann und Vater von 2 Kindern.
 
-Im Januar 2018 wird sein Buch "Spring Boot -- Moderne Softwareentwicklung im Spring-Ökosystem" im dpunkt.verlag erscheinen. Das Buch ist bereits heute unter http://springbootbuch.de[springbootbuch.de] vorbestellbar. Es behandelt Spring Boot 2 und das neue, reaktive Programmierparadigma von Spring 5 ebenso wie Spring-Grundlagen und spricht damit erfahrene Spring-Entwickler wie auch Spring-Neulinge an.
+Sein Buch "Spring Boot -- Moderne Softwareentwicklung im Spring-Ökosystem" ist 2018 im dpunkt.verlag erschienen. Es behandelt Spring Boot 2 und das neue, reaktive Programmierparadigma von Spring 5 ebenso wie Spring-Grundlagen und spricht damit erfahrene Spring-Entwickler wie auch Spring-Neulinge an.
