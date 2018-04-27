@@ -95,7 +95,7 @@ Getestet werden soll ein Service, der Events und dazugehörige Registrierungen v
 
 Der Event-Service könnte Teil einer größeren Anwendung sein und als sogenannter Bounded Context identifiziert worden sein. Der Begriff Bounded Context stammt aus dem Domain-Driven Design (DDD). Ein Bounded Context zielt darauf ab, größere Modelle in kleinere Teile zu zerlegen, die für sich genommen handhabbar sind und definierte Beziehungen untereinander haben. Innerhalb eines Bounded Context wird mit einer gemeinsamen, allgegenwärtigen ("Ubiquitous Language") über ein Thema gesprochen. Diese Fokussierung ist nicht nur für die eigentliche Entwicklung, sondern auch für das Testen wichtig. Es wird klar erkennbar was Teil des Tests sein muss und was nicht. Sie vermeiden damit, in einem allumfassenden Kontext ein ebenso allumfassendes Modell der Welt testen zu müssen.
 
-Die Fachlichkeit eignet sich sehr gut zu zeigen, dass Tests auf Modulebene nicht nur sehr einfach zu realisieren, sondern auch oftmals die wichtigsten Aspekte Ihrer Domain bereits erfassen. Betrachten Sie die Klasse `Event` in <<event-entity>>.
+Die Fachlichkeit eignet sich sehr gut zu zeigen, dass Tests auf Modulebene nicht nur sehr einfach zu realisieren sind, sondern auch oftmals die wichtigsten Aspekte Ihrer Domain bereits erfassen. Betrachten Sie die Klasse `Event` in <<event-entity>>.
 
 [source,java]
 [[event-entity]]
@@ -108,7 +108,7 @@ include::../main/java/ac/simons/simplemeetup/domain/Event.java[tags=event-entity
 
 Die Klasse `Event` wird in einem Domain-driven Design Ansatz als Aggregate Root bezeichnet, als Kern Ihrer Domain. Ein Aggregat kapselt mehrere Objekte Ihrer Domain, auf die nur gemeinsam zugegriffen werden darf. Eines dieser Objekte ist das Root-Objekt. Im Beispiel ist `Event` das Root-Objekt, die Registrierungen sind Objekte, die nur im Kontext des Events Gültigkeit besitzen. Auch hier hilft das gezielte Abstecken des Rahmens bei der Festlegung dessen, was getestet werden soll.
 
-`Event` ist frei von Spring-typischen Annotationen. Schauen Sie in den vollständigen Quelltext finden Sie allerdings JPA-Annotationen. JPA steht für _Java Persistence API_ und wird genutzt, um die Inhalte relationaler Datenbanken auf Objekte abzubilden. Richtig genutzt verbinden Sie damit sinnvolle Datenbankschemata mit Objekten, die nach den im vorherigen Absatz beschriebenen Prinzipien gestaltet wurden.
+`Event` ist frei von Spring-typischen Annotationen. Schauen Sie in den vollständigen Quelltext, finden Sie allerdings JPA-Annotationen. JPA steht für _Java Persistence API_ und wird genutzt, um die Inhalte relationaler Datenbanken auf Objekte abzubilden. Richtig genutzt verbinden Sie damit sinnvolle Datenbankschemata mit Objekten, die nach den im vorherigen Absatz beschriebenen Prinzipien gestaltet wurden.
 
 == Die Tests
 
@@ -134,7 +134,7 @@ JUnit 5 erschien im Herbst 2017. Es hat viele neue Funktionen, unter anderem die
 
 Die aktuelle Version des Spring-Frameworks und Spring Boot unterstützen ebenfalls JUnit 5. Durch Ausschluss der JUnit-4-Abhängigkeit des eingangs erwähnten Starters und Deklaration der entsprechenden JUnit-5-Bibliotheken hätten Sie alles, was Sie zum Schreiben von Tests benötigen. Warum also nicht direkt in diesem Artikel JUnit 5 nutzen? 
 
-Zur Infrastruktur eines Testes gehört mehr als nur die Abhängigkeit, auch die restliche Kette des Buildprozess muss einfach bereitgestellt werden können. Bürden Sie Ihren Entwicklern zu viel Aufwand zum Testen auf, wird nicht getestet. Während die Unterstützung von JUnit 5 in den großen IDEs wie Eclipse und IntelliJ IDEA bereits sehr gut ist, funktioniert die Build-Tool-Unterstützung noch nicht wie erwartet. Das Beispielprojekt zum Artikel arbeitete ursprünglich mit JUnit 5 und ich hätte Stand November 2017 einen eigenen Aufsatz darüber schreiben können, wie man Gradle beziehungsweise Maven dazu bringt, ähnlich gut mit JUnit 5 zusammenzuarbeiten wie mit Version 4. Ich habe mich bewusst dagegen entschieden, um tatsächlich den Fokus auf einfaches Testen zu legen.
+Zur Infrastruktur eines Testes gehört mehr als nur die Abhängigkeit, auch die restliche Kette des Buildprozesses muss einfach bereitgestellt werden können. Bürden Sie Ihren Entwicklern zu viel Aufwand zum Testen auf, wird nicht getestet. Während die Unterstützung von JUnit 5 in den großen IDEs wie Eclipse und IntelliJ IDEA bereits sehr gut ist, funktioniert die Build-Tool-Unterstützung noch nicht wie erwartet. Das Beispielprojekt zum Artikel arbeitete ursprünglich mit JUnit 5 und ich hätte Stand November 2017 einen eigenen Aufsatz darüber schreiben können, wie man Gradle beziehungsweise Maven dazu bringt, ähnlich gut mit JUnit 5 zusammenzuarbeiten wie mit Version 4. Ich habe mich bewusst dagegen entschieden, um tatsächlich den Fokus auf einfaches Testen zu legen.
 
 Es ist davon auszugehen, dass die Integration von JUnit 5 in den Build-Werkzeugen im Laufe von 2018 ähnlich gut sein wird, wie sie jetzt für JUnit 4 ist.
 ****
@@ -180,7 +180,7 @@ Der Spring DI-Container nimmt Ihnen die Arbeit ab, Infrastruktur für Dependency
 
 === Gezielte Tests technischer Schichten
 
-Spring Boot stellt Ihnen unter dem Begriff "Test-Slices" eine Möglichkeit zur Verfügung, gezielt technische Schichten einer Anwendung im Kontext des laufenden Spring Containers zu testen. Technische Schichten sind zum Beispiel Datenbankzugriff oder der Weblayer. Für Ihren Test hat das den großen Vorteil, dass er schlanker sein kann. Möchten Sie gezielt eine REST-API testen, können Sie oftmals auf eine echte Datenbank oder andere unterstützende Diense im Hintergrund verzichten. Gegeben sei die API in <<domain-usage-single-event>>. Sie basiert auf Spring Web MVC, das dominante Programmiermodell basiert auf Annotationen. Im Beispiel besagen sie, dass unter der URL `/api/events/2017-12-24/Weihnachten` ein Event mit seinen Eigenschaften abrufbar sein soll.
+Spring Boot stellt Ihnen unter dem Begriff "Test-Slices" eine Möglichkeit zur Verfügung, gezielt technische Schichten einer Anwendung im Kontext des laufenden Spring Containers zu testen. Technische Schichten sind zum Beispiel Datenbankzugriff oder der Weblayer. Für Ihren Test hat das den großen Vorteil, dass er schlanker sein kann. Möchten Sie gezielt eine REST-API testen, können Sie oftmals auf eine echte Datenbank oder andere unterstützende Dienste im Hintergrund verzichten. Gegeben sei die API in <<domain-usage-single-event>>. Sie basiert auf Spring Web MVC, das dominante Programmiermodell basiert auf Annotationen. Im Beispiel besagen sie, dass unter der URL `/api/events/2017-12-24/Weihnachten` ein Event mit seinen Eigenschaften abrufbar sein soll.
 
 [source,java]
 [[domain-usage-single-event]]
@@ -239,7 +239,7 @@ include::../../build.gradle[tags=integration-test-setup]
 <2> Definition eines Tasks, der vom Test-Task erbt, aber auf anderen Quellen arbeitet
 <3> Aktivierung eines Spring-Profiles, um passende Konfigurationseigenschaften zu aktivieren
 
-Integrationstests gegen Datenbanken können heikel sein. Schwergewichtige Datenbanken wie eine Oracle-Datenbank nur für einen Tests zu starten, kann dauern. Gegen In-Memory-Datenbanken zu testen, bildet nicht die Realität ab. Eine Alternative ist die Generierung unterschiedlicher Schemas für Testzwecke. Das Beispielprojekt des Artikels geht den konsequenten Weg und startet die Zieldatenbank, eine PostgreSQL-Instanz, während der Integrationstests per https://www.docker.com[Docker]. Die Datenbank wird mit den Mitteln von Spring Boot initialisiert und der vollständige Test ergibt sich in <<event-repository-custom-query-test>>.
+Integrationstests gegen Datenbanken können heikel sein. Schwergewichtige Datenbanken wie eine Oracle-Datenbank nur für einen Test zu starten, kann dauern. Gegen In-Memory-Datenbanken zu testen, bildet nicht die Realität ab. Eine Alternative ist die Generierung unterschiedlicher Schemas für Testzwecke. Das Beispielprojekt des Artikels geht den konsequenten Weg und startet die Zieldatenbank, eine PostgreSQL-Instanz, während der Integrationstests per https://www.docker.com[Docker]. Die Datenbank wird mit den Mitteln von Spring Boot initialisiert und der vollständige Test ergibt sich in <<event-repository-custom-query-test>>.
 
 [source,java]
 [[event-repository-custom-query-test]]
