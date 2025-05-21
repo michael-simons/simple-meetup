@@ -1,7 +1,5 @@
 = Simple Meetup
 
-image:https://travis-ci.org/michael-simons/simple-meetup.svg?branch=master["Build Status", link="https://travis-ci.org/michael-simons/simple-meetup"]
-
 A sample project to explore
 
 * Gradle
